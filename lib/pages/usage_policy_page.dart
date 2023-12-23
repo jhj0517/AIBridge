@@ -13,8 +13,16 @@ class UsagePolicyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(Intl.message("usagePolicyTitle")),
+        title: Text(
+          Intl.message("usagePolicyTitle"),
+          style: const  TextStyle(
+            color: ColorConstants.appbarTextColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: ColorConstants.appbarBackgroundColor,
+        centerTitle: false,
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 16.0, bottom: 16, right: 16, left: 16),
