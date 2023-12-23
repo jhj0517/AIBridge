@@ -21,8 +21,14 @@ class UsagePolicyPage extends StatelessWidget {
           ),
         ),
         backgroundColor: ColorConstants.appbarBackgroundColor,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          color: Colors.white,
+          onPressed: () async {
+            Navigator.pop(context);
+          },
+        ),
         centerTitle: false,
-        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 16.0, bottom: 16, right: 16, left: 16),

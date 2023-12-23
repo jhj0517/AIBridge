@@ -46,7 +46,8 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
           title: Text(
             Intl.message("chatRoomSetting"),
             style: const TextStyle(
-              color: ColorConstants.appbarTextColor
+              color: ColorConstants.appbarTextColor,
+              fontWeight: FontWeight.bold
             ),
           ),
           backgroundColor: ColorConstants.appbarBackgroundColor,
@@ -57,6 +58,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
               Navigator.pop(context);
             },
           ),
+          centerTitle: false,
           actions: [
             _buildDoneButton(),
           ]
@@ -100,7 +102,8 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
                   child: Text(
                     Intl.message("resetToDefaults"),
                     style: const TextStyle(
-                      color: Colors.white
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold
                     ),
                   ),
                 ),
