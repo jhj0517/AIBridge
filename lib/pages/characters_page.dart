@@ -75,6 +75,7 @@ class CharactersPageState extends State<CharactersPage> {
                 ),
               ],
             ),
+            backgroundColor: ColorConstants.appbarBackgroundColor,
             centerTitle: false,
             automaticallyImplyLeading: false,
             actions: <Widget>[

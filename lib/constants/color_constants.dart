@@ -30,6 +30,7 @@ class ColorConstants {
   static const defaultUserChatItalicWhiteColor = Color(0xFFE8E8E8);
   static const markdownCodeBoxColor = Color(0x80fcfcfc);
   static const appbarTextColor = Color(0xffffffff);
+  static const appbarBackgroundColor = Color(0xff000000);
   static const thickGreyColor = Color(0xff646464);
   static const characterPageCharacterNameColor = Color(0xff000000);
 }

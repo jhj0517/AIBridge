@@ -55,6 +55,7 @@ class ChatRoomsState extends State<ChatRoomsPage> {
                 ),
               ],
             ),
+            backgroundColor: ColorConstants.appbarBackgroundColor,
             centerTitle: false,
             automaticallyImplyLeading: false, // Add this line
           ),

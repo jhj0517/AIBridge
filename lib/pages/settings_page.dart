@@ -42,6 +42,7 @@ class SettingsPageState extends State<SettingsPage> {
             ),
           ],
         ),
+        backgroundColor: ColorConstants.appbarBackgroundColor,
         centerTitle: false,
         automaticallyImplyLeading: false,
       ),

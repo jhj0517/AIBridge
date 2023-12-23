@@ -21,6 +21,7 @@ class FullPhotoPage extends StatelessWidget {
             color: ColorConstants.appbarTextColor
           ),
         ),
+        backgroundColor: ColorConstants.appbarBackgroundColor,
         centerTitle: false,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new),

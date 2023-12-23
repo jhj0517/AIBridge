@@ -14,6 +14,7 @@ class UsagePolicyPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(Intl.message("usagePolicyTitle")),
+        backgroundColor: ColorConstants.appbarBackgroundColor,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 16.0, bottom: 16, right: 16, left: 16),

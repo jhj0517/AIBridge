@@ -49,6 +49,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
               color: ColorConstants.appbarTextColor
             ),
           ),
+          backgroundColor: ColorConstants.appbarBackgroundColor,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new),
             color: Colors.white,

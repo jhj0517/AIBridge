@@ -66,13 +66,13 @@ class CharacterProfileState extends State<CharacterProfilePage> {
           ),
         ),
         Scaffold(
-          backgroundColor: Colors.transparent, // Make the Scaffold's background transparent
+          backgroundColor: Colors.transparent,
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: ColorConstants.appbarBackgroundColor,
             elevation: 0, // Remove AppBar Shadow
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new),
-              color: Colors.white, // Update the color of the back button to match the text color
+              color: Colors.white,
               onPressed: () {
                 Navigator.pop(context);
               },

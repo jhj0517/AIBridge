@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:apibottle/utils/image_converter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

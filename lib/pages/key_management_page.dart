@@ -37,6 +37,7 @@ class KeyManagementPageState extends State<KeyManagementPage> {
             color: ColorConstants.appbarTextColor
           ),
         ),
+        backgroundColor: ColorConstants.appbarBackgroundColor,
       ),
       body: Padding(
         padding: const EdgeInsets.only(bottom: 16),

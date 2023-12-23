@@ -83,6 +83,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                   charactersProvider.currentCharacter.characterName,
                   style: const TextStyle(color: ColorConstants.appbarTextColor),
                 ),
+                backgroundColor: ColorConstants.appbarBackgroundColor,
                 centerTitle: false,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back_ios_new),
