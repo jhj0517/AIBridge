@@ -34,10 +34,13 @@ class KeyManagementPageState extends State<KeyManagementPage> {
         title: Text(
           Intl.message("keyPageTitle"),
           style: const TextStyle(
-            color: ColorConstants.appbarTextColor
+            color: ColorConstants.appbarTextColor,
+            fontWeight: FontWeight.bold
           ),
         ),
         backgroundColor: ColorConstants.appbarBackgroundColor,
+        centerTitle: false,
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.only(bottom: 16),
