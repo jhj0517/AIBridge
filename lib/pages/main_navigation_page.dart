@@ -6,7 +6,10 @@ import '../utils/utilities.dart';
 import '../constants/constants.dart';
 
 class MainNavigationPage extends StatefulWidget {
-  const MainNavigationPage({Key? key}) : super(key: key);
+  final int initialIndex;
+
+  const MainNavigationPage({Key? key, this.initialIndex=0}) : super(key: key);
+
   @override
   _MainNavigationState createState() => _MainNavigationState();
 }
@@ -26,6 +29,12 @@ class _MainNavigationState extends State<MainNavigationPage> {
       _currentIndex = index;
       Utilities.closeKeyboard(context);
     });
+  }
+
+  @override
+  void initState() {
+    _currentIndex = widget.initialIndex;
+    super.initState();
   }
 
   @override

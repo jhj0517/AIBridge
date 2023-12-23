@@ -707,7 +707,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         break;
       case OnYesOrNoOptionClicked.onYes:
         chatProvider.setRequestState(RequestState.initialized);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const KeyManagementPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const MainNavigationPage(initialIndex: 0)));
         break;
       case null: // when dialog is dismissed by tab somewhere else
         chatProvider.setRequestState(RequestState.initialized);
