@@ -20,7 +20,6 @@ This table details the primary patterns and packages used in this project.
 | Tech | Usage |
 | ---------- | ----- |
 | Provider pattern | Monitor data changes using ChangeNotifier |
-| Firebase | Used for Authentication, Firestore (Database), Firebase Messaging (In-app Messaging), and Remote Config |
 | sqflite | Used to store chat data as local data |
 | dio | 	Used for requesting API responses over the network. However, a different built-in package, dart_openai, is specifically used for ChatGPT. Dio is primarily used for PaLM. |
 | dart_openai | 	A built-in package for requesting ChatGPT API responses in Flutter |
