@@ -1,7 +1,7 @@
 name: aibridge
 description: A new Flutter project.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.1+1
+version: 1.0.1+5
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
@@ -34,6 +34,7 @@ dependencies:
   flutter_colorpicker: ^1.0.3
   rename: ^3.0.1
   flutter_native_splash: ^2.3.7
+  package_info_plus: ^4.1.0 # internet permission required
 
 dev_dependencies:
   flutter_test:
