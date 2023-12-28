@@ -9,7 +9,7 @@ Currently implemented APIs are :
 - PaLM
 
 # Architecture
-![diagram](https://github.com/jhj0517/chattercrafting/assets/97279763/4759246c-093d-459e-81aa-d9e1a9d9a396)
+![diagram](https://github.com/jhj0517/AIBridge/blob/master/gitimages/architecture.png)
 
 # Techs
 | Tech | Usage |
