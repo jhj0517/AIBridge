@@ -2,21 +2,16 @@
 
 AIBridge is a open-source flutter project that allows you to use external APIs for AI Chat.
 
-record
+https://github.com/jhj0517/AIBridge/assets/97279763/c23efc97-59d8-4540-ad30-6ca66607ec92
 
 Currently implemented APIs are :
 - ChatGPT
 - PaLM
 
-You can find the built version in the stores below:
-
-play-store-logo-github appstore-logo-github
-
 # Architecture
 ![diagram](https://github.com/jhj0517/chattercrafting/assets/97279763/4759246c-093d-459e-81aa-d9e1a9d9a396)
 
 # Techs
-This table details the primary patterns and packages used in this project.
 | Tech | Usage |
 | ---------- | ----- |
 | Provider pattern | Monitor data changes using ChangeNotifier |
