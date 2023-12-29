@@ -1,4 +1,4 @@
-# AIBridge
+# AI Bridge
 
 AIBridge is a open-source flutter project that allows you to use external APIs for AI Chat.
 
