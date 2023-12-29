@@ -8,6 +8,11 @@ Currently implemented APIs are :
 - ChatGPT
 - PaLM
 
+You can also use the built version directly from Stores :
+
+[![download on playstore](https://github.com/jhj0517/AIBridge/assets/97279763/6457404a-a4d9-4303-b614-f4a8e58c5b79)](https://play.google.com/store/apps/details?id=com.wecraftstudio.aibridge)
+[![download on appstore](https://github.com/jhj0517/AIBridge/assets/97279763/5394f501-89c3-446c-882f-a571a493161d)](https://apps.apple.com/app/id6474897375)
+
 # Architecture
 ![diagram](https://github.com/jhj0517/AIBridge/blob/master/gitimages/architecture.png)
 
