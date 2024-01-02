@@ -35,6 +35,9 @@ dependencies:
   rename: ^3.0.1
   flutter_native_splash: ^2.3.7
   package_info_plus: ^4.1.0 # internet permission required
+  native_exif: ^0.5.0
+  path: ^1.8.3
+  image_gallery_saver: ^2.0.3
 
 dev_dependencies:
   flutter_test:
@@ -81,8 +84,6 @@ flutter_native_splash: #flutter pub run flutter_native_splash:create
 # To rename project
 # install rename package
 # install rename CLI tool via `flutter pub global activate rename`
-# set package name with NOTE: This does not work, so use `change_app_package_name`
-# rename setBundleId --targets android --value "com.example.bundleId"
 # set app name with
 # rename setAppName --targets ios,android --value "YourAppName"
 
