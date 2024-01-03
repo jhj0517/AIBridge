@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:aibridge/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,7 @@ import '../pages/pages.dart';
 import '../constants/constants.dart';
 import '../widgets/widgets.dart';
 import '../models/models.dart';
+import '../utils/exif_manager.dart';
 
 class CharacterProfilePage extends StatefulWidget {
   const CharacterProfilePage({Key? key, required this.arguments}) : super(key: key);
@@ -115,6 +117,8 @@ class CharacterProfileState extends State<CharacterProfilePage> {
                           _buildChatButton(widget.arguments),
                           const SizedBox(width: 20),
                           _buildEditProfileButton(),
+                          const SizedBox(width: 20),
+                          _buildExportButton()
                         ],
                       ),
                     ),
@@ -275,6 +279,33 @@ class CharacterProfileState extends State<CharacterProfilePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildExportButton() {
+    return Flexible(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 80, minHeight: 80),
+          child: InkWell(
+            onTap: () async {
+              await ExifManager.saveImageWithExif(character: charactersProvider.currentCharacter);
+            },
+            child: Column(
+              children: [
+                const SizedBox(height: 15),
+                const Icon(
+                  Icons.file_upload_outlined,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  Intl.message('export'),
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        )
     );
   }
 

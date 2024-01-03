@@ -195,6 +195,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _buildChangeBackgroundIcon(),
+                  _buildImportIcon()
                 ],
               ),
             ],
@@ -656,7 +657,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     );
   }
 
-
   Widget _buildPaLMExampleInputField(){
     return Card(
       elevation: 4.0,
@@ -740,6 +740,77 @@ class CharacterCreationState extends State<CharacterCreationPage> {
               const SizedBox(height: 5),
               Text(
                 Intl.message("background"),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImportIcon(){
+    return Material(
+      color: Colors.transparent,
+      child: SizedBox(
+        height: 80,
+        width: 80,
+        child: InkWell(
+          onTap: () async {
+            final ImagePicker picker = ImagePicker();
+            final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+            if (image != null) {
+              final mimeType = lookupMimeType(image.path);
+
+              if (mimeType != null && !mimeType.startsWith('image/gif')) {
+                final _character = await ExifManager.decodeCharacter(pickedFile: image);
+
+                setState(() {
+                  _textFieldControllerName.text = _character!.characterName;
+                  _selectedBackgroundImageBLOB = _character.backgroundPhotoBLOB;
+                  _selectedProfileImageBLOB = _character.photoBLOB;
+                  _textFieldControllerYourName.text = _character.userName;
+                  _textFieldControllerFirstMessage.text = _character.firstMessage;
+
+                  if(_character.service.serviceType== ServiceType.openAI){
+                    final importedService = _character.service as OpenAIService;
+                    _selectedModel = importedService.modelName;
+
+                    if (importedService.systemPrompts.isNotEmpty){
+                      for (final (index, systemPrompt) in importedService.systemPrompts.indexed) {
+                        if(index==0){
+                          _textFieldControllersSystemPrompts.first.text = systemPrompt;
+                        } else {
+                          _textFieldControllersSystemPrompts.add(TextEditingController());
+                          _textFieldControllersSystemPrompts[index].text = systemPrompt;
+                        }
+                      }
+                    }
+                  }
+                  _textFieldControllerImport.text = "";
+                });
+              } else {
+                Fluttertoast.showToast(msg: Intl.message("toastSelectStaticImage"));
+              }
+            } else {
+              debugPrint('No image selected.');
+            }
+          },
+          child: Column(
+            children: [
+              const SizedBox(height: 15),
+              const Icon(
+                Icons.file_download_outlined, // Use any icon you want
+                color: Colors.white,
+                size: 30,
+              ),
+              const SizedBox(height: 5),
+              Text(
+                Intl.message("import"),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
