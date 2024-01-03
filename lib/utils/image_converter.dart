@@ -24,7 +24,7 @@ class ImageConverter{
       targetPath,
       minHeight: 480,
       minWidth: 640,
-      quality: 30,
+      quality: 60,
     );
 
     return compressedImage!;
