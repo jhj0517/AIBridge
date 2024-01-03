@@ -52,7 +52,7 @@ class ExifManager{
 
       final newExif = await Exif.fromPath(file.path);
       await newExif.writeAttributes({
-        "UserComment": json.encode(characterMap)
+        "UserComment": base64.encode(utf8.encode(json.encode(characterMap)))
       });
       debugPrint("saveImageWithExif exif : ${await readAttributes(imageFilePath: file.path)}");
 
@@ -76,13 +76,9 @@ class ExifManager{
     * */
     try{
       Map<String, Object>? attributes = await readAttributes(imageFilePath: pickedFile!.path);
-      String? exifJson = attributes?["UserComment"].toString();
-      List<int> bytes = exifJson!.split(',')
-          .map((e) => int.parse(e.trim()))
-          .toList();
-      String decodedUTF8 = utf8.decode(bytes);
+      final exifBase64 = attributes?["UserComment"] as String;
 
-      Map<String, dynamic> characterJson = json.decode(exifJson);
+      final characterJson = json.decode(utf8.decode((base64.decode(exifBase64))));
 
       final File imageFile = File(pickedFile.path);
       final File compressedImageFile = await ImageConverter.compressImage(imageFile);
