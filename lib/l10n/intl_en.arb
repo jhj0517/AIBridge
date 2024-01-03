@@ -98,5 +98,8 @@
   "defaultCharacterSystemPrompt": "Write <char>'s reply in a chat between <char> and <user>.",
   "defaultCharacterPersonalityPrompt": "<char> has a very friendly personality. <char> wants to know many things about <user>.",
   "name": "Name",
-  "characterNameHint": "This is replaced by <char> in the prompts."
+  "characterNameHint": "This is replaced by <char> in the prompts.",
+  "background": "Background",
+  "export": "Export",
+  "import": "Import"
 }

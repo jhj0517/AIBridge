@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "InitializingTokenizer":
             MessageLookupByLibrary.simpleMessage("トークナイザーの初期化.."),
         "appTitle": MessageLookupByLibrary.simpleMessage("AIブリッジ"),
+        "background": MessageLookupByLibrary.simpleMessage("背景"),
         "cancel": MessageLookupByLibrary.simpleMessage("キャンセル"),
         "characterChatBoxBackgroundColor":
             MessageLookupByLibrary.simpleMessage("キャラクターのチャットボックス背景色"),
@@ -79,6 +80,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "editProfile": MessageLookupByLibrary.simpleMessage("プロフィール編集"),
         "enableMarkdownRendering":
             MessageLookupByLibrary.simpleMessage("マークダウンを有効"),
+        "export": MessageLookupByLibrary.simpleMessage("Export"),
         "firstMessageHint": MessageLookupByLibrary.simpleMessage(
             "キャラクターの最初のメッセージはカスタマイズすることもできます。"),
         "firstMessageLabel":
@@ -87,6 +89,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gpt4VisionOnly": MessageLookupByLibrary.simpleMessage(
             "この機能は「GPT-4 Vision」のみに対応しています。"),
         "image": MessageLookupByLibrary.simpleMessage("画像"),
+        "import": MessageLookupByLibrary.simpleMessage("Import"),
         "isSaved": MessageLookupByLibrary.simpleMessage("が保存されました."),
         "keyPageTitle": MessageLookupByLibrary.simpleMessage("API キー管理"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),

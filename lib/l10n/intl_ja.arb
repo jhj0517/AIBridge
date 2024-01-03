@@ -98,5 +98,8 @@
   "defaultCharacterSystemPrompt": "Write <char>'s reply in a chat between <char> and <user>.",
   "defaultCharacterPersonalityPrompt": "<char> has a very friendly personality. <char> wants to know many things about <user>.",
   "name": "Name",
-  "characterNameHint": "これはプロンプトでは<char>に置き換えられる。"
+  "characterNameHint": "これはプロンプトでは<char>に置き換えられる。",
+  "background": "背景",
+  "export": "Export",
+  "import": "Import"
 }

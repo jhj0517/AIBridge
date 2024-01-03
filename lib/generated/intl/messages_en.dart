@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "InitializingTokenizer":
             MessageLookupByLibrary.simpleMessage("Initializing Tokenizer.."),
         "appTitle": MessageLookupByLibrary.simpleMessage("AI Bridge"),
+        "background": MessageLookupByLibrary.simpleMessage("Background"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "characterChatBoxBackgroundColor": MessageLookupByLibrary.simpleMessage(
             "Character\'s ChatBox Background Color"),
@@ -86,6 +87,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "editProfile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
         "enableMarkdownRendering":
             MessageLookupByLibrary.simpleMessage("Enable Markdown Rendering"),
+        "export": MessageLookupByLibrary.simpleMessage("Export"),
         "firstMessageHint": MessageLookupByLibrary.simpleMessage(
             "Customize Character\'s first message if you wish, or leave it empty if you prefer not to."),
         "firstMessageLabel":
@@ -94,6 +96,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gpt4VisionOnly": MessageLookupByLibrary.simpleMessage(
             "This feature is supported for GPT-4 Vision only."),
         "image": MessageLookupByLibrary.simpleMessage("Image"),
+        "import": MessageLookupByLibrary.simpleMessage("Import"),
         "isSaved": MessageLookupByLibrary.simpleMessage(" is saved."),
         "keyPageTitle":
             MessageLookupByLibrary.simpleMessage("API Key Management"),

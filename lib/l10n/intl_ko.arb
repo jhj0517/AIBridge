@@ -98,5 +98,8 @@
   "defaultCharacterSystemPrompt": "Write <char>'s reply in a chat between <char> and <user>.",
   "defaultCharacterPersonalityPrompt": "<char> has a very friendly personality. <char> wants to know many things about <user>.",
   "name": "이름",
-  "characterNameHint": "프롬프트에서 <char> 와 대치됩니다."
+  "characterNameHint": "프롬프트에서 <char> 와 대치됩니다.",
+  "background": "배경",
+  "export": "익스포트",
+  "import": "임포트"
 }

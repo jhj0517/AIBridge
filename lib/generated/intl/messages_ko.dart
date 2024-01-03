@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "InitializingTokenizer":
             MessageLookupByLibrary.simpleMessage("토크나이저 초기화 중.."),
         "appTitle": MessageLookupByLibrary.simpleMessage("AI 브리지"),
+        "background": MessageLookupByLibrary.simpleMessage("배경"),
         "cancel": MessageLookupByLibrary.simpleMessage("취소"),
         "characterChatBoxBackgroundColor":
             MessageLookupByLibrary.simpleMessage("캐릭터 채팅 배경 색상"),
@@ -76,6 +77,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "editProfile": MessageLookupByLibrary.simpleMessage("프로필 수정"),
         "enableMarkdownRendering":
             MessageLookupByLibrary.simpleMessage("마크다운 렌더링 허용"),
+        "export": MessageLookupByLibrary.simpleMessage("익스포트"),
         "firstMessageHint":
             MessageLookupByLibrary.simpleMessage("캐릭터의 첫 메시지를 정할 수 있습니다."),
         "firstMessageLabel": MessageLookupByLibrary.simpleMessage("캐릭터의 첫 메시지"),
@@ -83,6 +85,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gpt4VisionOnly": MessageLookupByLibrary.simpleMessage(
             "이 기능은 현재 GPT-4 Vision 에서만 지원됩니다."),
         "image": MessageLookupByLibrary.simpleMessage("이미지"),
+        "import": MessageLookupByLibrary.simpleMessage("임포트"),
         "isSaved": MessageLookupByLibrary.simpleMessage(" 가 저장되었습니다."),
         "keyPageTitle": MessageLookupByLibrary.simpleMessage("API 키 관리"),
         "name": MessageLookupByLibrary.simpleMessage("이름"),
