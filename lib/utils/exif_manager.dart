@@ -42,7 +42,7 @@ class ExifManager{
     * Note : Only temp image is EXIF editable, so you should make temp image -> edit EXIF -> move it to Gallery
     * */
     try {
-      final file = File(p.join(Directory.systemTemp.path, 'tempimage.jpg'));
+      final file = File(p.join(Directory.systemTemp.path, 'tempimage.png'));
       await file.create();
       await file.writeAsBytes(character.photoBLOB);
 
