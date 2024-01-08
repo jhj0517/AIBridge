@@ -1,12 +1,11 @@
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/material.dart';
 
 import '../../localdb/localdb.dart';
-import '../../constants/model_constants.dart';
-import '../services/i_service.dart';
-import '../services/openai_service.dart';
-import '../services/palm_service.dart';
+import '../../constants/constants.dart';
+import '../models.dart';
 
 class Character {
   final String? id;
@@ -38,6 +37,44 @@ class Character {
       SQFliteHelper.charactersColumnFirstMessage: firstMessage,
       SQFliteHelper.charactersColumnService: json.encode(service.toMap()), // Encode the service as JSON
     };
+  }
+
+  Map<String, dynamic>? toV2Card(){
+    if(service.serviceType == ServiceType.openAI){
+      final _service = service as OpenAIService;
+      return V2(
+          name: characterName,
+          description: _service.systemPrompts.first,
+          firstMes: firstMessage
+      ).toMap();
+    }
+
+    else {
+      debugPrint("Not supported format to share.");
+      return null;
+    }
+  }
+
+  factory Character.fromV2Card({
+    required V2 v2Card,
+    required Uint8List photoBLOB,
+    required Uint8List backgroundPhotoBLOB
+  }) {
+    String _id = const Uuid().v4();
+    return Character(
+        id: _id,
+        photoBLOB: photoBLOB,
+        backgroundPhotoBLOB: backgroundPhotoBLOB,
+        characterName: v2Card.name,
+        firstMessage: v2Card.firstMes,
+        userName: "",
+        service: OpenAIService(
+          characterId: _id,
+          modelName: ModelConstants.chatGPT4,
+          systemPrompts: [v2Card.description],
+          temperature: 1
+        )
+    );
   }
 
   factory Character.fromMap(Map<String, dynamic> map) {
