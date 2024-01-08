@@ -16,6 +16,7 @@ class ImageConverter{
   }
 
   static Future<File> compressImage(File imageFile) async {
+    // NOTE : This removes chunk data.
     final Directory tempDir = await getTemporaryDirectory();
     final String targetPath = '${tempDir.path}/tempimage.png';
 
@@ -25,6 +26,7 @@ class ImageConverter{
       minHeight: 480,
       minWidth: 640,
       quality: 60,
+      format: CompressFormat.png,
     );
 
     return compressedImage!;
