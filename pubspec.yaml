@@ -38,6 +38,8 @@ dependencies:
   native_exif: ^0.5.0
   path: ^1.8.3
   image_gallery_saver: ^2.0.3
+  png_chunks_encode: ^1.0.0
+  png_chunks_extract: ^1.0.2
 
 dev_dependencies:
   flutter_test:
