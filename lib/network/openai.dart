@@ -4,6 +4,7 @@ import 'package:tiktoken/tiktoken.dart' as tiktokenizer;
 
 import '../models/models.dart';
 import '../constants/model_constants.dart';
+import '../utils/utilities.dart';
 
 const openAIOutputTokenSafetyMargin = 800;
 
@@ -67,7 +68,7 @@ class OpenAINetwork{
         OpenAIChatCompletionChoiceMessageModel(
           content: [
             OpenAIChatCompletionChoiceMessageContentItemModel.text(
-              formattingSystemPrompt(systemPrompt, character)
+              Utilities.formattingPrompt(systemPrompt, character)
             )
           ],
           role: OpenAIChatMessageRole.system
@@ -75,10 +76,6 @@ class OpenAINetwork{
       );
     }
     return systemPrompts.isEmpty ? chatMessages : [...systemPrompts, ...chatMessages];
-  }
-
-  static String formattingSystemPrompt(String chat, Character character){
-    return chat.replaceAll('<user>', character.userName).replaceAll('<char>', character.characterName);
   }
 
   static List<OpenAIChatCompletionChoiceMessageModel> limitInputTokens(

@@ -5,6 +5,7 @@ import 'package:tiktoken/tiktoken.dart' as tiktokenizer;
 
 import '../constants/constants.dart';
 import '../models/models.dart';
+import '../utils/utilities.dart';
 
 const paLMMaximumInputToken = {
   ModelConstants.paLMBisonId: 4096,
@@ -82,17 +83,17 @@ class PaLM{
       Character character
       ) {
     return PaLMPrompt(
-        context: paLMParams.context.isNotEmpty ? formattingPrompt(paLMParams.context, character) : null,
+        context: paLMParams.context.isNotEmpty ? Utilities.formattingPrompt(paLMParams.context, character) : null,
         examples: paLMParams.exampleInput.isNotEmpty && paLMParams.exampleOutput.isNotEmpty
         ? [
             PaLMExample(
               input: PaLMMessage(
                   author: PaLMMessageRole.user,
-                  content: formattingPrompt(paLMParams.exampleInput, character)
+                  content: Utilities.formattingPrompt(paLMParams.exampleInput, character)
               ),
               output: PaLMMessage(
                   author: PaLMMessageRole.assistant,
-                  content: formattingPrompt(paLMParams.exampleOutput, character)
+                  content: Utilities.formattingPrompt(paLMParams.exampleOutput, character)
               ),
             )
           ]
@@ -121,10 +122,6 @@ class PaLM{
     }
     debugPrint("Context tokens are : $totalTokens ,Context token exceed Maximum ${tokenLimitation-tokenSafetyMargin} (tokenLimitation-tokenSafetyMargin) tokens, returns filteredList");
     return filteredList.reversed.toList();
-  }
-
-  static String formattingPrompt(String chat, Character character){
-    return chat.replaceAll('<user>', character.userName).replaceAll('<character>', character.characterName);
   }
 
   // note : Since google does not provide tokenizer, use tiktokenizer instead for now.

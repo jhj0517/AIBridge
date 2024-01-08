@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../models/sqflite/character.dart';
 
 class Utilities {
   static bool isKeyboardShowing(BuildContext context) {
@@ -42,5 +43,17 @@ class Utilities {
       DateFormat dateFormat = DateFormat('a h:mm');
       return dateFormat.format(dateTime);
     }
+  }
+
+  static String formattingPrompt(String chat, Character character){
+    return chat
+        .replaceAll('<user>', character.userName)
+        .replaceAll('<User>', character.userName)
+        .replaceAll('{{user}}', character.userName)
+        .replaceAll('{{User}}', character.userName)
+        .replaceAll('<char>', character.characterName)
+        .replaceAll('<Char>', character.characterName)
+        .replaceAll('{{char}}', character.characterName)
+        .replaceAll('{{Char}}', character.characterName);
   }
 }
