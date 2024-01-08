@@ -777,7 +777,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                 }
 
                 setState(() {
-                  _textFieldControllerName.text = _character!.characterName;
+                  _textFieldControllerName.text = _character.characterName;
                   _selectedBackgroundImageBLOB = _character.backgroundPhotoBLOB;
                   _selectedProfileImageBLOB = _character.photoBLOB;
                   _textFieldControllerYourName.text = _character.userName;
