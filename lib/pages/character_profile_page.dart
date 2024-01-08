@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:aibridge/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -288,7 +289,12 @@ class CharacterProfileState extends State<CharacterProfilePage> {
           constraints: const BoxConstraints(minWidth: 80, minHeight: 80),
           child: InkWell(
             onTap: () async {
-              await ExifManager.saveImageWithExif(character: charactersProvider.currentCharacter);
+              final success = await ChunkManager.saveImageWithChunk(character: charactersProvider.currentCharacter);
+              if (!success){
+                Fluttertoast.showToast(msg: Intl.message("failedToExport"));
+                return;
+              }
+              Fluttertoast.showToast(msg: Intl.message("savedInGallery"));
             },
             child: Column(
               children: [

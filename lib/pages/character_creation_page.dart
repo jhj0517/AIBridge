@@ -765,9 +765,16 @@ class CharacterCreationState extends State<CharacterCreationPage> {
 
             if (image != null) {
               final mimeType = lookupMimeType(image.path);
-
               if (mimeType != null && !mimeType.startsWith('image/gif')) {
-                final _character = await ExifManager.decodeCharacter(pickedFile: image);
+
+                final File imageFile = File(image.path);
+                Uint8List? pickedBLOB = await ImageConverter.convertImageToBLOB(imageFile);
+                final _character = await ChunkManager.decodeCharacter(pickedBLOB: pickedBLOB);
+
+                if (_character == null){
+                  Fluttertoast.showToast(msg: Intl.message("failedToImport"));
+                  return;
+                }
 
                 setState(() {
                   _textFieldControllerName.text = _character!.characterName;
