@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/models.dart';
 import '../repositories/characters_repository.dart';
+import '../utils/utilities.dart';
 
 class CharactersProvider extends ChangeNotifier {
 
@@ -33,7 +34,8 @@ class CharactersProvider extends ChangeNotifier {
   }
 
   Future<void> insertFirstMessage(Character character, ChatMessage firstMessage) async{
-    await charactersRepository.insertFirstMessage(character, firstMessage);
+    final _firstMessage = firstMessage.copyWith(content: Utilities.formattingPrompt(firstMessage.content, character));
+    await charactersRepository.insertFirstMessage(character, _firstMessage);
     await updateCharacters();
   }
 

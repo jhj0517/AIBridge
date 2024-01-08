@@ -82,6 +82,30 @@ class ChatMessage {
     );
   }
 
+  ChatMessage copyWith({
+    String? id,
+    String? roomId,
+    String? characterId,
+    ChatMessageType? chatMessageType,
+    int? timestamp,
+    String? role,
+    String? content,
+    String? imageUrl,
+    bool? isEditable,
+  }) {
+    return ChatMessage(
+      id: id ?? this.id,
+      roomId: roomId ?? this.roomId,
+      characterId: characterId ?? this.characterId,
+      chatMessageType: chatMessageType ?? this.chatMessageType,
+      timestamp: timestamp ?? this.timestamp,
+      role: role ?? this.role,
+      content: content ?? this.content,
+      imageUrl: imageUrl ?? this.imageUrl,
+      isEditable: isEditable ?? this.isEditable,
+    );
+  }
+
   @override
   String toString() {
     return 'ChatMessage(Id: $id, roomId: $roomId, characterId: $characterId, chatMessageType: $chatMessageType, timestamp: $timestamp, role: $role, content: $content, isEditable: $isEditable)';
