@@ -6,3 +6,4 @@ export 'services/result_wrapper.dart';
 export 'services/openai_service.dart';
 export 'services/palm_service.dart';
 export 'chatroom_settings.dart';
+export 'share/v2.dart';
