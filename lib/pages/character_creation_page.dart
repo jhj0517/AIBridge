@@ -624,8 +624,8 @@ class CharacterCreationState extends State<CharacterCreationPage> {
       children: [
         for (int index = 0; index < _textFieldControllersSystemPrompts.length; index++)
           _buildPromptSizedTextField(
-            Intl.message("systemPrompt"),
-            Intl.message("systemPromptHint"),
+            index == 0 ? Intl.message("description") : Intl.message("systemPrompt"),
+              index == 0 ? Intl.message("descriptionHint") : Intl.message("systemPromptHint"),
             _textFieldControllersSystemPrompts[index],
             index
           ),
