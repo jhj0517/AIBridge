@@ -1,3 +1,8 @@
+/***
+ * This is promised character share format.
+ * see more info : https://github.com/malfoyslastname/character-card-spec-v2
+ */
+
 class V2 {
   final String name;
   final String description;
