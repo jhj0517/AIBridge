@@ -104,5 +104,7 @@
   "import": "임포트",
   "failedToImport": "V2 데이터를 포함하고 있지 않은 이미지입니다.",
   "failedToExport": "V2 이미지 생성에 실패하였습니다.",
-  "savedInGallery": "V2 이미지가 갤러리에 저장되었습니다."
+  "savedInGallery": "V2 이미지가 갤러리에 저장되었습니다.",
+  "description": "설명",
+  "descriptionHint": "캐릭터의 설명에 대한 프롬프트입니다."
 }

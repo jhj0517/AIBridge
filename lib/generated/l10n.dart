@@ -1099,6 +1099,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Description`
+  String get description {
+    return Intl.message(
+      'Description',
+      name: 'description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This is the prompt for the character's description.`
+  String get descriptionHint {
+    return Intl.message(
+      'This is the prompt for the character\'s description.',
+      name: 'descriptionHint',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

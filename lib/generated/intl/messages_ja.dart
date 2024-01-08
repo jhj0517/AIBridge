@@ -74,6 +74,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "deleteChatroomConfirm": MessageLookupByLibrary.simpleMessage(
             "チャットの削除を確認しますか？\nすべてのチャット履歴が失われます！"),
         "deleteOption": MessageLookupByLibrary.simpleMessage("削除"),
+        "description": MessageLookupByLibrary.simpleMessage("説明"),
+        "descriptionHint":
+            MessageLookupByLibrary.simpleMessage("これはキャラクターの説明のためのプロンプトです。"),
         "done": MessageLookupByLibrary.simpleMessage("完了"),
         "editCharacterOption": MessageLookupByLibrary.simpleMessage("編集キャラクター"),
         "editChatOption": MessageLookupByLibrary.simpleMessage("編集"),

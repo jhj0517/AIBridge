@@ -80,6 +80,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "deleteChatroomConfirm": MessageLookupByLibrary.simpleMessage(
             "Confirm Chat deletion?\nAll chat history in this chatroom will be lost!"),
         "deleteOption": MessageLookupByLibrary.simpleMessage("Delete"),
+        "description": MessageLookupByLibrary.simpleMessage("Description"),
+        "descriptionHint": MessageLookupByLibrary.simpleMessage(
+            "This is the prompt for the character\'s description."),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "editCharacterOption":
             MessageLookupByLibrary.simpleMessage("Edit Character"),

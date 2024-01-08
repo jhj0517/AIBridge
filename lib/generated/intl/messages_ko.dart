@@ -71,6 +71,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "deleteChatroomConfirm": MessageLookupByLibrary.simpleMessage(
             "채팅방을 삭제하고 싶으신가요?\n해당 채팅방의 모든 대화기록이 삭제됩니다!"),
         "deleteOption": MessageLookupByLibrary.simpleMessage("삭제"),
+        "description": MessageLookupByLibrary.simpleMessage("설명"),
+        "descriptionHint":
+            MessageLookupByLibrary.simpleMessage("캐릭터의 설명에 대한 프롬프트입니다."),
         "done": MessageLookupByLibrary.simpleMessage("완료"),
         "editCharacterOption": MessageLookupByLibrary.simpleMessage("캐릭터 수정"),
         "editChatOption": MessageLookupByLibrary.simpleMessage("수정"),

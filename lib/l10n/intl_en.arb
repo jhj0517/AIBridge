@@ -103,5 +103,7 @@
   "export": "Export",
   "import": "Import",
   "failedToImport": "The image is not the correct V2 card format.",
-  "savedInGallery": "The image has been saved to the Gallery."
+  "savedInGallery": "The image has been saved to the Gallery.",
+  "description": "Description",
+  "descriptionHint": "This is the prompt for the character's description."
 }

@@ -103,5 +103,7 @@
   "export": "輸出",
   "import": "輸入",
   "failedToImport": "画像が正しいV2カード形式ではありません。",
-  "savedInGallery": "画像がギャラリーに保存されました。"
+  "savedInGallery": "画像がギャラリーに保存されました。",
+  "description": "説明",
+  "descriptionHint": "これはキャラクターの説明のためのプロンプトです。"
 }
