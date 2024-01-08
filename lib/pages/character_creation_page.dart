@@ -768,8 +768,10 @@ class CharacterCreationState extends State<CharacterCreationPage> {
               if (mimeType != null && !mimeType.startsWith('image/gif')) {
 
                 final File imageFile = File(image.path);
-                Uint8List? pickedBLOB = await ImageConverter.convertImageToBLOB(imageFile);
-                final _character = await ChunkManager.decodeCharacter(pickedBLOB: pickedBLOB);
+                final _character = await ChunkManager.decodeCharacter(pickedFile: imageFile);
+
+                final File compressedImageFile = await ImageConverter.compressImage(imageFile);
+                Uint8List compressedBLOB = await ImageConverter.convertImageToBLOB(compressedImageFile);
 
                 if (_character == null){
                   Fluttertoast.showToast(msg: Intl.message("failedToImport"));
@@ -779,7 +781,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                 setState(() {
                   _textFieldControllerName.text = _character.characterName;
                   _selectedBackgroundImageBLOB = _character.backgroundPhotoBLOB;
-                  _selectedProfileImageBLOB = _character.photoBLOB;
+                  _selectedProfileImageBLOB = compressedBLOB;
                   _textFieldControllerYourName.text = _character.userName;
                   _textFieldControllerFirstMessage.text = _character.firstMessage;
 
@@ -834,7 +836,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     Color textColor = _isDoneButtonEnabled ? Colors.white : Colors.white38;
     return TextButton(
       onPressed: _isDoneButtonEnabled
-          ? () async {
+      ? () async {
         if (Utilities.isKeyboardShowing(context)) {
           Utilities.closeKeyboard(context);
         }

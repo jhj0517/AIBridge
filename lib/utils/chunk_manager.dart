@@ -126,7 +126,7 @@ class ChunkManager{
   }
 
   static Future<Character?> decodeCharacter({
-    required Uint8List? pickedBLOB
+    required File? pickedFile //Uint8List? pickedBLOB
   }) async {
     /*
     * Get character data from chunk data in the PNG.
@@ -135,11 +135,11 @@ class ChunkManager{
     * returns Character model data
     * */
     try{
-      final List<Map<String, dynamic>>? chunks = readChunk(BLOB: pickedBLOB!);
+      final pickedBLOB = await ImageConverter.convertImageToBLOB(pickedFile!);
+      final List<Map<String, dynamic>>? chunks = readChunk(BLOB: pickedBLOB);
       for (var chunk in chunks!) {
         if (chunk['name'] == 'tEXt') {
           String encodedData = utf8.decode(chunk["data"]);
-          debugPrint("encodedData $encodedData");
           String keyword = "chara";
 
           if (encodedData.startsWith(keyword)) {
