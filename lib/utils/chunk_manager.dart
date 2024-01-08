@@ -31,7 +31,7 @@ class ChunkManager{
     }
   }
 
-  static Future<void> saveImageWithChunk({
+  static Future<bool> saveImageWithChunk({
     required Character character
   }) async {
     /*
@@ -49,7 +49,7 @@ class ChunkManager{
           keyword: "chara",
           newValue: base64.encode(utf8.encode(json.encode(v2Card)))
       );
-      final newBuffer = pngEncode.encodeChunks(newChunks!);
+      final newBuffer = pngEncode.encodeChunks(newChunks);
 
       final file = File(p.join(Directory.systemTemp.path, 'tempimage.png'));
       await file.create();
@@ -59,12 +59,14 @@ class ChunkManager{
           file.path,
           name: "${character.characterName}",
       );
+      return true;
     } catch (e) {
       debugPrint("saveImageWithChunk error : ${e}");
+      return false;
     }
   }
 
-  static addTextChunk({
+  static List<Map<String, dynamic>> addTextChunk({
     required List<Map<String, dynamic>> originalChunk,
     required String keyword,
     required String newValue
@@ -125,7 +127,7 @@ class ChunkManager{
     return newChunks;
   }
 
-  static decodeCharacter({
+  static Future<Character?> decodeCharacter({
     required Uint8List? pickedBLOB
   }) async {
     /*
