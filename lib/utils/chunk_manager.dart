@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'dart:typed_data';
 import 'dart:convert';
-import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:png_chunks_encode/png_chunks_encode.dart' as pngEncode;
