@@ -1,19 +1,18 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:png_chunks_encode/png_chunks_encode.dart' as pngEncode;
+import 'package:png_chunks_extract/png_chunks_extract.dart' as pngExtract;
 
 import '../models/models.dart';
 import '../utils/utils.dart';
 import '../localdb/localdb.dart';
 import '../constants/path_constants.dart';
-
-// Tavern은 keyword 가 chara 다.
-// Risu는 keyword가 persona 다.
 
 class ChunkManager{
 
@@ -33,16 +32,6 @@ class ChunkManager{
     }
   }
 
-  /*
-  RisuAI Template
-  {"spec":"chara_card_v2","spec_version":"2.0","data":{"name":"Sooah","description":"<char> is 24 years old girl. \n<char> likes to dominate and order someone around.\n<char> has a small height of 155 cm.\n<char> has a complex about her short stature and is quite concerned that someone will look down on her for it.\nIf someone belittles <char> about <char>'s height, <char> will never let that person get away with it. <char> will try to dominate them by trampling them.\n<char> is definitely sparing when it comes to people she loves or is close to.","personality":"","scenario":"","first_mes":"Hello, What's the matter.","mes_example":"","creator_notes":"","system_prompt":"","post_history_instructions":"","alternate_greetings":[],"character_book":{"extensions":{"risu_fullWordMatching":false},"entries":[]},"tags":[],"creator":"","character_version":"","extensions":{"risuai":{"emotions":[],"bias":[],"viewScreen":"none","customScripts":[],"utilityBot":false,"sdData":[["always","solo, 1girl"],["negative",""],["|character's appearance",""],["current situation",""],["$character's pose",""],["$character's emotion",""],["current location",""]],"triggerscript":[],"additionalText":"","largePortrait":false,"lorePlus":true,"newGenData":{"prompt":"","negative":"","instructions":"","emotionInstructions":""}},"depth_prompt":{"depth":0,"prompt":""}}}}
-   */
-
-  /*
-  TavernAI Template
-  {"name":"Character A","description":"She's sooo cute","personality":"summary","scenario":"scenario","first_mes":"Hi","mes_example":"","creatorcomment":"","avatar":"none","chat":"Character A - 2024-1-4 @19h 06m 48s 518ms","talkativeness":"0.5","fav":false,"spec":"chara_card_v2","spec_version":"2.0","data":{"name":"Character A","description":"She's sooo cute","personality":"summary","scenario":"scenario","first_mes":"Hi","mes_example":"","creator_notes":"","system_prompt":"","post_history_instructions":"","tags":[],"creator":"","character_version":"","alternate_greetings":[],"extensions":{"talkativeness":"0.5","fav":false,"world":"","depth_prompt":{"prompt":"note","depth":4}}},"create_date":"2024-1-4 @19h 06m 48s 932ms"}
-  * */
-
   static Future<void> saveImageWithChunk({
     required Character character
   }) async {
@@ -53,19 +42,15 @@ class ChunkManager{
     * Note : Only temp image is EXIF editable, so you should make temp image -> edit EXIF -> move it to Gallery
     * */
     try {
-      Map<String, dynamic> characterMap = character.toMap();
-      characterMap.remove(SQFliteHelper.charactersColumnCharacterPhotoBLOB);
-      characterMap.remove(SQFliteHelper.charactersColumnCharacterBackgroundPhotoBLOB);
-
       final newChunks = readChunk(BLOB: character.photoBLOB);
-      debugPrint("saveImageWithChunk newChunks ${newChunks!.length}");
-      debugPrint("saveImageWithChunk newChunks ${newChunks}");
-      printChunkNames(newChunks);
-      updateChunk(originalChunk: newChunks, key: "chara", value: "example");
-      final newBuffer = pngEncode.encodeChunks(newChunks!);
-      debugPrint("saveImageWithChunk updatedChunks ${newChunks.length}");
-      debugPrint("saveImageWithChunk updatedChunks ${newChunks}");
-      printChunkNames(newChunks);
+      final v2Card = character.toV2Card();
+
+      updateChunk(
+          originalChunk: newChunks!,
+          keyword: "chara",
+          newValue: base64.encode(utf8.encode(json.encode(v2Card)))
+      );
+      final newBuffer = pngEncode.encodeChunks(newChunks);
 
       final file = File(p.join(Directory.systemTemp.path, 'tempimage.png'));
       await file.create();
@@ -73,209 +58,131 @@ class ChunkManager{
 
       await ImageGallerySaver.saveFile(
           file.path,
-          name: "${character.characterName}"
+          name: "${character.characterName}",
       );
     } catch (e) {
       debugPrint("saveImageWithChunk error : ${e}");
     }
   }
 
-  static Future<void> testChunk({
-    required Character character
-  }) async {
-    /*
-    * Save new image with json character data as chunk data
-    * */
-    try {
-      Map<String, dynamic> characterMap = character.toMap();
-      characterMap.remove(SQFliteHelper.charactersColumnCharacterPhotoBLOB);
-      characterMap.remove(SQFliteHelper.charactersColumnCharacterBackgroundPhotoBLOB);
-
-      final newChunks = readChunk(BLOB: character.photoBLOB);
-      debugPrint("saveImageWithChunk newChunks ${newChunks!.length}");
-      debugPrint("saveImageWithChunk newChunks ${newChunks}");
-      printChunkNames(newChunks);
-    } catch (e) {
-      debugPrint("saveImageWithChunk error : ${e}");
-    }
-  }
-
   static updateChunk({
-    required originalChunk,
-    required String key,
-    required String value
-  }){
-    Uint8List newValue = Uint8List.fromList(utf8.encode(value));
-    bool chunkFound = false;
+    required List<Map<String, dynamic>> originalChunk,
+    required String keyword,
+    required String newValue
+  }) {
+    bool chunkUpdated = false;
 
     for (var chunk in originalChunk) {
-      if (chunk['name'] == key) {
-        // Update the chunk data
-        chunk['data'] = newValue;
+      if (chunk['name'] == 'tEXt') {
+        String existingData = utf8.decode(chunk['data']);
+        if (existingData.startsWith(keyword)) {
 
-        // Recalculate CRC
-        List<int> crcInput = List.from(Uint8List.fromList(utf8.encode(key)))..addAll(newValue);
-        chunk['crc'] = Crc32.getCrc32(crcInput);
+          List<int> keywordBytes = utf8.encode(keyword);
+          List<int> newTextBytes = utf8.encode(newValue);
+          List<int> updatedData = [...keywordBytes, 0, ...newTextBytes];
 
-        chunkFound = true;
-        break;
+          Uint8List chunkType = Uint8List.fromList(utf8.encode('tEXt'));
+          Uint8List dataBytes = Uint8List.fromList(updatedData);
+          Uint8List crcInput = Uint8List.fromList([...chunkType, ...dataBytes]);
+          int newCrc = Crc32.getCrc32(crcInput);
+
+          chunk['data'] = Uint8List.fromList(updatedData);
+          chunk['crc'] = newCrc;
+          chunkUpdated = true;
+          break;
+        }
       }
     }
 
-    if (!chunkFound) {
-      List<int> crcInput = List.from(Uint8List.fromList(utf8.encode(key)))..addAll(newValue);
+    if (!chunkUpdated) {
+      List<int> keywordBytes = utf8.encode(keyword);
+      List<int> textBytes = utf8.encode(newValue);
+      List<int> data = [...keywordBytes, 0, ...textBytes];
+
+      Uint8List chunkType = Uint8List.fromList(utf8.encode('tEXt'));
+      Uint8List dataBytes = Uint8List.fromList(data);
+      Uint8List crcInput = Uint8List.fromList([...chunkType, ...dataBytes]);
       int crc = Crc32.getCrc32(crcInput);
 
-      Map<String, dynamic> newChunk = {
-        'name': key,
-        'data': newValue,
-        'crc': crc,
+      Map<String, dynamic> textChunk = {
+        'name': 'tEXt',
+        'data': Uint8List.fromList(data),
+        'crc': crc
       };
-      originalChunk.insert(originalChunk.length - 1, newChunk);
+
+      int iendIndex = originalChunk.indexWhere((chunk) => chunk['name'] == 'IEND');
+      originalChunk.insert(iendIndex, textChunk);
     }
   }
 
-  static printChunkNames(List<Map<String, dynamic>> chunks) {
-    debugPrint("chunk");
-    for (var chunk in chunks) {
-      if (chunk.containsKey('name')) {
-        debugPrint(chunk['name']);
-      }
+  static decodeCharacter({
+    required Uint8List? pickedBLOB
+  }) async {
+    /*
+    * Get character data from chunk data in the PNG.
+    * pickedBLOB : picked image BLOB data with image picker
+    * -------
+    * returns Character model data
+    * */
+    try{
+      final List<Map<String, dynamic>>? chunk = readChunk(BLOB: pickedBLOB!);
+    } catch (e) {
+      debugPrint("decodeCharacter error : ${e}");
+      return null;
     }
   }
 
   static List<Map<String, dynamic>> extractChunks(Uint8List data) {
-    var uint8 = Uint8List(4);
-    var int32 = Int32List.view(uint8.buffer);
-    var uint32 = Uint32List.view(uint8.buffer);
+    if (data.length < 8 || !List<int>.generate(8, (i) => data[i]).toString().startsWith("[137, 80, 78, 71, 13, 10, 26, 10]")) {
+      throw ArgumentError('Invalid .png file header');
+    }
 
-    // if (data[0] != 0x89) throw ArgumentError('Invalid .png file header 0x89');
-    // if (data[1] != 0x50) throw ArgumentError('Invalid .png file header 0x50');
-    // if (data[2] != 0x4E) throw ArgumentError('Invalid .png file header 0x4E');
-    // if (data[3] != 0x47) throw ArgumentError('Invalid .png file header 0x47');
-    // if (data[4] != 0x0D) {
-    //   throw ArgumentError(
-    //       'Invalid .png file header: possibly caused by DOS-Unix line ending conversion?');
-    // }
-    // if (data[5] != 0x0A) {
-    //   throw ArgumentError(
-    //       'Invalid .png file header: possibly caused by DOS-Unix line ending conversion?');
-    // }
-    // if (data[6] != 0x1A) throw ArgumentError('Invalid .png file header');
-    // if (data[7] != 0x0A) {
-    //   throw ArgumentError(
-    //       'Invalid .png file header: possibly caused by DOS-Unix line ending conversion?');
-    // }
-
-    var ended = false;
     var chunks = <Map<String, dynamic>>[];
-    var idx = 8;
+    var idx = 8; // Starting index after the PNG file signature
 
     while (idx < data.length) {
-      // Read the length of the current chunk,
-      // which is stored as a Uint32.
-      uint8[3] = data[idx++];
-      uint8[2] = data[idx++];
-      uint8[1] = data[idx++];
-      uint8[0] = data[idx++];
+      // Read the length of the current chunk, which is stored as a big-endian Uint32
+      var length = data.buffer.asByteData().getUint32(idx, Endian.big);
+      idx += 4;
 
-      // Chunk includes name/type for CRC check (see below).
-      var length = uint32[0] + 4;
-      var chunk = Uint8List(length);
-      chunk[0] = data[idx++];
-      chunk[1] = data[idx++];
-      chunk[2] = data[idx++];
-      chunk[3] = data[idx++];
+      // Get the chunk type/name
+      var name = String.fromCharCodes(data.sublist(idx, idx + 4));
+      idx += 4;
 
-      // Get the name in ASCII for identification.
-      var name = (String.fromCharCode(chunk[0]) +
-          String.fromCharCode(chunk[1]) +
-          String.fromCharCode(chunk[2]) +
-          String.fromCharCode(chunk[3]));
-
-      // The IHDR header MUST come first.
+      // The IHDR header MUST come first
       if (chunks.isEmpty && name != 'IHDR') {
         throw UnsupportedError('IHDR header missing');
       }
 
-      // The IEND header marks the end of the file,
-      // so on discovering it break out of the loop.
+      // The IEND header marks the end of the file
       if (name == 'IEND') {
-        ended = true;
-        chunks.add({
-          'name': name,
-          'data': Uint8List(0),
-        });
-
+        chunks.add({'name': name, 'data': Uint8List(0)});
         break;
       }
 
-      // Read the contents of the chunk out of the main buffer.
-      for (var i = 4; i < length; i++) {
-        chunk[i] = data[idx++];
-      }
+      // Read the chunk data
+      var chunkData = data.sublist(idx, idx + length);
+      idx += length;
 
-      // Read out the CRC value for comparison.
-      // It's stored as an Int32.
-      uint8[3] = data[idx++];
-      uint8[2] = data[idx++];
-      uint8[1] = data[idx++];
-      uint8[0] = data[idx++];
-
-      var crcActual = int32[0];
-      var crcExpect = Crc32.getCrc32(chunk);
-      if (crcExpect != crcActual) {
-        throw UnsupportedError(
-            'CRC values for $name header do not match, PNG file is likely corrupted');
-      }
-
-      // The chunk data is now copied to remove the 4 preceding
-      // bytes used for the chunk name/type.
-
-      var chunkData = Uint8List.fromList(chunk.sublist(4));
+      // Skip CRC for now (4 bytes)
+      idx += 4;
 
       chunks.add({'name': name, 'data': chunkData});
-    }
 
-    if (!ended) {
-      throw UnsupportedError(
-          '.png file ended prematurely: no IEND header was found');
+
+      try {
+        var stringData = utf8.decode(chunkData);
+        debugPrint('$name : ${stringData}');
+        if (stringData.contains('chara')) {
+        }
+      } catch (e) {
+        // If decoding fails, it's likely not text data
+        debugPrint('$name ??');
+      }
     }
 
     return chunks;
   }
-
-
-// static Future<Character?> decodeCharacter({
-  //   required XFile? pickedFile
-  // }) async {
-  //   /*
-  //   * Get character data from exif data in the image.
-  //   * pickedFile : picked image file with image picker
-  //   * -------
-  //   * returns Character model data
-  //   * */
-  //   try{
-  //     Map<String, Object>? attributes = await readAttributes(imageFilePath: pickedFile!.path);
-  //     final exifBase64 = attributes?["UserComment"] as String;
-  //
-  //     final characterJson = json.decode(utf8.decode((base64.decode(exifBase64))));
-  //
-  //     final File imageFile = File(pickedFile.path);
-  //     final File compressedImageFile = await ImageConverter.compressImage(imageFile);
-  //     Uint8List photoBLOB = await ImageConverter.convertImageToBLOB(compressedImageFile);
-  //     Uint8List backgroundPhotoBLOB = await ImageConverter.convertAssetImageToBLOB(PathConstants.defaultCharacterBackgroundImage);
-  //     characterJson.addAll({
-  //       SQFliteHelper.charactersColumnCharacterPhotoBLOB: photoBLOB,
-  //       SQFliteHelper.charactersColumnCharacterBackgroundPhotoBLOB: backgroundPhotoBLOB
-  //     });
-  //
-  //     return Character.fromMap(characterJson);
-  //   } catch (e) {
-  //     debugPrint("decodeCharacter error : ${e}");
-  //     return null;
-  //   }
-  // }
 
 }
 
