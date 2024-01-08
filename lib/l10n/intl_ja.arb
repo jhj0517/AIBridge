@@ -100,6 +100,8 @@
   "name": "Name",
   "characterNameHint": "これはプロンプトでは<char>に置き換えられる。",
   "background": "背景",
-  "export": "Export",
-  "import": "Import"
+  "export": "輸出",
+  "import": "輸入",
+  "failedToImport": "画像が正しいV2カード形式ではありません。",
+  "savedInGallery": "画像がギャラリーに保存されました。"
 }

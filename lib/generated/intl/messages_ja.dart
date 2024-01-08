@@ -80,7 +80,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "editProfile": MessageLookupByLibrary.simpleMessage("プロフィール編集"),
         "enableMarkdownRendering":
             MessageLookupByLibrary.simpleMessage("マークダウンを有効"),
-        "export": MessageLookupByLibrary.simpleMessage("Export"),
+        "export": MessageLookupByLibrary.simpleMessage("輸出"),
+        "failedToImport":
+            MessageLookupByLibrary.simpleMessage("画像が正しいV2カード形式ではありません。"),
         "firstMessageHint": MessageLookupByLibrary.simpleMessage(
             "キャラクターの最初のメッセージはカスタマイズすることもできます。"),
         "firstMessageLabel":
@@ -89,7 +91,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gpt4VisionOnly": MessageLookupByLibrary.simpleMessage(
             "この機能は「GPT-4 Vision」のみに対応しています。"),
         "image": MessageLookupByLibrary.simpleMessage("画像"),
-        "import": MessageLookupByLibrary.simpleMessage("Import"),
+        "import": MessageLookupByLibrary.simpleMessage("輸入"),
         "isSaved": MessageLookupByLibrary.simpleMessage("が保存されました."),
         "keyPageTitle": MessageLookupByLibrary.simpleMessage("API キー管理"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
@@ -125,6 +127,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "privacyPolicy": MessageLookupByLibrary.simpleMessage("プライバシーポリシー"),
         "registerAPI": MessageLookupByLibrary.simpleMessage("登録"),
         "resetToDefaults": MessageLookupByLibrary.simpleMessage("デフォルトの初期化"),
+        "savedInGallery":
+            MessageLookupByLibrary.simpleMessage("画像がギャラリーに保存されました。"),
         "searchCharacter": MessageLookupByLibrary.simpleMessage("キャラクター名を検索"),
         "selectModel": MessageLookupByLibrary.simpleMessage("モデルを選択"),
         "settingsPageTitle": MessageLookupByLibrary.simpleMessage("設定"),

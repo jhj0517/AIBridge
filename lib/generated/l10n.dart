@@ -1079,6 +1079,26 @@ class S {
       args: [],
     );
   }
+
+  /// `The image is not the correct V2 card format.`
+  String get failedToImport {
+    return Intl.message(
+      'The image is not the correct V2 card format.',
+      name: 'failedToImport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The image has been saved to the Gallery.`
+  String get savedInGallery {
+    return Intl.message(
+      'The image has been saved to the Gallery.',
+      name: 'savedInGallery',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -101,5 +101,7 @@
   "characterNameHint": "This is replaced by <char> in the prompts.",
   "background": "Background",
   "export": "Export",
-  "import": "Import"
+  "import": "Import",
+  "failedToImport": "The image is not the correct V2 card format.",
+  "savedInGallery": "The image has been saved to the Gallery."
 }

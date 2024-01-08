@@ -88,6 +88,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "enableMarkdownRendering":
             MessageLookupByLibrary.simpleMessage("Enable Markdown Rendering"),
         "export": MessageLookupByLibrary.simpleMessage("Export"),
+        "failedToImport": MessageLookupByLibrary.simpleMessage(
+            "The image is not the correct V2 card format."),
         "firstMessageHint": MessageLookupByLibrary.simpleMessage(
             "Customize Character\'s first message if you wish, or leave it empty if you prefer not to."),
         "firstMessageLabel":
@@ -137,6 +139,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "registerAPI": MessageLookupByLibrary.simpleMessage("Register"),
         "resetToDefaults":
             MessageLookupByLibrary.simpleMessage("Reset to Defaults"),
+        "savedInGallery": MessageLookupByLibrary.simpleMessage(
+            "The image has been saved to the Gallery."),
         "searchCharacter":
             MessageLookupByLibrary.simpleMessage("Search character name"),
         "selectModel": MessageLookupByLibrary.simpleMessage("Select Model"),

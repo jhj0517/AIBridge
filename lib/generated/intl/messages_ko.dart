@@ -78,6 +78,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "enableMarkdownRendering":
             MessageLookupByLibrary.simpleMessage("마크다운 렌더링 허용"),
         "export": MessageLookupByLibrary.simpleMessage("익스포트"),
+        "failedToImport":
+            MessageLookupByLibrary.simpleMessage("V2 데이터를 포함하고 있지 않은 이미지입니다."),
         "firstMessageHint":
             MessageLookupByLibrary.simpleMessage("캐릭터의 첫 메시지를 정할 수 있습니다."),
         "firstMessageLabel": MessageLookupByLibrary.simpleMessage("캐릭터의 첫 메시지"),
@@ -120,6 +122,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "privacyPolicy": MessageLookupByLibrary.simpleMessage("개인정보 처리방침"),
         "registerAPI": MessageLookupByLibrary.simpleMessage("등록하기"),
         "resetToDefaults": MessageLookupByLibrary.simpleMessage("기본값 초기화"),
+        "savedInGallery":
+            MessageLookupByLibrary.simpleMessage("V2 이미지가 갤러리에 저장되었습니다."),
         "searchCharacter": MessageLookupByLibrary.simpleMessage("캐릭터 명 검색"),
         "selectModel": MessageLookupByLibrary.simpleMessage("모델 선택"),
         "settingsPageTitle": MessageLookupByLibrary.simpleMessage("설정"),
