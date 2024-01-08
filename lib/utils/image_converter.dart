@@ -17,7 +17,7 @@ class ImageConverter{
 
   static Future<File> compressImage(File imageFile) async {
     final Directory tempDir = await getTemporaryDirectory();
-    final String targetPath = '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final String targetPath = '${tempDir.path}/tempimage.png';
 
     final File? compressedImage = await FlutterImageCompress.compressAndGetFile(
       imageFile.path,
