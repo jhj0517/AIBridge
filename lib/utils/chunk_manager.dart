@@ -11,7 +11,6 @@ import 'package:png_chunks_extract/png_chunks_extract.dart' as pngExtract;
 
 import '../models/models.dart';
 import '../utils/utils.dart';
-import '../localdb/localdb.dart';
 import '../constants/path_constants.dart';
 
 class ChunkManager{
@@ -25,7 +24,7 @@ class ChunkManager{
     * returns List of the chunk data
     * */
     try{
-      return extractChunks(BLOB);
+      return pngExtract.extractChunks(BLOB);
     } catch(e){
       debugPrint("readChunk error : ${e}");
       return null;
@@ -42,15 +41,15 @@ class ChunkManager{
     * Note : Only temp image is EXIF editable, so you should make temp image -> edit EXIF -> move it to Gallery
     * */
     try {
-      final newChunks = readChunk(BLOB: character.photoBLOB);
+      List<Map<String, dynamic>>? newChunks = readChunk(BLOB: character.photoBLOB);
       final v2Card = character.toV2Card();
 
-      updateChunk(
+      newChunks = addTextChunk(
           originalChunk: newChunks!,
           keyword: "chara",
           newValue: base64.encode(utf8.encode(json.encode(v2Card)))
       );
-      final newBuffer = pngEncode.encodeChunks(newChunks);
+      final newBuffer = pngEncode.encodeChunks(newChunks!);
 
       final file = File(p.join(Directory.systemTemp.path, 'tempimage.png'));
       await file.create();
@@ -65,14 +64,24 @@ class ChunkManager{
     }
   }
 
-  static updateChunk({
+  static addTextChunk({
     required List<Map<String, dynamic>> originalChunk,
     required String keyword,
     required String newValue
   }) {
+    /*
+    * add tEXt type data in the chunk of the PNG.
+    * keyword : keyword for the data
+    * newValue : value for the data
+    * */
+    // Deep copy
+    List<Map<String, dynamic>> newChunks = List.from(
+        originalChunk.map((chunk) => Map<String, dynamic>.from(chunk)),
+        growable: true
+    );
     bool chunkUpdated = false;
 
-    for (var chunk in originalChunk) {
+    for (var chunk in newChunks) {
       if (chunk['name'] == 'tEXt') {
         String existingData = utf8.decode(chunk['data']);
         if (existingData.startsWith(keyword)) {
@@ -110,9 +119,10 @@ class ChunkManager{
         'crc': crc
       };
 
-      int iendIndex = originalChunk.indexWhere((chunk) => chunk['name'] == 'IEND');
-      originalChunk.insert(iendIndex, textChunk);
+      int iendIndex = newChunks.indexWhere((chunk) => chunk['name'] == 'IEND');
+      newChunks.insert(iendIndex, textChunk);
     }
+    return newChunks;
   }
 
   static decodeCharacter({
@@ -125,65 +135,33 @@ class ChunkManager{
     * returns Character model data
     * */
     try{
-      final List<Map<String, dynamic>>? chunk = readChunk(BLOB: pickedBLOB!);
+      final List<Map<String, dynamic>>? chunks = readChunk(BLOB: pickedBLOB!);
+      for (var chunk in chunks!) {
+        if (chunk['name'] == 'tEXt') {
+          String encodedData = utf8.decode(chunk["data"]);
+          debugPrint("encodedData $encodedData");
+          String keyword = "chara";
+
+          if (encodedData.startsWith(keyword)) {
+            String base64Data = encodedData.substring(keyword.length + 1);
+            final v2Map = json.decode(utf8.decode(base64.decode(base64Data)));
+            final v2Card = V2.fromMap(v2Map);
+            Uint8List backgroundPhotoBLOB = await ImageConverter.convertAssetImageToBLOB(PathConstants.defaultCharacterBackgroundImage);
+            return Character.fromV2Card(
+              v2Card: v2Card,
+              backgroundPhotoBLOB: backgroundPhotoBLOB,
+              photoBLOB: pickedBLOB
+            );
+          }
+        }
+      }
+      debugPrint("no chunk data for v2 card has found");
+      return null;
     } catch (e) {
       debugPrint("decodeCharacter error : ${e}");
       return null;
     }
   }
-
-  static List<Map<String, dynamic>> extractChunks(Uint8List data) {
-    if (data.length < 8 || !List<int>.generate(8, (i) => data[i]).toString().startsWith("[137, 80, 78, 71, 13, 10, 26, 10]")) {
-      throw ArgumentError('Invalid .png file header');
-    }
-
-    var chunks = <Map<String, dynamic>>[];
-    var idx = 8; // Starting index after the PNG file signature
-
-    while (idx < data.length) {
-      // Read the length of the current chunk, which is stored as a big-endian Uint32
-      var length = data.buffer.asByteData().getUint32(idx, Endian.big);
-      idx += 4;
-
-      // Get the chunk type/name
-      var name = String.fromCharCodes(data.sublist(idx, idx + 4));
-      idx += 4;
-
-      // The IHDR header MUST come first
-      if (chunks.isEmpty && name != 'IHDR') {
-        throw UnsupportedError('IHDR header missing');
-      }
-
-      // The IEND header marks the end of the file
-      if (name == 'IEND') {
-        chunks.add({'name': name, 'data': Uint8List(0)});
-        break;
-      }
-
-      // Read the chunk data
-      var chunkData = data.sublist(idx, idx + length);
-      idx += length;
-
-      // Skip CRC for now (4 bytes)
-      idx += 4;
-
-      chunks.add({'name': name, 'data': chunkData});
-
-
-      try {
-        var stringData = utf8.decode(chunkData);
-        debugPrint('$name : ${stringData}');
-        if (stringData.contains('chara')) {
-        }
-      } catch (e) {
-        // If decoding fails, it's likely not text data
-        debugPrint('$name ??');
-      }
-    }
-
-    return chunks;
-  }
-
 }
 
 class Crc32 {
