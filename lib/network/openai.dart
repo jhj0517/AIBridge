@@ -22,6 +22,16 @@ class OpenAINetwork{
       List<ChatMessage> chatMessages,
       Character character
     ) async {
+    /*
+    * Request chat completion stream to OpenAI server.
+    * ------------
+    * key : OpenAI API key
+    * openAIParams : parameters for OpenAI chat completion including temperature, model name, system prompts.
+    * chatMessages : input chat messages.
+    * character :character data including character name etc.
+    * ------------
+    * returns streams for chat completion
+    * */
       OpenAI.apiKey = key;
       List<OpenAIChatCompletionChoiceMessageModel> messages = formattingToOpenAI(chatMessages);
       messages = embedSystemPrompts(messages, openAIParams, character);
@@ -35,11 +45,19 @@ class OpenAINetwork{
         messages: messages,
         temperature: openAIParams.temperature,
         maxTokens: openAIParams.modelId! == ModelConstants.chatGPT4VisionId ? 4096 : null
-      );
-      // note : `maxTokens` must be specified when use gpt-4-vision. unless, It generates too small output. For other models, by default it's 4096 - promptTokens
+      ); // NOTE : `maxTokens` must be specified when use gpt-4-vision. unless, It generates too small output. For other models, by default it's (4096 - promptTokens)
   }
 
-  static List<OpenAIChatCompletionChoiceMessageModel> formattingToOpenAI(List<ChatMessage> chatMessages) {
+  static List<OpenAIChatCompletionChoiceMessageModel> formattingToOpenAI(
+      List<ChatMessage> chatMessages
+      ) {
+    /*
+    * receive chat message model and formatting to model for `dart_openai` package
+    * ------------
+    * chatMessages : chat message model
+    * ------------
+    * returns model for `dart_openai` package
+    * */
     List<OpenAIChatCompletionChoiceMessageModel> formatted = chatMessages
         .map((message) => OpenAIChatCompletionChoiceMessageModel(
       content: message.imageUrl.isEmpty
@@ -53,7 +71,6 @@ class OpenAINetwork{
           ? OpenAIChatMessageRole.user
           : OpenAIChatMessageRole.assistant,
     )).toList();
-    debugPrint("formattedMessage : ${formatted}");
     return formatted;
   }
 
@@ -62,6 +79,15 @@ class OpenAINetwork{
       OpenAIService openAIParams,
       Character character
   ){
+    /*
+    * Embed system prompts before chat prompts. Use system prompts from character data.
+    * ------------
+    * chatMessages : chat message model
+    * openAIParams : parameters for OpenAI chat completion including temperature, model name, system prompts.
+    * character : character data including character name etc.
+    * ------------
+    * Returns prompts that are embedded system prompts.
+    * */
     final systemPrompts = [];
     for (final (index, systemPrompt) in openAIParams.systemPrompts.indexed){
       systemPrompts.add(
@@ -83,6 +109,16 @@ class OpenAINetwork{
       int tokenLimitation,
       String modelId
   ){
+    /*
+    * Filter input messages as maximum tokens for the model. see more detailed info here : https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
+    * "Context window" meant maximum token, this function calculates and filters input messages to be (system prompts + chat messages) + answer < maximum token.
+    * ------------
+    * chatMessages : chat message model
+    * tokenLimitation : max token limitation
+    * character : chat completion model id
+    * ------------
+    * returns List of input models that is filtered as maximum tokens
+    * */
     int totalTokens=0;
     List<OpenAIChatCompletionChoiceMessageModel> filteredList = [];
     int outputTokenSafetyMargin = tokenLimitation > openAIOutputTokenSafetyMargin ? openAIOutputTokenSafetyMargin : 0;
@@ -117,6 +153,14 @@ class OpenAINetwork{
   }
 
   static int numTokensFromString(String string, String modelName) {
+    /*
+    * get tokens for string. This function uses ported tiktokenizer for the dart.
+    * ------------
+    * string : string to examine token
+    * modelName : OpenAI chat completion model name
+    * ------------
+    * returns int number tokens
+    * */
     final encoding = tiktokenizer.encodingForModel(modelName);
     final numTokens = encoding.encode(string).length;
     return numTokens;
