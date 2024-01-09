@@ -34,9 +34,12 @@ class ChunkManager{
   }) async {
     /*
     * Save new image with json character data as chunk data
+    * ------------
     * character : Character data to add exif data in the image
     * Note : Only specific EXIF is writable in both Android and iOS. Using the key "UserComment" is safe for both OS. see more info: https://pub.dev/packages/native_exif
     * Note : Only temp image is EXIF editable, so you should make temp image -> edit EXIF -> move it to Gallery
+    * ------------
+    * returns a bool value that indicates whether the result was successful or not.
     * */
     try {
       List<Map<String, dynamic>>? newChunks = readChunk(BLOB: character.photoBLOB);
@@ -71,8 +74,12 @@ class ChunkManager{
   }) {
     /*
     * add tEXt type data in the chunk of the PNG.
+    * ------------
+    * originalChunk
     * keyword : keyword for the data
     * newValue : value for the data
+    * ------------
+    * returns list of new chunk data with tEXt data
     * */
     // Deep copy
     List<Map<String, dynamic>> newChunks = List.from(
@@ -130,8 +137,9 @@ class ChunkManager{
   }) async {
     /*
     * Get character data from chunk data in the PNG.
+    * ------------
     * pickedBLOB : picked image BLOB data with image picker
-    * -------
+    * ------------
     * returns Character model data
     * */
     try{
