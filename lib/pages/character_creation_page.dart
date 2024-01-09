@@ -323,7 +323,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
       children: [
         GestureDetector(
           onTap: () async {
-            await _pickProfileImageFromGallery();
+            _pickProfileImageFromGallery();
           },
           child: Material(
             color: Colors.transparent,
@@ -359,7 +359,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
             mini: true,
             onPressed: () async {
               // Implement your functionality to pick an image from the gallery
-              await _pickProfileImageFromGallery();
+              _pickProfileImageFromGallery();
             },
             backgroundColor: Colors.white,
             child: const Icon(
