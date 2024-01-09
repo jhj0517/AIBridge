@@ -99,7 +99,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        const SizedBox(height: 10),
                         //List of messages
                         Expanded(
                             child: Container(
@@ -112,8 +111,8 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                                         child: ListView.builder(
                                           shrinkWrap: true,
                                           reverse: true,
-                                          cacheExtent: _isLoading? double.maxFinite: null, // without this, scrollChatToBottom() at first does not work!!
-                                          padding: EdgeInsets.zero,
+                                          cacheExtent: _isLoading? double.maxFinite: null, // without this, scrollChatToBottom() at first does not work
+                                          padding: const EdgeInsets.only(top: 10),
                                           controller: _chatScrollController,
                                           itemCount: chatMessages.length + 1,
                                           itemBuilder: (context, index) => _buildItem(
@@ -168,8 +167,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     // Dispose ValueNotifiers
     _messagesToDeleteNotifier.dispose();
     chatProvider.removeListener(_networkStateListenerFunction);
-    // updateSpendingHistory
-    //balanceProvider.getSpendingHistory(authProvider.currentUser!.uid);
     WidgetsBinding.instance.removeObserver(this);
   }
 
@@ -239,21 +236,27 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
       List<ChatMessage> chatMessages,
       RequestState requestState,
       ChatRoomSetting settings
-      ){
-    if (index == 0){
-      return requestState == RequestState.loading ? _buildCharacterTypingIndicator(charactersProvider) : const SizedBox.shrink();
-    }
+  ){
+    /*
+    * NOTE : Last item should be a placeholder for the typing indicator.
+    * Since the list view is reversed, there is a placeholder for index 0. (index 0 is the last item, since the list view is reversed)
+    * */
     final items = [ChatMessage.placeHolder(), ...chatMessages];
     final content = items[index];
-    if (content.chatMessageType == ChatMessageType.characterMessage) {
-      return _buildCharacterMessage(
+    if (index == 0) {
+      return requestState == RequestState.loading ? _buildCharacterTypingIndicator(charactersProvider) : const SizedBox.shrink();
+    }
+    if (content.chatMessageType == ChatMessageType.userMessage) {
+      return _buildUserMessage(
           chatMessage: content,
-          charactersProvider: charactersProvider,
           settings: settings
       );
-    } else {
-      return _buildUserMessage(content, settings);
     }
+    return _buildCharacterMessage(
+        chatMessage: content,
+        charactersProvider: charactersProvider,
+        settings: settings
+    );
   }
 
   bool _isListContainsEntry(List<ChatMessage> messagesToDelete, ChatMessage messageEntry) {
@@ -480,7 +483,10 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     );
   }
 
-  Widget _buildUserMessage(ChatMessage chatMessage, ChatRoomSetting settings) {
+  Widget _buildUserMessage({
+    required ChatMessage chatMessage,
+    required ChatRoomSetting settings
+  }) {
     return Column(
       children: [
         const SizedBox(height: 8),
