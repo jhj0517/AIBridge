@@ -75,7 +75,7 @@ class ChunkManager{
     /*
     * add tEXt type data in the chunk of the PNG.
     * ------------
-    * originalChunk
+    * originalChunk : original chunk data to add new data
     * keyword : keyword for the data
     * newValue : value for the data
     * ------------

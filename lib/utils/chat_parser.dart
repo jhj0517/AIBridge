@@ -8,11 +8,27 @@ import '../constants/color_constants.dart';
 class ChatParser {
 
   static List<TextSpan> parseMessageContent(String content, ChatMessageType? type) {
+    /*
+    * parse font to italic within *content*
+    * ------------
+    * content : chat message to parse
+    * ChatMessageType : chat message type
+    * ------------
+    * returns List of TextSpan widget that is parsed
+    * */
     final List<TextSpan> textSpans = [];
     final RegExp italicPattern = RegExp(r'\*([^*]+)\*');
     final matches = italicPattern.allMatches(content).toList();
 
     int lastMatchEnd = 0;
+
+    Color textColor = ColorConstants.chatRoomLastChatMessageColor;
+    if (type == ChatMessageType.characterMessage){
+      textColor = ColorConstants.defaultCharacterChatItalicGreyColor;
+    }
+    if (type == ChatMessageType.userMessage){
+      textColor = ColorConstants.defaultUserChatItalicWhiteColor;
+    }
 
     for (final match in matches) {
       if (lastMatchEnd < match.start) {
@@ -25,11 +41,7 @@ class ChatParser {
         style: TextStyle(
             fontStyle: FontStyle.italic,
             fontWeight: FontWeight.w300,
-            color: type == null // null in case of used for chatroom
-                ? ColorConstants.chatRoomLastChatMessageColor
-                : type == ChatMessageType.characterMessage
-                ? ColorConstants.defaultCharacterChatItalicGreyColor
-                : ColorConstants.defaultUserChatItalicWhiteColor
+            color: textColor
         ),
       ));
       lastMatchEnd = match.end;
