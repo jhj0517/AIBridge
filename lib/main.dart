@@ -42,6 +42,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<ThemeProvider>(
+          create: (context) => ThemeProvider(),
+        ),
         Provider<SQFliteHelper>(
           create: (context) => SQFliteHelper(
             prefs: prefs
@@ -100,7 +103,7 @@ class MyApp extends StatelessWidget {
         ),
         home: const SplashPage(),
         debugShowCheckedModeBanner: false,
-      ),
+      )
     );
   }
 }
