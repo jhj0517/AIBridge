@@ -27,6 +27,7 @@ abstract class ThemeAttributes {
   Color get backgroundColor;
   Color get dividerColor;
   Color get fontColor;
+  Color get appbarColor;
   String get toggleThemeName;
   IconData get toggleThemeIcon;
 }
@@ -38,6 +39,8 @@ class LightThemeAttributes implements ThemeAttributes {
   Color get dividerColor => const Color(0x11000000);
   @override
   Color get fontColor => const Color(0xFF000000);
+  @override
+  Color get appbarColor => const Color(0xff000000);
   @override
   String get toggleThemeName => Intl.message("darkTheme");
   @override
@@ -51,6 +54,8 @@ class DarkThemeAttributes implements ThemeAttributes {
   Color get dividerColor => const Color(0x11000000);
   @override
   Color get fontColor => const Color(0xFFFFFFFF);
+  @override
+  Color get appbarColor => const Color(0xff090909); //0xff090909
   @override
   String get toggleThemeName => Intl.message("lightTheme");
   @override
