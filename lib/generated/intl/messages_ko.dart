@@ -56,6 +56,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "checkingAPIKeys": MessageLookupByLibrary.simpleMessage("API 키 확인 중.."),
         "colors": MessageLookupByLibrary.simpleMessage("색상"),
         "copyChatOption": MessageLookupByLibrary.simpleMessage("복사"),
+        "darkTheme": MessageLookupByLibrary.simpleMessage("다크 테마"),
         "defaultCharacterFirstMessage":
             MessageLookupByLibrary.simpleMessage("안녕! 뭐해?"),
         "defaultCharacterName": MessageLookupByLibrary.simpleMessage("캐릭터 A"),
@@ -93,6 +94,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "import": MessageLookupByLibrary.simpleMessage("임포트"),
         "isSaved": MessageLookupByLibrary.simpleMessage(" 가 저장되었습니다."),
         "keyPageTitle": MessageLookupByLibrary.simpleMessage("API 키 관리"),
+        "lightTheme": MessageLookupByLibrary.simpleMessage("라이트 테마"),
         "name": MessageLookupByLibrary.simpleMessage("이름"),
         "neverLeakAPIKey":
             MessageLookupByLibrary.simpleMessage("절대 API 키를 유출하지 마세요!"),

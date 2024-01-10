@@ -62,6 +62,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Checking API Keys.."),
         "colors": MessageLookupByLibrary.simpleMessage("Colors"),
         "copyChatOption": MessageLookupByLibrary.simpleMessage("Copy"),
+        "darkTheme": MessageLookupByLibrary.simpleMessage("Dark Theme"),
         "defaultCharacterFirstMessage":
             MessageLookupByLibrary.simpleMessage("Hi! What are you doing?"),
         "defaultCharacterName":
@@ -105,6 +106,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "isSaved": MessageLookupByLibrary.simpleMessage(" is saved."),
         "keyPageTitle":
             MessageLookupByLibrary.simpleMessage("API Key Management"),
+        "lightTheme": MessageLookupByLibrary.simpleMessage("Light Theme"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "neverLeakAPIKey": MessageLookupByLibrary.simpleMessage(
             "Never leak the API key to anywhere else!"),

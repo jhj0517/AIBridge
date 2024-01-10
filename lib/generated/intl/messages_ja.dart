@@ -58,6 +58,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "checkingAPIKeys": MessageLookupByLibrary.simpleMessage("APIキーのチェック.."),
         "colors": MessageLookupByLibrary.simpleMessage("色相"),
         "copyChatOption": MessageLookupByLibrary.simpleMessage("コピー"),
+        "darkTheme": MessageLookupByLibrary.simpleMessage("ダークテーマ"),
         "defaultCharacterFirstMessage":
             MessageLookupByLibrary.simpleMessage("こんにちは！ 何してるの？"),
         "defaultCharacterName": MessageLookupByLibrary.simpleMessage("キャラクターA"),
@@ -97,6 +98,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "import": MessageLookupByLibrary.simpleMessage("輸入"),
         "isSaved": MessageLookupByLibrary.simpleMessage("が保存されました."),
         "keyPageTitle": MessageLookupByLibrary.simpleMessage("API キー管理"),
+        "lightTheme": MessageLookupByLibrary.simpleMessage("ライトテーマ"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "neverLeakAPIKey":
             MessageLookupByLibrary.simpleMessage("APIキーを他へ漏らさないこと！"),
