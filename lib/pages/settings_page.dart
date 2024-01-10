@@ -1,3 +1,4 @@
+import 'package:aibridge/providers/providers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,17 +19,21 @@ class SettingsPage extends StatefulWidget {
 class SettingsPageState extends State<SettingsPage> {
 
   late SQFliteHelper sqFliteHelper;
+  late ThemeProvider themeProvider;
 
   @override
   void initState() {
     super.initState();
+    themeProvider = context.read<ThemeProvider>();
     sqFliteHelper = context.read<SQFliteHelper>();
     _init();
   }
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
+      backgroundColor: themeProvider.attrs.backgroundColor,
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -42,7 +47,7 @@ class SettingsPageState extends State<SettingsPage> {
             ),
           ],
         ),
-        backgroundColor: ColorConstants.appbarBackgroundColor,
+        backgroundColor: themeProvider.attrs.appbarColor,
         centerTitle: false,
         automaticallyImplyLeading: false,
       ),
@@ -53,6 +58,10 @@ class SettingsPageState extends State<SettingsPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                _buildMoreRow(themeProvider.attrs.toggleThemeName, themeProvider.attrs.toggleThemeIcon, (){
+                  themeProvider.toggleTheme();
+                }
+                ),
                 _buildMoreRow(Intl.message('chatRoomSetting'), Icons.settings, () async {
                   //onTab chatRoomSetting
                   if (context.mounted) {
@@ -182,6 +191,7 @@ class SettingsPageState extends State<SettingsPage> {
                   Icon(
                     iconOrImagePath,
                     size: 24,
+                    color: themeProvider.attrs.fontColor,
                   )
                 else if (iconOrImagePath is String)
                   Image.asset(
@@ -193,9 +203,10 @@ class SettingsPageState extends State<SettingsPage> {
                 const SizedBox(width: 20),
                 Text(
                   text,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.normal,
+                    color: themeProvider.attrs.fontColor
                   ),
                 ),
               ],
