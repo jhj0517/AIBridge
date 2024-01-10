@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../constants/color_constants.dart';
 
@@ -8,41 +9,50 @@ enum MyTheme{
 }
 
 class ThemeProvider extends ChangeNotifier {
-  MyTheme _themeMode = MyTheme.light;
+  MyTheme _themeMode = MyTheme.dark;
 
-  ThemeColors get colors => _themeMode == MyTheme.light
-      ? LightThemeColors()
-      : DarkThemeColors();
+  ThemeAttributes get attrs => _themeMode == MyTheme.light
+      ? LightThemeAttributes()
+      : DarkThemeAttributes();
 
   MyTheme get themeMode => _themeMode;
 
   void toggleTheme() {
     _themeMode = _themeMode == MyTheme.light ? MyTheme.dark : MyTheme.light;
-    debugPrint("themeMode : ${themeMode.name}");
     notifyListeners();
   }
 }
 
-abstract class ThemeColors {
+abstract class ThemeAttributes {
   Color get backgroundColor;
   Color get dividerColor;
   Color get fontColor;
+  String get toggleThemeName;
+  IconData get toggleThemeIcon;
 }
 
-class LightThemeColors implements ThemeColors {
+class LightThemeAttributes implements ThemeAttributes {
   @override
   Color get backgroundColor => const Color(0xffffffff);
   @override
   Color get dividerColor => const Color(0x11000000);
   @override
   Color get fontColor => const Color(0xFF000000);
+  @override
+  String get toggleThemeName => Intl.message("darkTheme");
+  @override
+  IconData get toggleThemeIcon => Icons.dark_mode;
 }
 
-class DarkThemeColors implements ThemeColors {
+class DarkThemeAttributes implements ThemeAttributes {
   @override
   Color get backgroundColor => const Color(0xff000000);
   @override
   Color get dividerColor => const Color(0x11000000);
   @override
   Color get fontColor => const Color(0xFFFFFFFF);
+  @override
+  String get toggleThemeName => Intl.message("lightTheme");
+  @override
+  IconData get toggleThemeIcon => Icons.light_mode;
 }
