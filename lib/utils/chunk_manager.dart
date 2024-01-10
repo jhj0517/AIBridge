@@ -154,7 +154,7 @@ class ChunkManager{
             String base64Data = encodedData.substring(keyword.length + 1);
             final v2Map = json.decode(utf8.decode(base64.decode(base64Data)));
             final v2Card = V2.fromMap(v2Map);
-            Uint8List backgroundPhotoBLOB = await ImageConverter.convertAssetImageToBLOB(PathConstants.defaultCharacterBackgroundImage);
+            Uint8List backgroundPhotoBLOB = await ImageConverter.convertAssetImageToBLOB(PathConstants.charactersPageBackgroundImage);
             return Character.fromV2Card(
               v2Card: v2Card,
               backgroundPhotoBLOB: backgroundPhotoBLOB,
