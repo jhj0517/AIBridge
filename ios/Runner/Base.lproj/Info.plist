@@ -37,6 +37,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>The app requires permission to use the character sharing feature.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>To add an image to a Character's profile, the application must grant permission.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
