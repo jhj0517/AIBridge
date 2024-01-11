@@ -43,7 +43,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<ThemeProvider>(
-          create: (context) => ThemeProvider(),
+          create: (context) => ThemeProvider(
+            prefs: prefs
+          ),
         ),
         Provider<SQFliteHelper>(
           create: (context) => SQFliteHelper(
