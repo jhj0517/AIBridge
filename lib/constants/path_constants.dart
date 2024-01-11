@@ -1,6 +1,7 @@
 class PathConstants {
   static const appIconImage = "images/launcher_icon_512_letter.png";
   static const chatGPTImage = "images/chatgpt-logo.png";
+  static const chatGPTWhiteImage = "images/chatgpt-logo-white.png";
   static const paLMImage = "images/palm-logo.png";
   static const defaultCharacterImage = "images/default_character.png";
   static const defaultCharacterBackgroundImage = "images/default_character_background.png";
