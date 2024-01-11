@@ -1,7 +1,7 @@
 name: aibridge
 description: Open Source AI API Platform
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.2+8
+version: 1.0.2+9
 
 environment:
   sdk: '>=3.1.0 <4.0.0'
@@ -27,7 +27,7 @@ dependencies:
   photo_view: 0.14.0
   flutter_keyboard_visibility: ^5.4.1
   flutter_markdown: ^0.6.17+2
-  dio: ^4.0.4
+  dio: ^5.4.0
   http: ^1.1.0
   tiktoken: ^1.0.3
   dart_openai: ^4.0.0
