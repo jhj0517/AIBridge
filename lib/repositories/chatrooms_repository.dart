@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 
 import '../models/models.dart';
 import '../localdb/sqflite_helper.dart';
@@ -40,13 +41,15 @@ class ChatRoomRepository {
     await prefs.setString(SharedPreferenceConstants.settingChatRoomJson, settingString);
   }
 
-  Future<ChatRoomSetting> getChatRoomSetting() async {
+  Future<ChatRoomSetting> getChatRoomSetting(
+    Color themeBackgroundColor
+  ) async {
     String? settingString = prefs.getString(SharedPreferenceConstants.settingChatRoomJson);
     if (settingString != null) {
       Map<String, dynamic> json = jsonDecode(settingString);
       return ChatRoomSetting.fromJson(json);
     }
-    return ChatRoomSetting.defaultChatRoomSetting();
+    return ChatRoomSetting.defaultChatRoomSetting(themeBackgroundColor);
   }
 
 }

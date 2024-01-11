@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
 import '../constants/constants.dart';
-import '../providers/key_provider.dart';
+import '../providers/providers.dart';
 import '../models/models.dart';
 
 class KeyManagementPage extends StatefulWidget {
@@ -17,19 +17,23 @@ class KeyManagementPage extends StatefulWidget {
 
 class KeyManagementPageState extends State<KeyManagementPage> {
 
+  late ThemeProvider themeProvider;
   late KeyProvider keyProvider;
   late TextEditingController _textFieldControllerKey;
 
   @override
   void initState() {
     super.initState();
+    themeProvider = context.read<ThemeProvider>();
     keyProvider = context.read<KeyProvider>();
     _init();
   }
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
+      backgroundColor: themeProvider.attrs.backgroundColor,
       appBar: AppBar(
         title: Text(
           Intl.message("keyPageTitle"),
@@ -38,7 +42,7 @@ class KeyManagementPageState extends State<KeyManagementPage> {
             fontWeight: FontWeight.bold
           ),
         ),
-        backgroundColor: ColorConstants.appbarBackgroundColor,
+        backgroundColor: themeProvider.attrs.appbarColor,
         centerTitle: false,
         automaticallyImplyLeading: false,
       ),
@@ -46,7 +50,7 @@ class KeyManagementPageState extends State<KeyManagementPage> {
         padding: const EdgeInsets.only(bottom: 16),
         child: Column(
           children: [
-            _buildSelectableRow(Intl.message("chatGPTKey"), PathConstants.chatGPTImage, () async {
+            _buildSelectableRow(Intl.message("chatGPTKey"), themeProvider.attrs.gptLogoPath, () async {
               await showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -97,18 +101,20 @@ class KeyManagementPageState extends State<KeyManagementPage> {
                 const SizedBox(width: 20),
                 Text(
                   text,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.normal,
+                    color: themeProvider.attrs.fontColor
                   ),
                 ),
               ],
             ),
           ),
         ),
-        const Divider(
-          height: 1,
-          color: ColorConstants.dividerColor, // Very light grey color
+        Divider(
+          height: 0.1,
+          thickness: 0.3,
+          color: themeProvider.attrs.dividerColor,
         ),
       ],
     );

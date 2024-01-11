@@ -13,8 +13,8 @@ class ChatRoomsProvider extends ChangeNotifier{
   ChatRoom _currentChatRoom = ChatRoom.emptyChatRoom();
   ChatRoom get currentChatRoom => _currentChatRoom;
 
-  ChatRoomSetting _chatRoomSetting = ChatRoomSetting.defaultChatRoomSetting();
-  ChatRoomSetting get chatRoomSetting => _chatRoomSetting;
+  ChatRoomSetting? _chatRoomSetting;
+  ChatRoomSetting? get chatRoomSetting => _chatRoomSetting;
 
   ChatRoomsProvider({required this.chatRoomsRepository}) {
     updateChatRooms();
@@ -60,8 +60,10 @@ class ChatRoomsProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> readChatRoomSetting() async{
-    final setting = await chatRoomsRepository.getChatRoomSetting();
+  Future<void> readChatRoomSetting(
+    Color themeBackgroundColor,
+  ) async{
+    final setting = await chatRoomsRepository.getChatRoomSetting(themeBackgroundColor);
     _chatRoomSetting = setting;
     notifyListeners();
   }

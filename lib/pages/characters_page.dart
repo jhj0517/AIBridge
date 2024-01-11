@@ -30,12 +30,14 @@ class CharactersPageState extends State<CharactersPage> {
   TextEditingController searchBarTec = TextEditingController();
   FocusNode searchBarFocusNode = FocusNode();
 
+  late ThemeProvider themeProvider;
   late CharactersProvider charactersProvider;
   late ChatRoomsProvider chatRoomsProvider;
 
   @override
   void initState() {
     super.initState();
+    themeProvider = context.read<ThemeProvider>();
     charactersProvider = context.read<CharactersProvider>();
     chatRoomsProvider = context.read<ChatRoomsProvider>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -45,7 +47,8 @@ class CharactersPageState extends State<CharactersPage> {
 
   @override
   Widget build(BuildContext context) {
-    CharactersProvider friendsProvider = context.watch<CharactersProvider>();
+    themeProvider = context.watch<ThemeProvider>();
+    charactersProvider = context.watch<CharactersProvider>();
     final screenSize = MediaQuery.of(context).size;
     return Stack(
       children: [
@@ -59,31 +62,31 @@ class CharactersPageState extends State<CharactersPage> {
           ),
         ),
         Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: themeProvider.attrs.backgroundColor,
           appBar: AppBar(
             title: _isSearching
                 ? _buildSearchBar()
                 : Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  Intl.message('charactersPageTitle'),
-                  style: const TextStyle(
-                    color: ColorConstants.appbarTextColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      Intl.message('charactersPageTitle'),
+                      style: const TextStyle(
+                        color: ColorConstants.appbarTextColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            backgroundColor: ColorConstants.appbarBackgroundColor,
+            backgroundColor: themeProvider.attrs.appbarColor,
             centerTitle: false,
             automaticallyImplyLeading: false,
             actions: <Widget>[
               IconButton(
                 icon: Icon(
                   _isSearching
-                      ? Icons.close
-                      : Icons.search,
+                  ? Icons.close
+                  : Icons.search,
                   color: Colors.white,
                 ),
                 onPressed: () {
@@ -110,9 +113,7 @@ class CharactersPageState extends State<CharactersPage> {
                     Expanded(
                       child: Builder(
                         builder: (BuildContext context) {
-                          List<Character> characters = friendsProvider
-                              .characters;
-
+                          List<Character> characters = charactersProvider.characters;
                           if (characters.isEmpty) {
                             return ListView.builder(
                               itemBuilder: (context, index) {
@@ -124,19 +125,17 @@ class CharactersPageState extends State<CharactersPage> {
                             List<Character> filteredCharacters =
                             characters.where((character) =>
                             _textSearch.isEmpty ||
-                                character.characterName.toLowerCase().contains(
-                                    _textSearch.toLowerCase())).toList();
+                            character.characterName.toLowerCase().contains(_textSearch.toLowerCase()))
+                            .toList();
 
                             if (filteredCharacters.isNotEmpty) {
                               return ListView.builder(
-                                padding: const EdgeInsets.fromLTRB(
-                                    0.5, 0.5, 0.5, 50),
+                                padding: const EdgeInsets.fromLTRB(0.5, 0.5, 0.5, 50),
                                 itemBuilder: (context, index) {
                                   if (index == filteredCharacters.length) {
                                     return _buildAddButton(context);
                                   } else {
-                                    return buildItem(
-                                        context, filteredCharacters[index]);
+                                    return _buildItem(context, filteredCharacters[index]);
                                   }
                                 },
                                 itemCount: filteredCharacters.length + 1,
@@ -266,12 +265,12 @@ class CharactersPageState extends State<CharactersPage> {
     );
   }
 
-  Widget buildItem(BuildContext context, Character? character) {
+  Widget _buildItem(BuildContext context, Character? character) {
     if (character != null) {
       return Column(
         children: [
           Ink(
-            color: Colors.white,
+            color: themeProvider.attrs.backgroundColor,
             child: InkWell(
               onLongPress: () async {
                 await _openCharacterOptionDialog(context, character);
@@ -294,8 +293,7 @@ class CharactersPageState extends State<CharactersPage> {
                 );
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 10, horizontal: 16),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                 child: Row(
                   children: <Widget>[
                     Material(
@@ -304,25 +302,25 @@ class CharactersPageState extends State<CharactersPage> {
                       clipBehavior: Clip.hardEdge,
                       child: character.photoBLOB.isNotEmpty
                           ? SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Image.memory(
-                            character.photoBLOB,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, object, stackTrace) {
-                              return const Icon(
-                                Icons.account_circle_rounded,
-                                size: 50,
-                                color: ColorConstants.greyColor,
-                              );
-                            },
+                            width: 50,
+                            height: 50,
+                            child: Image.memory(
+                              character.photoBLOB,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, object, stackTrace) {
+                                return const Icon(
+                                  Icons.account_circle_rounded,
+                                  size: 50,
+                                  color: ColorConstants.greyColor,
+                                );
+                              },
+                            )
                           )
-                      )
                           : const Icon(
-                        Icons.account_circle,
-                        size: 50,
-                        color: ColorConstants.greyColor,
-                      ),
+                            Icons.account_circle,
+                            size: 50,
+                            color: ColorConstants.greyColor,
+                          ),
                     ),
                     const SizedBox(width: 20),
                     Expanded(
@@ -331,8 +329,8 @@ class CharactersPageState extends State<CharactersPage> {
                         children: <Widget>[
                           Text(
                             character.characterName,
-                            style: const TextStyle(
-                              color: ColorConstants.characterPageCharacterNameColor,
+                            style: TextStyle(
+                              color: themeProvider.attrs.fontColor,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -347,8 +345,8 @@ class CharactersPageState extends State<CharactersPage> {
           ),
           Divider(
             height: 0.1,
-            thickness: 0.5,
-            color: Colors.grey[300],
+            thickness: 0.3,
+            color: themeProvider.attrs.dividerColor,
           ),
         ],
       );
@@ -358,31 +356,42 @@ class CharactersPageState extends State<CharactersPage> {
   }
 
   Widget _buildAddButton(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  CharacterCreationPage(
-                    arguments: CharacterCreationPageArguments(
-                        character: Character.defaultCharacter()
-                    ),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: themeProvider.attrs.dividerColor, // Set border color here
+            width: 0.2, // Set border width here
+          ),
+        ),
+      ),
+      child: Material(
+        color: Colors.white,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CharacterCreationPage(
+                  arguments: CharacterCreationPageArguments(
+                      character: Character.defaultCharacter()
                   ),
+                ),
+              ),
+            );
+          },
+          child: Ink(
+            color: themeProvider.attrs.backgroundColor,
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(
+              Icons.add_circle_outline_sharp,
+              size: 24.0,
+              color: themeProvider.attrs.fontColor,
             ),
-          );
-        },
-        child: Ink(
-          padding: const EdgeInsets.all(8.0),
-          child: const Icon(
-            Icons.add_circle_outline_sharp,
-            size: 24.0,
-            color: Colors.black,
           ),
         ),
       ),
     );
   }
+
 }

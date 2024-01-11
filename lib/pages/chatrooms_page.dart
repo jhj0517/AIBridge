@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../utils/utils.dart';
 import '../models/models.dart';
 import '../pages/chat_page.dart';
-import '../providers/chatrooms_provider.dart';
+import '../providers/providers.dart';
 import '../constants/constants.dart';
 import '../widgets/dialogs.dart';
 
@@ -19,16 +19,19 @@ class ChatRoomsPage extends StatefulWidget {
 class ChatRoomsState extends State<ChatRoomsPage> {
 
   late ChatRoomsProvider chatRoomsProvider;
+  late ThemeProvider themeProvider;
 
   @override
   void initState() {
     super.initState();
+    themeProvider = context.read<ThemeProvider>();
     chatRoomsProvider = context.read<ChatRoomsProvider>();
   }
 
   @override
   Widget build(BuildContext context) {
-    ChatRoomsProvider chatRoomsProvider = context.watch<ChatRoomsProvider>();
+    chatRoomsProvider = context.watch<ChatRoomsProvider>();
+    themeProvider = context.watch<ThemeProvider>();
     final screenSize = MediaQuery.of(context).size;
     return Stack(
       children: [
@@ -41,7 +44,7 @@ class ChatRoomsState extends State<ChatRoomsPage> {
           ),
         ),
         Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: themeProvider.attrs.backgroundColor,
           appBar: AppBar(
             title: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -55,7 +58,7 @@ class ChatRoomsState extends State<ChatRoomsPage> {
                 ),
               ],
             ),
-            backgroundColor: ColorConstants.appbarBackgroundColor,
+            backgroundColor: themeProvider.attrs.appbarColor,
             centerTitle: false,
             automaticallyImplyLeading: false, // Add this line
           ),
@@ -82,7 +85,7 @@ class ChatRoomsState extends State<ChatRoomsPage> {
       return Column(
         children: [
           Ink(
-            color: Colors.white,
+            color: themeProvider.attrs.backgroundColor,
             child: InkWell(
               onTap: () {
                 if (Utilities.isKeyboardShowing(context)) {
@@ -103,9 +106,6 @@ class ChatRoomsState extends State<ChatRoomsPage> {
                 await _openChatRoomDialog(chatRoom);
               },
               child: Container(
-                decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(color: Colors.grey[100]!)),
-                ),
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                 child: Row(
                   children: <Widget>[
@@ -144,8 +144,8 @@ class ChatRoomsState extends State<ChatRoomsPage> {
                         children: <Widget>[
                           Text(
                             chatRoom.characterName,
-                            style: const TextStyle(
-                              color: ColorConstants.primaryColor,
+                            style: TextStyle(
+                              color: themeProvider.attrs.fontColor,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -193,8 +193,8 @@ class ChatRoomsState extends State<ChatRoomsPage> {
           ),
           Divider(
             height: 0.1,
-            thickness: 0.1,
-            color: Colors.grey[100]!,
+            thickness: 0.2,
+            color: themeProvider.attrs.dividerColor,
           ),
         ],
       );

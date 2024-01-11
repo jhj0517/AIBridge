@@ -70,7 +70,9 @@ class ChatRoomSetting{
     );
   }
 
-  factory ChatRoomSetting.defaultChatRoomSetting() {
+  factory ChatRoomSetting.defaultChatRoomSetting(
+      Color themeBackgroundColor,
+  ) {
     return ChatRoomSetting(
       isRenderMarkdown: true,
       characterFontSize: 16,
@@ -79,7 +81,7 @@ class ChatRoomSetting{
       userFontColor: Colors.white,
       characterChatBoxBackgroundColor: ColorConstants.defaultCharacterChatBoxColor,
       userChatBoxBackgroundColor: ColorConstants.defaultUserChatBoxColor,
-      chatRoomBackgroundColor: Colors.white,
+      chatRoomBackgroundColor: themeBackgroundColor,
     );
   }
 }

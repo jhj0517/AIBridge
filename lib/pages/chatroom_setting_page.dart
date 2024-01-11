@@ -18,13 +18,16 @@ class ChatRoomSettingPage extends StatefulWidget {
 }
 
 class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
+
+  late ThemeProvider themeProvider;
   bool _isLoading = true;
   late ChatRoomsProvider chatRoomsProvider;
-  ChatRoomSetting currentSettings = ChatRoomSetting.defaultChatRoomSetting();
+  ChatRoomSetting? currentSettings;
 
   @override
   void initState() {
     super.initState();
+    themeProvider = context.read<ThemeProvider>();
     chatRoomsProvider = context.read<ChatRoomsProvider>();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _init();
@@ -32,16 +35,18 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
   }
 
   Future<void> _init() async {
-    await chatRoomsProvider.readChatRoomSetting();
+    await chatRoomsProvider.readChatRoomSetting(themeProvider.attrs.backgroundColor);
     setState(() {
-      currentSettings = ChatRoomSetting.copy(chatRoomsProvider.chatRoomSetting);
+      currentSettings = ChatRoomSetting.copy(chatRoomsProvider.chatRoomSetting!);
       _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
+      backgroundColor: themeProvider.attrs.backgroundColor,
       appBar: AppBar(
           title: Text(
             Intl.message("chatRoomSetting"),
@@ -50,7 +55,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
               fontWeight: FontWeight.bold
             ),
           ),
-          backgroundColor: ColorConstants.appbarBackgroundColor,
+          backgroundColor: themeProvider.attrs.appbarColor,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new),
             color: Colors.white,
@@ -74,7 +79,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
                   elevation: 3.0,
                   child: Padding(
                     padding: const EdgeInsets.all(15),
-                    child: MarkdownRenderSetting(currentSetting: currentSettings),
+                    child: MarkdownRenderSetting(currentSetting: currentSettings!),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -82,7 +87,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
                   elevation: 3.0,
                   child: Padding(
                     padding: const EdgeInsets.all(15),
-                    child: FontSizeSetting(currentSetting: currentSettings),
+                    child: FontSizeSetting(currentSetting: currentSettings!),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -90,19 +95,19 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
                   elevation: 3.0,
                   child: Padding(
                     padding: const EdgeInsets.all(15),
-                    child: ColorSetting(currentSetting: currentSettings),
+                    child: ColorSetting(currentSetting: currentSettings!),
                   ),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: _resetToDefaults,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorConstants.themeColor,
+                    backgroundColor: themeProvider.attrs.fontColor,
                   ),
                   child: Text(
                     Intl.message("resetToDefaults"),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: themeProvider.attrs.backgroundColor,
                       fontWeight: FontWeight.bold
                     ),
                   ),
@@ -122,7 +127,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
   Widget _buildDoneButton() {
     return TextButton(
       onPressed: () async {
-        chatRoomsProvider.saveChatRoomSetting(currentSettings);
+        chatRoomsProvider.saveChatRoomSetting(currentSettings!);
         if (context.mounted) {
           Navigator.of(context).pop();
         }
@@ -143,7 +148,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
 
   void _resetToDefaults() {
     setState(() {
-      currentSettings = ChatRoomSetting.defaultChatRoomSetting();
+      currentSettings = ChatRoomSetting.defaultChatRoomSetting(themeProvider.attrs.backgroundColor);
     });
   }
 }

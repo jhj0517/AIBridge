@@ -27,6 +27,7 @@ class CharacterCreationPage extends StatefulWidget {
 
 class CharacterCreationState extends State<CharacterCreationPage> {
 
+  late ThemeProvider themeProvider;
   late CharactersProvider characterProvider;
   late ChatRoomsProvider chatRoomsProvider;
 
@@ -51,6 +52,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
 
   @override
   void initState() {
+    themeProvider = context.read<ThemeProvider>();
     characterProvider = context.read<CharactersProvider>();
     chatRoomsProvider = context.read<ChatRoomsProvider>();
     _init();
@@ -59,6 +61,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = context.watch<ThemeProvider>();
     return Stack(
       children: [
         // Background placeholder image
@@ -99,7 +102,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         Scaffold(
           backgroundColor: Colors.transparent, // Make the Scaffold's background transparent
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: themeProvider.attrs.appbarColor,
             elevation: 0, // Remove AppBar Shadow
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new),

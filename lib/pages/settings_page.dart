@@ -213,9 +213,10 @@ class SettingsPageState extends State<SettingsPage> {
             ),
           ),
         ),
-        const Divider(
-          height: 1,
-          color: ColorConstants.dividerColor, // Very light grey color
+        Divider(
+          height: 0.1,
+          thickness: 0.2,
+          color: themeProvider.attrs.dividerColor,
         ),
       ],
     );

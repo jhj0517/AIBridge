@@ -50,6 +50,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   final FocusNode _editCharacterChatFocusNode = FocusNode();
   final FocusNode _editUserChatFocusNode = FocusNode();
 
+  late ThemeProvider themeProvider;
   late ChatProvider chatProvider;
   late CharactersProvider charactersProvider;
   late ChatRoomsProvider chatRoomsProvider;
@@ -57,6 +58,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   @override
   void initState() {
     super.initState();
+    themeProvider = context.read<ThemeProvider>();
     chatProvider = context.read<ChatProvider>();
     charactersProvider = context.read<CharactersProvider>();
     chatRoomsProvider = context.read<ChatRoomsProvider>();
@@ -68,9 +70,10 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
   @override
   Widget build(BuildContext context) {
+    themeProvider = context.watch<ThemeProvider>();
     charactersProvider = context.watch<CharactersProvider>(); // makes new instance of the page whenever character is updated
     return Selector<ChatRoomsProvider, ChatRoomSetting>(
-      selector: (_, provider) => provider.chatRoomSetting,
+      selector: (_, provider) => provider.chatRoomSetting!,
       builder: (context, settings, _) {
         return WillPopScope(
           onWillPop: _onBackPress,
@@ -83,7 +86,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                   charactersProvider.currentCharacter.characterName,
                   style: const TextStyle(color: ColorConstants.appbarTextColor),
                 ),
-                backgroundColor: ColorConstants.appbarBackgroundColor,
+                backgroundColor: themeProvider.attrs.appbarColor,
                 centerTitle: false,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back_ios_new),
@@ -172,7 +175,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
   Future<void> _init() async {
     // init ChatRoomSetting
-    await chatRoomsProvider.readChatRoomSetting();
+    await chatRoomsProvider.readChatRoomSetting(themeProvider.attrs.backgroundColor);
     // init Request state and add Listener
     chatProvider.setRequestState(RequestState.initialized);
     chatProvider.addListener(() {
@@ -316,19 +319,19 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     );
   }
 
-  Widget _buildCharacterTypingIndicator(CharactersProvider friendsProvider) {
+  Widget _buildCharacterTypingIndicator(CharactersProvider charactersProvider) {
     return Column(
       children: [
         Row(
           children: [
             const SizedBox(width: 10.0),
-            _buildCharacterProfilePicture(friendsProvider, onTap: () {
+            _buildCharacterProfilePicture(charactersProvider, onTap: () {
               if (context.mounted) {
                 Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => CharacterProfilePage(
                         arguments: CharacterProfilePageArguments(
-                            characterId: friendsProvider.currentCharacter.id!,
+                            characterId: charactersProvider.currentCharacter.id!,
                             comingFromChatPage: true
                         ),
                       ),
@@ -342,7 +345,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildCharacterName(friendsProvider),
+                  _buildCharacterName(charactersProvider),
                   const SizedBox(height: 4),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -1023,19 +1026,19 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     );
   }
 
-  Widget _buildCharacterProfilePicture(CharactersProvider friendsProvider, {VoidCallback? onTap}) {
+  Widget _buildCharacterProfilePicture(CharactersProvider charactersProvider, {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Material(
         color: Colors.transparent,
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         clipBehavior: Clip.hardEdge,
-        child: friendsProvider.currentCharacter.photoBLOB.isNotEmpty
+        child: charactersProvider.currentCharacter.photoBLOB.isNotEmpty
             ? SizedBox(
             width: 50,
             height: 50,
             child: Image.memory(
-              friendsProvider.currentCharacter.photoBLOB,
+              charactersProvider.currentCharacter.photoBLOB,
               fit: BoxFit.cover,
               errorBuilder: (context, object, stackTrace) {
                 return const Icon(
@@ -1058,9 +1061,10 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   Widget _buildCharacterName(CharactersProvider charactersProvider) {
     return Text(
       charactersProvider.currentCharacter.characterName,
-      style: const TextStyle(
+      style: TextStyle(
         fontWeight: FontWeight.bold,
         fontSize: 16.0,
+        color: themeProvider.attrs.fontColor
       ),
     );
   }
