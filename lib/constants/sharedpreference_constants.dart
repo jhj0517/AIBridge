@@ -10,4 +10,5 @@ class SharedPreferenceConstants {
   static const settingUserChatBoxBackgroundColor = "userChatBoxBackgroundColor";
   static const settingChatRoomBackgroundColor = "chatRoomBackgroundColor";
   static const settingChatRoomJson = "chatRoomSetting";
+  static const theme = "theme";
 }
