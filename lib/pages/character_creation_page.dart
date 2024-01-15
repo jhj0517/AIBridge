@@ -772,13 +772,13 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                 final File imageFile = File(image.path);
                 final _character = await ChunkManager.decodeCharacter(pickedFile: imageFile);
 
-                final File compressedImageFile = await ImageConverter.compressImage(imageFile);
-                Uint8List compressedBLOB = await ImageConverter.convertImageToBLOB(compressedImageFile);
-
                 if (_character == null){
                   Fluttertoast.showToast(msg: Intl.message("failedToImport"));
                   return;
                 }
+
+                final File compressedImageFile = await ImageConverter.compressImage(imageFile);
+                Uint8List compressedBLOB = await ImageConverter.convertImageToBLOB(compressedImageFile);
 
                 setState(() {
                   _textFieldControllerName.text = _character.characterName;
