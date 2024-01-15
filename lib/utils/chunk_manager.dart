@@ -133,7 +133,7 @@ class ChunkManager{
   }
 
   static Future<Character?> decodeCharacter({
-    required File? pickedFile //Uint8List? pickedBLOB
+    required File? pickedFile
   }) async {
     /*
     * Get character data from chunk data in the PNG.
