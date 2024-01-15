@@ -1190,7 +1190,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     return IgnorePointer(
       child: Theme(
         data: ThemeData(
-          unselectedWidgetColor: themeProvider.attrs.fontColor, // Color for unchecked state
+          unselectedWidgetColor: themeProvider.attrs.fontColor,
         ),
         child: Checkbox(
           shape: const CircleBorder(),
