@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tiktoken/tiktoken.dart' as tiktokenizer;
+import 'package:dio/dio.dart';
 
 import '../constants/constants.dart';
 import '../models/models.dart';
@@ -27,44 +28,53 @@ class PaLM{
 
   static String baseUrl = 'https://generativelanguage.googleapis.com/v1beta1/';
 
+  static final Dio _dio = Dio();
+
   static Future<Result<PaLMResponse>> requestChat(
       String apiKey,
       PaLMService paLMParams,
       List<ChatMessage> chatMessages,
       Character character
-    ) async{
-    try{
-      List<PaLMMessage> messages = formattingToPaLM(chatMessages);
-      messages = limitInputTokens(messages, paLMMaximumInputToken[paLMParams.modelId]!, paLMParams.modelId);
-      PaLMPrompt prompts = embedOtherPrompts(paLMParams, messages, character);
+    ) async {
+    List<PaLMMessage> messages = formattingToPaLM(chatMessages);
+    messages = limitInputTokens(messages, paLMMaximumInputToken[paLMParams.modelId]!, paLMParams.modelId);
+    PaLMPrompt prompts = embedOtherPrompts(paLMParams, messages, character);
 
-      final url = Uri.parse('${baseUrl}models/${paLMParams.modelId}:generateMessage?key=$apiKey');
-      final headers = {
-        'Content-Type': 'application/json'
-      };
-      final body = PaLMRequest(
-          prompt: prompts,
-          temperature: paLMParams.temperature,
-          candidateCount: paLMParams.candidateCount
-      ).toJson();
-      debugPrint("body : $body");
-      final response = await http.post(url, headers: headers, body: jsonEncode(body));
-      if (response.statusCode == 200) {
-        // note : 1. When random string is inserted, it returns content filter with "OTHERS" reason
-        // note : 2. When unsupported language is inserted, it returns content filter with "OTHERS" reason
-        final decodedResponse = json.decode(response.body);
+    final headers = {
+      'Content-Type': 'application/json'
+    };
+
+    final body = PaLMRequest(
+        prompt: prompts,
+        temperature: paLMParams.temperature,
+        candidateCount: paLMParams.candidateCount
+    ).toJson();
+
+    final response = await _dio.post(
+      '${baseUrl}models/${paLMParams.modelId}:generateMessage',
+      data: body,
+      queryParameters: {'key': apiKey},
+      options: Options(
+        headers: headers,
+        receiveTimeout: const Duration(seconds: 30),
+      )
+    );
+
+    switch (response.statusCode){
+      case 200 : {
+        final decodedResponse = json.decode(response.data);
         return Success(PaLMResponse.fromJson(decodedResponse));
-      } else {
-        debugPrint("error : ${response.body}");
-        // note : error code 400 -> message must alternate between authors.
+      }
+      default: {
         return Error(
-          errorCode: response.statusCode,
-          errorMessage: json.decode(response.body)['error']['message'],
+          errorCode: response.statusCode!,
+          errorMessage: json.decode(response.data)['error']['message'],
         );
       }
-    } catch (e) {
-      throw Exception('Failed during PaLM Post Request: $e');
     }
+    // note : 1. When random string is inserted, it returns content filter with "OTHERS" reason
+    // note : 2. When unsupported language is inserted, it returns content filter with "OTHERS" reason
+    // note : 3. error code 400 -> message must alternate between authors.
   }
 
   static List<PaLMMessage> formattingToPaLM(List<ChatMessage> chatMessages) {
@@ -125,7 +135,7 @@ class PaLM{
   }
 
   // note : Since google does not provide tokenizer, use tiktokenizer instead for now.
-  // note : it looks like this tokenizer count more tokens than tiktokenizer.
+  // note : it looks like PaLM's tokenizer count more tokens than tiktokenizer.
   static int numTokensFromString(String string) {
     final encoding = tiktokenizer.encodingForModel(ModelConstants.chatGPT3dot5Id);
     final numTokens = encoding.encode(string).length;
