@@ -191,7 +191,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
       });
     });
 
-    // init "Current" Values in providers
     await charactersProvider.updateCurrentCharacter(widget.arguments.characterId);
     await chatRoomsProvider.updateCurrentChatRoom(widget.arguments.characterId);
     await chatProvider.updateChatMessages(chatRoomsProvider.currentChatRoom.id!);
@@ -246,335 +245,68 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     * */
     final items = [ChatMessage.placeHolder(), ...chatMessages];
     final content = items[index];
-    if (index == 0) {
-      return requestState == RequestState.loading ? _buildCharacterTypingIndicator(charactersProvider) : const SizedBox.shrink();
-    }
-    if (content.chatMessageType == ChatMessageType.userMessage) {
-      return _buildUserMessage(
-          chatMessage: content,
-          settings: settings
+
+    if (index == 0 && requestState == RequestState.loading) {
+      return CharacterChatBoxLoading(
+        chatMessage: content,
+        chatTextEditingController: _chatTextEditingController,
+        editChatFocusNode: _editCharacterChatFocusNode,
+        mode: ChatPageMode.chatMode,
+        settings: settings,
+        themeProvider: themeProvider,
+        charactersProvider: charactersProvider,
       );
     }
-    return _buildCharacterMessage(
-        chatMessage: content,
-        charactersProvider: charactersProvider,
-        settings: settings
-    );
-  }
 
-  bool _isListContainsEntry(List<ChatMessage> messagesToDelete, ChatMessage messageEntry) {
-    return messagesToDelete.any((chatMessage) => chatMessage == messageEntry);
-  }
+    if (content.chatMessageType == ChatMessageType.userMessage) {
+      if(mode==ChatPageMode.deleteMode){
+        return UserChatBoxDeleteMode(
+            chatMessage: content,
+            settings: settings,
+            mode: mode,
+            messagesToDeleteNotifier: _messagesToDeleteNotifier,
+            chatTextEditingController: _chatTextEditingController,
+            editChatFocusNode: _editUserChatFocusNode,
+            themeProvider: themeProvider
+        );
+      }
+      return UserChatBox(
+          chatMessage: content,
+          settings: settings,
+          mode: mode,
+          chatTextEditingController: _chatTextEditingController,
+          editChatFocusNode: _editUserChatFocusNode,
+          dialogCallback: () => _openChatDialog(context, content),
+          themeProvider: themeProvider
+      );
+    }
 
-  Widget _buildCharacterMessage({
-    required ChatMessage chatMessage,
-    required CharactersProvider charactersProvider,
-    required ChatRoomSetting settings
-  }) {
-    return Column(
-      children: [
-        if (mode == ChatPageMode.deleteMode)
-          ValueListenableBuilder<List<ChatMessage>>(
-            valueListenable: _messagesToDeleteNotifier,
-            builder: (context, messagesToDelete, child) {
-              return Stack(
-                children: [
-                  Positioned(
-                    left: 0.0,
-                    top: 0.0,
-                    bottom: 0.0,
-                    child: _buildMessageCheckbox(
-                        _isListContainsEntry(messagesToDelete, chatMessage)),
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: InkWell(
-                      onTap: () {
-                        if (_isListContainsEntry(messagesToDelete, chatMessage)) {
-                          _messagesToDeleteNotifier.value = List.from(messagesToDelete)
-                            ..removeWhere((entry) => entry == chatMessage);
-                        } else {
-                          _messagesToDeleteNotifier.value = [...messagesToDelete, chatMessage];
-                        }
-                      },
-                      child: _buildCharacterMessageRow(
-                          chatMessage: chatMessage,
-                          messagesToDelete: messagesToDelete,
-                          settings: settings
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          )
-        else
-          _buildCharacterMessageRow(
-              chatMessage: chatMessage,
-              messagesToDelete: null,
-              settings: settings
-          ),
-        const SizedBox(height: 8),
-      ],
-    );
-  }
+    if (content.chatMessageType == ChatMessageType.characterMessage){
+      if(mode==ChatPageMode.deleteMode){
+        return CharacterChatBoxDeleteMode(
+            chatMessage: content,
+            settings: settings,
+            mode: mode,
+            messagesToDeleteNotifier: _messagesToDeleteNotifier,
+            chatTextEditingController: _chatTextEditingController,
+            editChatFocusNode: _editUserChatFocusNode,
+            themeProvider: themeProvider,
+            charactersProvider: charactersProvider,
+        );
+      }
 
-  Widget _buildCharacterTypingIndicator(CharactersProvider charactersProvider) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            const SizedBox(width: 10.0),
-            _buildCharacterProfilePicture(charactersProvider, onTap: () {
-              if (context.mounted) {
-                Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => CharacterProfilePage(
-                        arguments: CharacterProfilePageArguments(
-                            characterId: charactersProvider.currentCharacter.id!,
-                            comingFromChatPage: true
-                        ),
-                      ),
-                    )
-                );
-              }
-            }),
-            const SizedBox(width: 8.0),
-            // typing animation ( such as moving ... ) in chat box
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildCharacterName(charactersProvider),
-                  const SizedBox(height: 4),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Flexible(
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Ink(
-                            decoration: BoxDecoration(
-                              color: ColorConstants.defaultCharacterChatBoxColor,
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            child: InkWell(
-                              splashColor: ColorConstants.defaultCharacterChatBoxColor.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(12.0),
-                              onLongPress: () async {
-                                // await openChatDialog(context, chatMessage);
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 8.0),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 8.0),
-                                  child: Image.asset(
-                                    PathConstants.typingDotAnimation,
-                                    width: 30,
-                                    height: 20,
-                                    fit: BoxFit.fitHeight,
-                                  ), // replace with the path to your GIF
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 4.0),
-                      _buildTimestampWithInt(Utilities.getTimestamp()),
-                      const SizedBox(width: 35.0),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-        const SizedBox(height: 8)
-      ],
-    );
-  }
-
-  Widget _buildCharacterMessageRow({
-    required ChatMessage chatMessage,
-    required List<ChatMessage>? messagesToDelete,
-    required ChatRoomSetting settings
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        mode == ChatPageMode.deleteMode
-            ? const SizedBox(width: 50.0)
-            : const SizedBox(width: 10.0),
-        _buildCharacterProfilePicture(charactersProvider, onTap: () {
-          if (context.mounted) {
-            Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CharacterProfilePage(
-                    arguments: CharacterProfilePageArguments(
-                        characterId: charactersProvider.currentCharacter.id!,
-                        comingFromChatPage: true
-                    ),
-                  ),
-                )
-            );
-          }
-        }),
-        const SizedBox(width: 8.0),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildCharacterName(charactersProvider),
-              const SizedBox(height: 4),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Flexible(
-                    child: Material(
-                      color: Colors.transparent,
-                      child: Ink(
-                          decoration: BoxDecoration(
-                            color: settings.characterChatBoxBackgroundColor,
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: mode == ChatPageMode.chatMode
-                              ? InkWell(
-                            splashColor: settings.characterChatBoxBackgroundColor.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(12.0),
-                            onLongPress: () async {
-                              if (mode == ChatPageMode.chatMode) {
-                                await _openChatDialog(context, chatMessage);
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                              child: _buildChatMessageContent(
-                                  chatMessage,
-                                  _editCharacterChatFocusNode,
-                                  _chatTextEditingController,
-                                  settings
-                              ),
-                            ),
-                          )
-                              : Container(
-                            padding:
-                            const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                            child: _buildChatMessageContent(
-                                chatMessage,
-                                _editCharacterChatFocusNode,
-                                _chatTextEditingController,
-                                settings
-                            ),
-                          )
-                      ),
-                    ),
-                  ),
-                  mode == ChatPageMode.deleteMode
-                  ? const SizedBox(width: 0.0)
-                  : const SizedBox(width: 4.0),
-                  _buildTime(chatMessage),
-                  mode == ChatPageMode.deleteMode
-                  ? const SizedBox(width:1.0)
-                  : const SizedBox(width: 35.0),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildUserMessage({
-    required ChatMessage chatMessage,
-    required ChatRoomSetting settings
-  }) {
-    return Column(
-      children: [
-        const SizedBox(height: 8),
-        if (mode == ChatPageMode.deleteMode)
-          ValueListenableBuilder<List<ChatMessage>>(
-            valueListenable: _messagesToDeleteNotifier,
-            builder: (context, messagesToDelete, child) {
-              return Stack(
-                children: [
-                  Positioned(
-                    left: 0.0,
-                    top: 0.0,
-                    bottom: 0.0,
-                    child: _buildMessageCheckbox(
-                        _isListContainsEntry(messagesToDelete, chatMessage)),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      onTap: () {
-                        if (_isListContainsEntry(messagesToDelete, chatMessage)) {
-                          _messagesToDeleteNotifier.value = List.from(messagesToDelete)
-                            ..removeWhere((entry) => entry == chatMessage);
-                        } else {
-                          _messagesToDeleteNotifier.value = [...messagesToDelete, chatMessage];
-                        }
-                      },
-                      child: _buildUserMessageRow(chatMessage, settings),
-                    ),
-                  ),
-                ],
-              );
-            },
-          )
-        else
-          _buildUserMessageRow(chatMessage, settings),
-        const SizedBox(height: 15),
-      ],
-    );
-  }
-
-  Widget _buildUserMessageRow(
-      ChatMessage chatMessage,
-      ChatRoomSetting settings
-      ) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        const SizedBox(width: 70),
-        _buildTime(chatMessage),
-        const SizedBox(width: 4.0),
-        Flexible(
-          child: Material(
-            color: Colors.transparent,
-            child: Ink(
-                decoration: BoxDecoration(
-                  color: settings.userChatBoxBackgroundColor,
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: mode == ChatPageMode.chatMode
-                    ? InkWell(
-                      splashColor: settings.userChatBoxBackgroundColor.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(12.0),
-                      onLongPress: () async {
-                        if (mode == ChatPageMode.chatMode) {
-                          await _openChatDialog(context, chatMessage);
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                        child: _buildChatMessageContent(chatMessage, _editUserChatFocusNode, _chatTextEditingController, settings),
-                      ),
-                    )
-                    : Container(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                        child: _buildChatMessageContent(chatMessage, _editUserChatFocusNode, _chatTextEditingController, settings)
-                     )
-            ),
-          ),
-        ),
-        const SizedBox(width: 10.0),
-      ],
-    );
+      return CharacterChatBox(
+          chatMessage: content,
+          settings: settings,
+          mode: mode,
+          chatTextEditingController: _chatTextEditingController,
+          editChatFocusNode: _editUserChatFocusNode,
+          dialogCallback: () => _openChatDialog(context, content),
+          themeProvider: themeProvider,
+          charactersProvider: charactersProvider,
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Future<bool> _onBackPress() async {
@@ -1026,181 +758,8 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     );
   }
 
-  Widget _buildCharacterProfilePicture(CharactersProvider charactersProvider, {VoidCallback? onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
-        clipBehavior: Clip.hardEdge,
-        child: charactersProvider.currentCharacter.photoBLOB.isNotEmpty
-            ? SizedBox(
-            width: 50,
-            height: 50,
-            child: Image.memory(
-              charactersProvider.currentCharacter.photoBLOB,
-              fit: BoxFit.cover,
-              errorBuilder: (context, object, stackTrace) {
-                return const Icon(
-                  Icons.account_circle_rounded,
-                  size: 50,
-                  color: ColorConstants.greyColor,
-                );
-              },
-            ))
-            : const Icon(
-          Icons.account_circle,
-          size: 50,
-          color: ColorConstants.greyColor,
-        ),
-      ),
-    );
-  }
-
-
-  Widget _buildCharacterName(CharactersProvider charactersProvider) {
-    return Text(
-      charactersProvider.currentCharacter.characterName,
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16.0,
-        color: themeProvider.attrs.fontColor
-      ),
-    );
-  }
-
-  Widget _buildChatMessageContent(
-      ChatMessage chatMessage,
-      FocusNode editChatChatFocusNode,
-      TextEditingController chatTextEditingController,
-      ChatRoomSetting settings,
-      ) {
-    if (chatMessage.imageUrl.isNotEmpty && mode == ChatPageMode.deleteMode) {
-      return Image.network(
-            chatMessage.imageUrl,
-            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-              if (loadingProgress == null) return child; // Image is fully loaded
-              return Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                      : null,
-                ),
-              );
-            },
-        );
-    }
-
-    if (chatMessage.imageUrl.isNotEmpty) {
-      return GestureDetector(
-          onTap:() {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FullPhotoPage(
-                  arguments: FullPhotoPageArguments(
-                      title: chatMessage.imageUrl,
-                      imageUrl: chatMessage.imageUrl
-                  ),
-                ),
-              ),
-            );
-          },
-          child: Image.network(
-            chatMessage.imageUrl,
-            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-              if (loadingProgress == null) return child; // Image is fully loaded
-              return Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                      : null,
-                ),
-              );
-            },
-          )
-      );
-    }
-
-    if (chatMessage.isEditable) {
-      return TextField(
-        focusNode: editChatChatFocusNode,
-        textInputAction: TextInputAction.newline,
-        cursorColor: Colors.white,
-        maxLines: null,
-        autofocus: true,
-        controller: chatTextEditingController,
-        style: TextStyle(
-          fontSize: chatMessage.chatMessageType == ChatMessageType.characterMessage
-              ? settings.characterFontSize // default 16
-              : settings.userFontSize, // default 16
-          color: chatMessage.chatMessageType == ChatMessageType.characterMessage
-              ? settings.characterFontColor // default Colors.black
-              : settings.userFontColor, // default Colors.white
-        ),
-      );
-    }
-
-    if (settings.isRenderMarkdown) {
-      return MarkdownBody(
-        data: ChatParser.parseMarkDown(chatMessage.content),
-        styleSheet: ChatParser.markdownStyleSheet(chatMessage.chatMessageType, settings),
-      );
-    }
-
-    return RichText(
-      text: TextSpan(
-        children:
-        ChatParser.parseMessageContent(chatMessage.content, chatMessage.chatMessageType),
-        style: TextStyle(
-          fontSize: chatMessage.chatMessageType == ChatMessageType.characterMessage
-              ? settings.characterFontSize // default 16
-              : settings.userFontSize, // default 16
-          color: chatMessage.chatMessageType == ChatMessageType.characterMessage
-              ? settings.characterFontColor
-              : settings.userFontColor,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTime(ChatMessage chatMessage) {
-    return Text(
-      Utilities.timestampIntoHourFormat(chatMessage.timestamp),
-      style: const TextStyle(
-        fontSize: 10.0,
-        color: Colors.grey,
-      ),
-    );
-  }
-
-  Widget _buildTimestampWithInt(int timestamp) {
-    return Text(
-      Utilities.timestampIntoHourFormat(timestamp),
-      style: const TextStyle(
-        fontSize: 10.0,
-        color: Colors.grey,
-      ),
-    );
-  }
-
-  Widget _buildMessageCheckbox(bool isChecked) {
-    return IgnorePointer(
-      child: Theme(
-        data: ThemeData(
-          unselectedWidgetColor: themeProvider.attrs.fontColor,
-        ),
-        child: Checkbox(
-          shape: const CircleBorder(),
-          value: isChecked,
-          onChanged: (bool? newValue) {},
-        ),
-      ),
-    );
-  }
 }
+
 
 class ChatPageArguments {
   final String characterId;
