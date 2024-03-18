@@ -171,21 +171,21 @@ abstract class BaseChatBox extends StatelessWidget {
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         clipBehavior: Clip.hardEdge,
         child: charactersProvider!.currentCharacter.photoBLOB.isNotEmpty
-            ? SizedBox(
-            width: 50,
-            height: 50,
-            child: Image.memory(
-              charactersProvider!.currentCharacter.photoBLOB,
-              fit: BoxFit.cover,
-              errorBuilder: (context, object, stackTrace) {
-                return const Icon(
-                  Icons.account_circle_rounded,
-                  size: 50,
-                  color: ColorConstants.greyColor,
-                );
-              },
-            ))
-            : const Icon(
+        ? SizedBox(
+          width: 50,
+          height: 50,
+          child: Image.memory(
+            charactersProvider!.currentCharacter.photoBLOB,
+            fit: BoxFit.cover,
+            errorBuilder: (context, object, stackTrace) {
+              return const Icon(
+                Icons.account_circle_rounded,
+                size: 50,
+                color: ColorConstants.greyColor,
+              );
+            })
+        )
+        : const Icon(
           Icons.account_circle,
           size: 50,
           color: ColorConstants.greyColor,
@@ -272,7 +272,6 @@ class UserChatBox extends BaseChatBox {
 }
 
 class UserChatBoxDeleteMode extends BaseChatBox {
-
   final ValueNotifier<List<ChatMessage>> messagesToDeleteNotifier;
 
   const UserChatBoxDeleteMode({
