@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'package:aibridge/widgets/chat_input.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../widgets/widgets.dart';
 import '../utils/utils.dart';
@@ -132,11 +132,19 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                         ),
                         //Input content
                         if (mode == ChatPageMode.editMode) ...[
-                          _buildEditInput(), //Positioned bottom: MediaQuery.of(context).viewInsets.bottom,
+                          EditBar(onPressed: () => _onEditChat()),
                         ] else if (mode == ChatPageMode.deleteMode) ...[
-                          _buildDeleteInput(),
+                          DeleteBar(onPressed: () => _onDeleteChat()),
                         ] else ...[
-                          _buildInput(),
+                          ChatInputField(
+                            controller: _inputTextEditingController,
+                            focusNode: _inputFocusNode,
+                            isSendEnabled: _isSendEnabled,
+                            isInputEmpty: _isInputEmpty,
+                            isMenuVisible: _isInputMenuVisible,
+                            onMenuOpen: () => _onMenuOpen(),
+                            onSendChat: () => _onSubmitInput(),
+                          ),
                           _isInputMenuVisible
                           ? _buildInputMenu()
                           : const SizedBox.shrink(),
@@ -465,162 +473,126 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     }
   }
 
-  Widget _buildDeleteInput(){
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton.icon(
-        onPressed: () async {
-          //Implement to Edit action
-          await chatProvider.deleteChatMessages(_messagesToDeleteNotifier.value, chatRoomsProvider.currentChatRoom.id!);
-          await chatRoomsProvider.updateChatRooms();
-          //local db action
-          setState(() {
-            mode=ChatPageMode.chatMode;
-          });
-          _messagesToDeleteNotifier.value = [];
-        },
-        icon: const Icon(Icons.delete, color: Colors.white),
-        label: Text(
-          Intl.message("deleteOption"),
-          style: const TextStyle(color: Colors.white, fontSize: 16),
-        ),
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-            ),
-          ),
-        ),
-      ),
-    );
+  Future<void> _onMenuOpen() async {
+    if(_keyboardVisibilityController.isVisible){
+      _inputFocusNode.unfocus();
+      //wait until keyboard is fully closed
+      await Future.delayed(const Duration(milliseconds: 200));
+      setState(() {
+        _isInputMenuVisible = true;
+      });
+    } else{
+      _inputFocusNode.unfocus();
+      setState(() {
+        _isInputMenuVisible = !_isInputMenuVisible;
+      });
+    }
   }
 
-  Widget _buildEditInput() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton.icon(
-        onPressed: () async {
-          //Implement to Edit action
-          //local db action
-          final editedChatMessage = ChatMessage(
-            id: _messageToEdit.id,
-            roomId: _messageToEdit.roomId,
-            characterId: _messageToEdit.characterId,
-            chatMessageType: _messageToEdit.chatMessageType,
-            timestamp: _messageToEdit.timestamp,
-            role: _messageToEdit.role,
-            content: _chatTextEditingController.text,
-            isEditable: false,
-          );
-          await chatProvider.updateOneChatMessage(editedChatMessage);
-          await chatRoomsProvider.updateChatRooms();
-          setState(() {
-            _messageToEdit = ChatMessage.placeHolder();
-            mode = ChatPageMode.chatMode;
-          });
-          _chatTextEditingController.text = "";
-        },
-        icon: const Icon(Icons.edit, color: Colors.white),
-        label: Text(
-          Intl.message("editChatOption"),
-          style: const TextStyle(color: Colors.white, fontSize: 16),
-        ),
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(ColorConstants.themeColor),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-            ),
-          ),
-        ),
-      ),
-    );
+  Future<void> _onDeleteChat() async {
+    await chatProvider.deleteChatMessages(_messagesToDeleteNotifier.value, chatRoomsProvider.currentChatRoom.id!);
+    await chatRoomsProvider.updateChatRooms();
+    setState(() {
+      mode=ChatPageMode.chatMode;
+      _messagesToDeleteNotifier.value = [];
+    });
   }
 
-  Widget _buildInput() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.zero,
-      //height: 50,
-      decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: ColorConstants.inputDecoration, width: 0.5)), color: Colors.white),
-      child: Row(
-        children: <Widget>[
-          // Button send image
-          Material(
-            color: Colors.white,
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 1),
-              child: IconButton(
-                icon: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  transitionBuilder: (Widget child, Animation<double> animation) {
-                    return ScaleTransition(scale: animation, child: child);
-                  },
-                  child: _isInputMenuVisible
-                      ? const Icon(Icons.close)
-                      : const Icon(Icons.add),
+  Future<void> _onEditChat() async {
+    final editedChatMessage = ChatMessage(
+      id: _messageToEdit.id,
+      roomId: _messageToEdit.roomId,
+      characterId: _messageToEdit.characterId,
+      chatMessageType: _messageToEdit.chatMessageType,
+      timestamp: _messageToEdit.timestamp,
+      role: _messageToEdit.role,
+      content: _chatTextEditingController.text,
+      isEditable: false,
+    );
+    await chatProvider.updateOneChatMessage(editedChatMessage);
+    await chatRoomsProvider.updateChatRooms();
+    setState(() {
+      _messageToEdit = ChatMessage.placeHolder();
+      mode = ChatPageMode.chatMode;
+      _chatTextEditingController.text = "";
+    });
+  }
+
+  Widget _buildInputMenu() {
+    Widget buildMenuButton(Object iconOrImagePath, String label, Function onPressed) {
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => onPressed(),
+          child: SizedBox(
+            width: 80,
+            height: 80,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                iconOrImagePath is IconData
+                    ? Icon(iconOrImagePath, color: ColorConstants.primaryColor)
+                    : SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Image(
+                    fit: BoxFit.scaleDown,
+                    image: AssetImage(iconOrImagePath as String),
+                  ),
                 ),
-                onPressed: () async {
-                  if(_keyboardVisibilityController.isVisible){
-                    _inputFocusNode.unfocus();
-                    //wait until keyboard is fully closed
-                    await Future.delayed(const Duration(milliseconds: 200));
-                    setState(() {
-                      _isInputMenuVisible = true;
-                    });
-                  } else{
-                    _inputFocusNode.unfocus();
-                    setState(() {
-                      _isInputMenuVisible = !_isInputMenuVisible;
-                    });
-                  }
-                },
-                color: ColorConstants.primaryColor,
-              ),
+                Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      color: ColorConstants.primaryColor
+                  ),
+                ),
+              ],
             ),
           ),
+        ),
+      );
+    }
 
-          // TextField
-          Flexible(
-            child: TextField(
-              textInputAction: TextInputAction.newline,
-              scrollPhysics: const BouncingScrollPhysics(),
-              minLines: 1,
-              maxLines: 4,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 15
-              ),
-              controller: _inputTextEditingController,
-              decoration: InputDecoration.collapsed(
-                hintText: Intl.message("chatInputHint"),
-                hintStyle: const TextStyle(color: ColorConstants.greyColor),
-              ),
-              focusNode: _inputFocusNode,
-            ),
-          ),
-          // Button send message
-          Material(
-            color: Colors.white,
-            child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                child: IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: !_isSendEnabled || _isInputEmpty
-                      ? null
-                      : () async {
-                    // implement on Send
-                    await _onSubmitInput();
-                  },
-                  color: ColorConstants.primaryColor,
-                )
-            ),
-          ),
-        ],
+    return Container(
+      height: chatProvider.getKeyboardHeight(context),
+      color: Colors.white,
+      child: SingleChildScrollView(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            buildMenuButton(Icons.edit, Intl.message("editProfile"), () {
+              // Implement functionality for photo button
+              if (context.mounted) {
+                Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CharacterCreationPage(
+                        arguments: CharacterCreationPageArguments(
+                            character: charactersProvider.currentCharacter
+                        ),
+                      ),
+                    )
+                );
+              }
+            }),
+            buildMenuButton(Icons.settings, Intl.message("chatRoomSetting"), () {
+              // Implement functionality for photo button
+              if (context.mounted) {
+                Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const ChatRoomSettingPage(),
+                    )
+                );
+              }
+            }),
+            buildMenuButton(Icons.image, Intl.message("image"), () {
+              // Implement functionality for photo button
+              if (context.mounted) {
+                _openPasteDialog();
+              }
+            }),
+          ],
+        ),
       ),
     );
   }
@@ -677,85 +649,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         _isSendEnabled = true;
       });
     }
-  }
-
-  Widget _buildInputMenu() {
-    Widget buildMenuButton(Object iconOrImagePath, String label, Function onPressed) {
-      return Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => onPressed(),
-          child: SizedBox(
-            width: 80,
-            height: 80,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                iconOrImagePath is IconData
-                ? Icon(iconOrImagePath, color: ColorConstants.primaryColor)
-                : SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: Image(
-                    fit: BoxFit.scaleDown,
-                    image: AssetImage(iconOrImagePath as String),
-                  ),
-                 ),
-                Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: ColorConstants.primaryColor
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      height: chatProvider.getKeyboardHeight(context),
-      color: Colors.white,
-      child: SingleChildScrollView(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            buildMenuButton(Icons.edit, Intl.message("editProfile"), () {
-              // Implement functionality for photo button
-              if (context.mounted) {
-                Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => CharacterCreationPage(
-                        arguments: CharacterCreationPageArguments(
-                            character: charactersProvider.currentCharacter
-                        ),
-                      ),
-                    )
-                );
-              }
-            }),
-            buildMenuButton(Icons.settings, Intl.message("chatRoomSetting"), () {
-              // Implement functionality for photo button
-              if (context.mounted) {
-                Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const ChatRoomSettingPage(),
-                    )
-                );
-              }
-            }),
-            buildMenuButton(Icons.image, Intl.message("image"), () {
-              // Implement functionality for photo button
-              if (context.mounted) {
-                _openPasteDialog();
-              }
-            }),
-          ],
-        ),
-      ),
-    );
   }
 
 }
