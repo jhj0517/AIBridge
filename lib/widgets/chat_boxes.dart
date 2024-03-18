@@ -22,7 +22,7 @@ abstract class BaseChatBox extends StatelessWidget {
   final ThemeProvider themeProvider;
 
   const BaseChatBox({
-    Key? key,
+    super.key,
     required this.chatMessage,
     required this.settings,
     required this.mode,
@@ -31,7 +31,7 @@ abstract class BaseChatBox extends StatelessWidget {
     required this.themeProvider,
     this.dialogCallback,
     this.charactersProvider,
-  }) : super(key: key);
+  });
 
   Widget buildMessageContent(BuildContext context) {
     if (chatMessage.imageUrl.isNotEmpty && mode == ChatPageMode.deleteMode) {
@@ -216,24 +216,15 @@ abstract class BaseChatBox extends StatelessWidget {
 class UserChatBox extends BaseChatBox {
 
   const UserChatBox({
-    Key? key,
-    required ChatMessage chatMessage,
-    required ChatRoomSetting settings,
-    required ChatPageMode mode,
-    required TextEditingController chatTextEditingController,
-    required FocusNode editChatFocusNode,
-    required Future<void> Function() dialogCallback,
-    required ThemeProvider themeProvider
-  }) : super(
-    key: key,
-    chatMessage: chatMessage,
-    settings: settings,
-    mode: mode,
-    chatTextEditingController: chatTextEditingController,
-    editChatFocusNode: editChatFocusNode,
-    dialogCallback: dialogCallback,
-    themeProvider: themeProvider
-  );
+    super.key,
+    required super.chatMessage,
+    required super.settings,
+    required super.mode,
+    required super.chatTextEditingController,
+    required super.editChatFocusNode,
+    required super.dialogCallback,
+    required super.themeProvider
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -285,23 +276,15 @@ class UserChatBoxDeleteMode extends BaseChatBox {
   final ValueNotifier<List<ChatMessage>> messagesToDeleteNotifier;
 
   const UserChatBoxDeleteMode({
-    Key? key,
-    required ChatMessage chatMessage,
-    required ChatRoomSetting settings,
-    required ChatPageMode mode,
-    required TextEditingController chatTextEditingController,
-    required FocusNode editChatFocusNode,
+    super.key,
     required this.messagesToDeleteNotifier,
-    required ThemeProvider themeProvider
-  }) : super(
-      key: key,
-      chatMessage: chatMessage,
-      settings: settings,
-      mode: mode,
-      chatTextEditingController: chatTextEditingController,
-      editChatFocusNode: editChatFocusNode,
-      themeProvider: themeProvider
-  );
+    required super.chatMessage,
+    required super.settings,
+    required super.mode,
+    required super.chatTextEditingController,
+    required super.editChatFocusNode,
+    required super.themeProvider
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -376,26 +359,16 @@ class UserChatBoxDeleteMode extends BaseChatBox {
 
 class CharacterChatBox extends BaseChatBox {
   const CharacterChatBox({
-    Key? key,
-    required ChatMessage chatMessage,
-    required ChatRoomSetting settings,
-    required ChatPageMode mode,
-    required TextEditingController chatTextEditingController,
-    required FocusNode editChatFocusNode,
-    required Future<void> Function() dialogCallback,
-    required ThemeProvider themeProvider,
-    required CharactersProvider charactersProvider,
-  }) : super(
-    key: key,
-    chatMessage: chatMessage,
-    settings: settings,
-    mode: mode,
-    chatTextEditingController: chatTextEditingController,
-    editChatFocusNode: editChatFocusNode,
-    dialogCallback: dialogCallback,
-    themeProvider: themeProvider,
-    charactersProvider: charactersProvider,
-  );
+    super.key,
+    required super.chatMessage,
+    required super.settings,
+    required super.mode,
+    required super.chatTextEditingController,
+    required super.editChatFocusNode,
+    required super.dialogCallback,
+    required super.themeProvider,
+    required super.charactersProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -461,25 +434,16 @@ class CharacterChatBoxDeleteMode extends BaseChatBox {
   final ValueNotifier<List<ChatMessage>> messagesToDeleteNotifier;
 
   const CharacterChatBoxDeleteMode({
-    Key? key,
-    required ChatMessage chatMessage,
-    required ChatRoomSetting settings,
-    required ChatPageMode mode,
-    required TextEditingController chatTextEditingController,
-    required FocusNode editChatFocusNode,
+    super.key,
     required this.messagesToDeleteNotifier,
-    required ThemeProvider themeProvider,
-    required CharactersProvider charactersProvider,
-  }) : super(
-    key: key,
-    chatMessage: chatMessage,
-    settings: settings,
-    mode: mode,
-    chatTextEditingController: chatTextEditingController,
-    editChatFocusNode: editChatFocusNode,
-    themeProvider: themeProvider,
-    charactersProvider: charactersProvider,
-  );
+    required super.chatMessage,
+    required super.settings,
+    required super.mode,
+    required super.chatTextEditingController,
+    required super.editChatFocusNode,
+    required super.themeProvider,
+    required super.charactersProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -564,24 +528,15 @@ class CharacterChatBoxDeleteMode extends BaseChatBox {
 class CharacterChatBoxLoading extends BaseChatBox{
 
   const CharacterChatBoxLoading({
-    Key? key,
-    required ChatMessage chatMessage,
-    required ChatRoomSetting settings,
-    required ChatPageMode mode,
-    required TextEditingController chatTextEditingController,
-    required FocusNode editChatFocusNode,
-    required ThemeProvider themeProvider,
-    required CharactersProvider charactersProvider,
-  }) : super(
-    key: key,
-    chatMessage: chatMessage,
-    settings: settings,
-    mode: mode,
-    chatTextEditingController: chatTextEditingController,
-    editChatFocusNode: editChatFocusNode,
-    themeProvider: themeProvider,
-    charactersProvider: charactersProvider,
-  );
+    super.key,
+    required super.chatMessage,
+    required super.settings,
+    required super.mode,
+    required super.chatTextEditingController,
+    required super.editChatFocusNode,
+    required super.themeProvider,
+    required super.charactersProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
