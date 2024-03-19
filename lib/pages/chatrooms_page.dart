@@ -1,3 +1,4 @@
+import 'package:aibridge/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -207,9 +208,9 @@ class ChatRoomsState extends State<ChatRoomsPage> {
     switch (await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialogs.chatRoomDialog(context, chatRoom.characterName);
+          return ChatRoomOption(characterName: chatRoom.characterName);
         })) {
-      case OnChatRoomOptionClicked.onDelete:
+      case DialogResult.delete:
         await _openDeleteChatRoomDialog(context, chatRoom);
         break;
     }
@@ -219,11 +220,15 @@ class ChatRoomsState extends State<ChatRoomsPage> {
     switch (await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialogs.deleteChatRoomDialog(context);
+          return WarningDialog(
+              icon: Icons.delete,
+              title: Intl.message("deleteChatroom"),
+              message: Intl.message("deleteChatroomConfirm")
+          );
         })) {
-      case OnDeleteChatRoomOptionClicked.onCancel:
+      case DialogResult.cancel:
         break;
-      case OnDeleteChatRoomOptionClicked.onYes:
+      case DialogResult.yes:
         await chatRoomsProvider.deleteChatRoom(chatRoom.id!);
         break;
     }
