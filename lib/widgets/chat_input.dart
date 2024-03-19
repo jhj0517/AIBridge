@@ -7,7 +7,6 @@ class ChatInputField extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final bool isSendEnabled;
-  final bool isInputEmpty;
   final bool isMenuVisible;
   final Future<void> Function() onMenuOpen;
   final Future<void> Function() onSendChat;
@@ -18,7 +17,6 @@ class ChatInputField extends StatelessWidget {
     required this.controller,
     required this.focusNode,
     required this.isSendEnabled,
-    required this.isInputEmpty,
     required this.isMenuVisible,
     required this.onMenuOpen
   });
@@ -65,7 +63,7 @@ class ChatInputField extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.send),
-            onPressed: isSendEnabled && !isInputEmpty ? onSendChat : null,
+            onPressed: isSendEnabled ? onSendChat : null,
             color: ColorConstants.primaryColor,
           ),
         ],

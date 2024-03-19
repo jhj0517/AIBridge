@@ -36,7 +36,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   ChatPageMode mode = ChatPageMode.chatMode;
 
   bool _isSendEnabled = true;
-  bool _isInputEmpty = true;
   ChatMessage _messageToEdit = ChatMessage.placeHolder();
   final ValueNotifier<List<ChatMessage>> _messagesToDeleteNotifier = ValueNotifier<List<ChatMessage>>([]);
 
@@ -140,7 +139,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                             controller: _inputTextEditingController,
                             focusNode: _inputFocusNode,
                             isSendEnabled: _isSendEnabled,
-                            isInputEmpty: _isInputEmpty,
                             isMenuVisible: _isInputMenuVisible,
                             onMenuOpen: () => _onMenuOpen(),
                             onSendChat: () => _onSubmitInput(),
@@ -201,11 +199,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
           _isInputMenuVisible = false;
         });
       }
-    });
-    _inputTextEditingController.addListener(() {
-      setState(() {
-        _isInputEmpty = _inputTextEditingController.text.isEmpty;
-      });
     });
 
     await charactersProvider.updateCurrentCharacter(widget.arguments.characterId);
