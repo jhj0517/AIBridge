@@ -39,70 +39,99 @@ enum OnPasteDialogOptionClicked{
   onOKButton
 }
 
-class Dialogs {
+enum DialogResult {
+  yes,
+  cancel,
+  edit,
+  delete,
+  copy,
+}
 
-  static Widget characterDialog(BuildContext context,String characterName){
+abstract class BaseDialog extends StatelessWidget {
+  const BaseDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return SimpleDialog(
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       contentPadding: EdgeInsets.zero,
-      children: <Widget>[
-        Container(
+      children: buildContent(context),
+    );
+  }
+
+  List<Widget> buildContent(BuildContext context);
+}
+
+class CharacterOption extends BaseDialog{
+  final String characterName;
+
+  const CharacterOption({
+    super.key,
+    required this.characterName
+  });
+
+  @override
+  List<Widget> buildContent(BuildContext context) {
+    return [
+      Container(
+        margin: const EdgeInsets.only(left: 20),
+        alignment: Alignment.centerLeft,
+        height: 50,
+        color: Colors.transparent,
+        child: Text(
+          characterName,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      InkWell(
+        onTap: () {
+          Navigator.pop(context, DialogResult.edit);
+        },
+        child: Container(
           margin: const EdgeInsets.only(left: 20),
           alignment: Alignment.centerLeft,
           height: 50,
           color: Colors.transparent,
           child: Text(
-            characterName,
+            Intl.message("editCharacterOption"),
             style: const TextStyle(
               color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              fontWeight: FontWeight.w300,
             ),
           ),
         ),
-        InkWell(
-          onTap: () {
-            Navigator.pop(context, OnCharacterOptionClicked.onEdit);
-          },
-          child: Container(
-            margin: const EdgeInsets.only(left: 20),
-            alignment: Alignment.centerLeft,
-            height: 50,
-            color: Colors.transparent,
-            child: Text(
-              Intl.message("editCharacterOption"),
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w300,
-              ),
+      ),
+      const SizedBox(height: 1),
+      InkWell(
+        onTap: () {
+          Navigator.pop(context, DialogResult.delete);
+        },
+        child: Container(
+          margin: const EdgeInsets.only(left: 20),
+          alignment: Alignment.centerLeft,
+          height: 50,
+          color: Colors.transparent,
+          child: Text(
+            Intl.message("deleteCharacterOption"),
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w300,
             ),
           ),
         ),
-        const SizedBox(height: 1),
-        InkWell(
-          onTap: () {
-            Navigator.pop(context, OnCharacterOptionClicked.onDelete);
-          },
-          child: Container(
-            margin: const EdgeInsets.only(left: 20),
-            alignment: Alignment.centerLeft,
-            height: 50,
-            color: Colors.transparent,
-            child: Text(
-              Intl.message("deleteCharacterOption"),
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w300,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+      ),
+    ];
   }
+}
+
+class Dialogs {
 
   static Widget deleteCharacterDialog(BuildContext context){
     return SimpleDialog(

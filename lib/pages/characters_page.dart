@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:aibridge/widgets/dialogs.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -189,9 +190,9 @@ class CharactersPageState extends State<CharactersPage> {
     switch (await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialogs.characterDialog(context, character.characterName);
+          return CharacterOption(characterName: character.characterName);
         })) {
-      case OnCharacterOptionClicked.onEdit:
+      case DialogResult.edit:
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -203,7 +204,7 @@ class CharactersPageState extends State<CharactersPage> {
           ),
         );
         break;
-      case OnCharacterOptionClicked.onDelete:
+      case DialogResult.delete:
         await _openDeleteDialog(context, character.id!);
         break;
     }
