@@ -146,7 +146,10 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                             onSendChat: () => _onSubmitInput(),
                           ),
                           _isInputMenuVisible
-                          ? _buildInputMenu()
+                          ? ChatMenu(
+                            menuHeight: chatProvider.getKeyboardHeight(context),
+                            menuItems: getChatMenus(),
+                          )
                           : const SizedBox.shrink(),
                         ],
                       ],
@@ -192,7 +195,13 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     // init Keyboard height listener to scroll down chat list when keyboard appears
     _onKeyboardVisibilityChangeSub = _applyKeyboardHeightListener(_keyboardVisibilityController);
     // init Input focus node to deal with focus when Long-Press touch happens
-    _inputFocusNode.addListener(_onFocusChange);
+    _inputFocusNode.addListener(() {
+      if (_inputFocusNode.hasFocus){
+        setState(() {
+          _isInputMenuVisible = false;
+        });
+      }
+    });
     _inputTextEditingController.addListener(() {
       setState(() {
         _isInputEmpty = _inputTextEditingController.text.isEmpty;
@@ -464,15 +473,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     }
   }
 
-  void _onFocusChange() {
-    if (_inputFocusNode.hasFocus){
-      // Hide menu when keyboard appear
-      setState(() {
-        _isInputMenuVisible = false;
-      });
-    }
-  }
-
   Future<void> _onMenuOpen() async {
     if(_keyboardVisibilityController.isVisible){
       _inputFocusNode.unfocus();
@@ -518,83 +518,43 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     });
   }
 
-  Widget _buildInputMenu() {
-    Widget buildMenuButton(Object iconOrImagePath, String label, Function onPressed) {
-      return Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => onPressed(),
-          child: SizedBox(
-            width: 80,
-            height: 80,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                iconOrImagePath is IconData
-                    ? Icon(iconOrImagePath, color: ColorConstants.primaryColor)
-                    : SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: Image(
-                    fit: BoxFit.scaleDown,
-                    image: AssetImage(iconOrImagePath as String),
-                  ),
-                ),
-                Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: ColorConstants.primaryColor
-                  ),
-                ),
-              ],
+  List<ChatMenuItem> getChatMenus(){
+    return [
+      ChatMenuItem(
+        icon: Icons.edit,
+        label: Intl.message("editProfile"),
+        onPressed: () => {
+          navigateTo(CharacterCreationPage(
+            arguments: CharacterCreationPageArguments(
+                character: charactersProvider.currentCharacter
             ),
-          ),
-        ),
+          ))
+      }),
+      ChatMenuItem(
+        icon: Icons.settings,
+        label: Intl.message("chatRoomSetting"),
+        onPressed: () => {
+          navigateTo(const ChatRoomSettingPage())
+      }),
+      ChatMenuItem(
+        icon: Icons.image,
+        label: Intl.message("image"),
+        onPressed: () => {
+          if (context.mounted){
+            _openPasteDialog()
+          }
+      })
+    ];
+  }
+
+  void navigateTo(StatefulWidget page){
+    if (context.mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => page, // This should be variable
+        )
       );
     }
-
-    return Container(
-      height: chatProvider.getKeyboardHeight(context),
-      color: Colors.white,
-      child: SingleChildScrollView(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            buildMenuButton(Icons.edit, Intl.message("editProfile"), () {
-              // Implement functionality for photo button
-              if (context.mounted) {
-                Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => CharacterCreationPage(
-                        arguments: CharacterCreationPageArguments(
-                            character: charactersProvider.currentCharacter
-                        ),
-                      ),
-                    )
-                );
-              }
-            }),
-            buildMenuButton(Icons.settings, Intl.message("chatRoomSetting"), () {
-              // Implement functionality for photo button
-              if (context.mounted) {
-                Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const ChatRoomSettingPage(),
-                    )
-                );
-              }
-            }),
-            buildMenuButton(Icons.image, Intl.message("image"), () {
-              // Implement functionality for photo button
-              if (context.mounted) {
-                _openPasteDialog();
-              }
-            }),
-          ],
-        ),
-      ),
-    );
   }
 
   Future<void> _onSubmitInput() async {
