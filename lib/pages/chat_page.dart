@@ -361,16 +361,15 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     switch (await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialogs.pasteTextDialog(
-            context,
-            Intl.message("uploadImage"),
-            Intl.message("gpt4VisionOnly"),
-            Intl.message("pasteImageURL"),
-            Intl.message("upload"),
-            _imageURLTextEditingController,
+          return TextPaster(
+              title: Intl.message("uploadImage"),
+              subTitle: Intl.message("gpt4VisionOnly"),
+              labelText: Intl.message("pasteImageURL"),
+              buttonText: Intl.message("upload"),
+              textFieldController: _imageURLTextEditingController
           );
         })) {
-      case OnPasteDialogOptionClicked.onOKButton:
+      case DialogResult.yes:
         final character = charactersProvider.currentCharacter;
         final imageInput = ChatMessage(
             roomId: chatRoomsProvider.currentChatRoom.id!,
@@ -444,17 +443,12 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     switch (await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialogs.yesOrNoDialog(
-            context,
-            Icons.key,
-            title,
-            message,
-          );
+          return WarningDialog(icon: Icons.key, title: title, message: message);
         })) {
-      case OnYesOrNoOptionClicked.onCancel:
+      case DialogResult.cancel:
         chatProvider.setRequestState(RequestState.initialized);
         break;
-      case OnYesOrNoOptionClicked.onYes:
+      case DialogResult.yes:
         chatProvider.setRequestState(RequestState.initialized);
         Navigator.push(context, MaterialPageRoute(builder: (context) => const MainNavigationPage(initialIndex: 0)));
         break;
