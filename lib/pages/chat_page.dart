@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:aibridge/widgets/chat_input.dart';
+import 'package:aibridge/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -384,7 +385,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         _imageURLTextEditingController.text = "";
         if(character.service.serviceType == ServiceType.openAI){
           final service = character.service as OpenAIService;
-          debugPrint("currentMessages : ${chatProvider.chatMessages}");
           await chatProvider.openAIStreamCompletion(
             service,
             chatProvider.chatMessages,
@@ -401,8 +401,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
           );
         }
         break;
-      case null: // when dialog is dismissed by tab somewhere else
-        break;
     }
   }
 
@@ -410,9 +408,9 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     switch (await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialogs.chatDialog(context);
+          return const ChatOption();
         })) {
-      case OnChatOptionClicked.onEdit:
+      case DialogResult.edit:
         _chatTextEditingController.text = chatMessage.content;
         final editableChatMessage = ChatMessage(
           id: chatMessage.id,
@@ -431,12 +429,12 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
           mode = ChatPageMode.editMode;
         });
         break;
-      case OnChatOptionClicked.onDelete :
+      case DialogResult.delete :
         setState(() {
           mode = ChatPageMode.deleteMode;
         });
         break;
-      case OnChatOptionClicked.onCopy :
+      case DialogResult.copy :
         await Clipboard.setData(ClipboardData(text: chatMessage.content));
         break;
     }
@@ -469,14 +467,13 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   Future<void> _onMenuOpen() async {
     if(_keyboardVisibilityController.isVisible){
       _inputFocusNode.unfocus();
-      //wait until keyboard is fully closed
       await Future.delayed(const Duration(milliseconds: 200));
       setState(() {
         _isInputMenuVisible = true;
       });
     } else{
-      _inputFocusNode.unfocus();
       setState(() {
+        _inputFocusNode.unfocus();
         _isInputMenuVisible = !_isInputMenuVisible;
       });
     }
@@ -551,56 +548,66 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   }
 
   Future<void> _onSubmitInput() async {
-    // Declare these values at first because `current` values can be different during request
-    final roomId = chatRoomsProvider.currentChatRoom.id!;
+    final currentChatRoom = chatRoomsProvider.currentChatRoom;
     final character = charactersProvider.currentCharacter;
+
     final now = Utilities.getTimestamp();
     final inputChatMessage = ChatMessage(
-      roomId: roomId,
+      roomId: currentChatRoom.id!,
       characterId: character.id!,
       chatMessageType: ChatMessageType.userMessage,
       timestamp: now,
       role: "user",
       content: _inputTextEditingController.text,
     );
+
     await chatProvider.insertChatMessage(inputChatMessage);
-    // scroll down chat list
     _scrollChatToBottom();
-    // set Input text empty after inserting input message
     _inputTextEditingController.text = "";
-    // request Chat by service
-    if(character.service.serviceType == ServiceType.openAI){
-      final service = character.service as OpenAIService;
-      await chatProvider.openAIStreamCompletion(
-        service,
-        chatProvider.chatMessages,
-        roomId,
-        character,
-      );
-    } else if (character.service.serviceType == ServiceType.paLM){
-      final service = character.service as PaLMService;
-      await chatProvider.paLMChatCompletion(
-        service,
-        chatProvider.chatMessages,
-        roomId,
-        character,
-      );
+
+    switch (character.service.serviceType) {
+      case ServiceType.openAI:
+        final openAIService = character.service as OpenAIService;
+        await chatProvider.openAIStreamCompletion(
+          openAIService,
+          chatProvider.chatMessages,
+          currentChatRoom.id!,
+          character,
+        );
+        break;
+      case ServiceType.paLM:
+        final paLMService = character.service as PaLMService;
+        await chatProvider.paLMChatCompletion(
+          paLMService,
+          chatProvider.chatMessages,
+          currentChatRoom.id!,
+          character,
+        );
+        break;
+      default:
+      // Handle unsupported service types (optional)
     }
   }
 
   void _networkStateListenerFunction(){
-    if(chatProvider.requestState == RequestState.invalidOpenAIAPIKey){
-      _openMovePageDialog(Intl.message("chatGPTAPIKeyErrorTitle"), Intl.message("chatGPTAPIisInvalid"));
-    } else if (chatProvider.requestState == RequestState.invalidPaLMAPIKey){
-      _openMovePageDialog(Intl.message("paLMAPIKeyErrorTitle"), Intl.message("paLMAPIisInvalid"));
-    } else if (mounted && (chatProvider.requestState == RequestState.loading || chatProvider.requestState == RequestState.answering)){
-      setState(() {
-        _isSendEnabled = false;
-      });
-    } else if (mounted && (chatProvider.requestState == RequestState.initialized || chatProvider.requestState == RequestState.done)) {
-      setState(() {
-        _isSendEnabled = true;
-      });
+    switch(chatProvider.requestState){
+      case RequestState.invalidOpenAIAPIKey:
+        _openMovePageDialog(Intl.message("chatGPTAPIKeyErrorTitle"), Intl.message("chatGPTAPIisInvalid"));
+        break;
+      case RequestState.invalidPaLMAPIKey:
+        _openMovePageDialog(Intl.message("paLMAPIKeyErrorTitle"), Intl.message("paLMAPIisInvalid"));
+        break;
+      case RequestState.loading:
+      case RequestState.answering:
+        setState(() {
+          _isSendEnabled = false;
+        });
+      case RequestState.initialized:
+      case RequestState.done:
+        setState(() {
+          _isSendEnabled = true;
+        });
+        break;
     }
   }
 
