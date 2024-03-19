@@ -215,11 +215,11 @@ class CharactersPageState extends State<CharactersPage> {
     switch (await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialogs.deleteCharacterDialog(context);
+          return const DeleteCheckDialog();
         })) {
-      case OnDeleteCharacterOptionClicked.onCancel:
+      case DialogResult.cancel:
         break;
-      case OnDeleteCharacterOptionClicked.onYes:
+      case DialogResult.yes:
         final characterProvider = Provider.of<CharactersProvider>(
             context, listen: false);
         final chatRoomsProvider = Provider.of<ChatRoomsProvider>(

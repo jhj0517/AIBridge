@@ -131,88 +131,159 @@ class CharacterOption extends BaseDialog{
   }
 }
 
-class Dialogs {
+class DeleteCheckDialog extends BaseDialog {
+  const DeleteCheckDialog({super.key});
 
-  static Widget deleteCharacterDialog(BuildContext context){
-    return SimpleDialog(
-      clipBehavior: Clip.hardEdge,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      contentPadding: EdgeInsets.zero,
-      children: <Widget>[
-        Container(
-          color: ColorConstants.themeColor,
-          padding: const EdgeInsets.only(bottom: 10, top: 10,right: 10,left: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                child: const Icon(
-                  Icons.delete,
-                  size: 30,
-                  color: Colors.white,
-                ),
+  @override
+  List<Widget> buildContent(BuildContext context) {
+    return [
+      Container(
+        color: ColorConstants.themeColor,
+        padding: const EdgeInsets.only(bottom: 10, top: 10,right: 10,left: 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: const Icon(
+                Icons.delete,
+                size: 30,
+                color: Colors.white,
               ),
-              Text(
-                Intl.message("deleteCharacterOption"),
-                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              Intl.message("deleteCharacterOption"),
+              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              Intl.message("deleteCharacterConfirm"),
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
               ),
-              const SizedBox(height: 5),
-              Text(
-                Intl.message("deleteCharacterConfirm"),
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
-        SimpleDialogOption(
-          onPressed: () {
-            Navigator.pop(context, OnDeleteCharacterOptionClicked.onCancel);
-          },
-          child: Row(
-            children: <Widget>[
-              Container(
-                margin: const EdgeInsets.only(right: 10),
-                child: const Icon(
-                  Icons.cancel,
-                  color: ColorConstants.primaryColor,
-                ),
+      ),
+      SimpleDialogOption(
+        onPressed: () {
+          Navigator.pop(context, DialogResult.cancel);
+        },
+        child: Row(
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.only(right: 10),
+              child: const Icon(
+                Icons.cancel,
+                color: ColorConstants.primaryColor,
               ),
-              Text(
-                Intl.message("cancel"),
-                style: const TextStyle(color: ColorConstants.primaryColor, fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
+            ),
+            Text(
+              Intl.message("cancel"),
+              style: const TextStyle(color: ColorConstants.primaryColor, fontWeight: FontWeight.bold),
+            )
+          ],
         ),
-        SimpleDialogOption(
-          onPressed: () {
-            Navigator.pop(context, OnDeleteCharacterOptionClicked.onYes);
-          },
-          child: Row(
-            children: <Widget>[
-              Container(
-                margin: const EdgeInsets.only(right: 10),
-                child: const Icon(
-                  Icons.check_circle,
-                  color: ColorConstants.primaryColor,
-                ),
+      ),
+      SimpleDialogOption(
+        onPressed: () {
+          Navigator.pop(context, DialogResult.yes);
+        },
+        child: Row(
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.only(right: 10),
+              child: const Icon(
+                Icons.check_circle,
+                color: ColorConstants.primaryColor,
               ),
-              Text(
-                Intl.message("yes"),
-                style: const TextStyle(color: ColorConstants.primaryColor, fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
+            ),
+            Text(
+              Intl.message("yes"),
+              style: const TextStyle(color: ColorConstants.primaryColor, fontWeight: FontWeight.bold),
+            )
+          ],
         ),
-      ],
-    );
+      ),
+    ];
   }
+
+}
+
+class ChatOption extends BaseDialog {
+  const ChatOption({super.key});
+
+  @override
+  List<Widget> buildContent(BuildContext context) {
+    return [
+      InkWell(
+        onTap: () {
+          Navigator.pop(context, DialogResult.delete);
+        },
+        child: Container(
+          margin: const EdgeInsets.only(left: 20),
+          alignment: Alignment.centerLeft,
+          height: 50,
+          color: Colors.transparent,
+          child: Text(
+            Intl.message("editChatOption"),
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 1),
+      InkWell(
+        onTap: () {
+          Navigator.pop(context, DialogResult.delete);
+        },
+        child: Container(
+          margin: const EdgeInsets.only(left: 20),
+          alignment: Alignment.centerLeft,
+          height: 50,
+          color: Colors.transparent,
+          child: Text(
+            Intl.message("deleteChatOption"),
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 1),
+      InkWell(
+        onTap: () {
+          Navigator.pop(context, DialogResult.copy);
+        },
+        child: Container(
+          margin: const EdgeInsets.only(left: 20),
+          alignment: Alignment.centerLeft,
+          height: 50,
+          color: Colors.transparent,
+          child: Text(
+            Intl.message("copyChatOption"),
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ),
+      ),
+    ];
+  }
+
+}
+
+class Dialogs {
 
   static Widget chatDialog(BuildContext context){
     return SimpleDialog(
