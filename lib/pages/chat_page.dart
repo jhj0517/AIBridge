@@ -358,17 +358,18 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   }
 
   Future<void> _openPasteDialog() async {
-    switch (await showDialog(
+    final result = await showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return TextPaster(
-              title: Intl.message("uploadImage"),
-              subTitle: Intl.message("gpt4VisionOnly"),
-              labelText: Intl.message("pasteImageURL"),
-              buttonText: Intl.message("upload"),
-              textFieldController: _imageURLTextEditingController
-          );
-        })) {
+        builder: (context) => TextPaster(
+            title: Intl.message("uploadImage"),
+            subTitle: Intl.message("gpt4VisionOnly"),
+            labelText: Intl.message("pasteImageURL"),
+            buttonText: Intl.message("upload"),
+            textFieldController: _imageURLTextEditingController
+        ),
+    );
+
+    switch (result){
       case DialogResult.yes:
         final character = charactersProvider.currentCharacter;
         final imageInput = ChatMessage(
@@ -382,24 +383,29 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         );
         await chatProvider.insertChatMessage(imageInput);
         _imageURLTextEditingController.text = "";
-        if(character.service.serviceType == ServiceType.openAI){
-          final service = character.service as OpenAIService;
-          await chatProvider.openAIStreamCompletion(
-            service,
-            chatProvider.chatMessages,
-            chatRoomsProvider.currentChatRoom.id!,
-            character,
-          );
-        } else if (character.service.serviceType == ServiceType.paLM){
-          final service = character.service as PaLMService;
-          await chatProvider.paLMChatCompletion(
-            service,
-            chatProvider.chatMessages,
-            chatRoomsProvider.currentChatRoom.id!,
-            character,
-          );
-        }
-        break;
+
+        await _handleChatSendEvent(character);
+    }
+  }
+
+  Future<void> _handleChatSendEvent(Character character) async {
+    switch(character.service.serviceType){
+      case ServiceType.openAI:
+        final service = character.service as OpenAIService;
+        await chatProvider.openAIStreamCompletion(
+          service,
+          chatProvider.chatMessages,
+          chatRoomsProvider.currentChatRoom.id!,
+          character,
+        );
+      case ServiceType.paLM:
+        final service = character.service as PaLMService;
+        await chatProvider.paLMChatCompletion(
+          service,
+          chatProvider.chatMessages,
+          chatRoomsProvider.currentChatRoom.id!,
+          character,
+        );
     }
   }
 
@@ -450,7 +456,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         break;
       case DialogResult.yes:
         chatProvider.setRequestState(RequestState.initialized);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const MainNavigationPage(initialIndex: 0)));
+        navigateTo(const MainNavigationPage(initialIndex: 0));
         break;
       case null: // when dialog is dismissed by tab somewhere else
         chatProvider.setRequestState(RequestState.initialized);
@@ -535,7 +541,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     if (context.mounted) {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => page, // This should be variable
+          builder: (context) => page,
         )
       );
     }
@@ -559,38 +565,15 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     _scrollChatToBottom();
     _inputTextEditingController.text = "";
 
-    switch (character.service.serviceType) {
-      case ServiceType.openAI:
-        final openAIService = character.service as OpenAIService;
-        await chatProvider.openAIStreamCompletion(
-          openAIService,
-          chatProvider.chatMessages,
-          currentChatRoom.id!,
-          character,
-        );
-        break;
-      case ServiceType.paLM:
-        final paLMService = character.service as PaLMService;
-        await chatProvider.paLMChatCompletion(
-          paLMService,
-          chatProvider.chatMessages,
-          currentChatRoom.id!,
-          character,
-        );
-        break;
-      default:
-      // Handle unsupported service types (optional)
-    }
+    await _handleChatSendEvent(character);
   }
 
   void _networkStateListenerFunction(){
     switch(chatProvider.requestState){
       case RequestState.invalidOpenAIAPIKey:
         _openMovePageDialog(Intl.message("chatGPTAPIKeyErrorTitle"), Intl.message("chatGPTAPIisInvalid"));
-        break;
       case RequestState.invalidPaLMAPIKey:
         _openMovePageDialog(Intl.message("paLMAPIKeyErrorTitle"), Intl.message("paLMAPIisInvalid"));
-        break;
       case RequestState.loading:
       case RequestState.answering:
         setState(() {
@@ -601,7 +584,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         setState(() {
           _isSendEnabled = true;
         });
-        break;
     }
   }
 
