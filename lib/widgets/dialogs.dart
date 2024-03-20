@@ -389,6 +389,7 @@ class TextPaster extends StatelessWidget {
   final String subTitle;
   final String labelText;
   final String buttonText;
+  final bool isPassword;
   final TextEditingController textFieldController;
 
   const TextPaster({
@@ -397,7 +398,8 @@ class TextPaster extends StatelessWidget {
     required this.subTitle,
     required this.labelText,
     required this.buttonText,
-    required this.textFieldController
+    required this.textFieldController,
+    this.isPassword = false,
   });
 
   @override
@@ -456,6 +458,7 @@ class TextPaster extends StatelessWidget {
                         color: Colors.white
                     ),
                     autocorrect: false,
+                    obscureText: isPassword,
                   ),
                 ),
                 Material(
