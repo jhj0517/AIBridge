@@ -25,7 +25,6 @@ class CharactersPageState extends State<CharactersPage> {
   final ScrollController listScrollController = ScrollController();
   bool isLoading = false;
 
-  //Searchbar
   bool _isSearching = false;
   String _textSearch = "";
   TextEditingController searchBarTec = TextEditingController();
@@ -185,7 +184,7 @@ class CharactersPageState extends State<CharactersPage> {
     // initialize something
   }
 
-  Future<void> _openCharacterOptionDialog(BuildContext context, Character character) async {
+  Future<void> _openCharacterOptionDialog(Character character) async {
     final dialogResult = await showDialog(
         context: context,
         builder: (context) => CharacterOption(
@@ -207,12 +206,12 @@ class CharactersPageState extends State<CharactersPage> {
         );
         break;
       case DialogResult.delete:
-        await _openDeleteDialog(context, character.id!);
+        await _openDeleteDialog(character.id!);
         break;
     }
   }
 
-  Future<void> _openDeleteDialog(BuildContext context, String characterId) async {
+  Future<void> _openDeleteDialog(String characterId) async {
     final dialogResult = await showDialog(
       context: context,
       builder: (context) => const DeleteCheckDialog(),
@@ -275,7 +274,7 @@ class CharactersPageState extends State<CharactersPage> {
           color: themeProvider.attrs.backgroundColor,
           child: InkWell(
             onLongPress: () async {
-              await _openCharacterOptionDialog(context, character);
+              await _openCharacterOptionDialog(character);
             },
             onTap: () {
               if (Utilities.isKeyboardShowing(context)) {

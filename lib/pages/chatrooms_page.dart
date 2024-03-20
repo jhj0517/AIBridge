@@ -205,11 +205,12 @@ class ChatRoomsState extends State<ChatRoomsPage> {
   }
 
   Future<void> _openChatRoomDialog(ChatRoom chatRoom) async {
-    switch (await showDialog(
+    final result = await showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return ChatRoomOption(characterName: chatRoom.characterName);
-        })) {
+        builder: (context) => ChatRoomOption(characterName: chatRoom.characterName),
+    );
+
+    switch(result){
       case DialogResult.delete:
         await _openDeleteChatRoomDialog(context, chatRoom);
         break;
@@ -217,15 +218,16 @@ class ChatRoomsState extends State<ChatRoomsPage> {
   }
 
   Future<void> _openDeleteChatRoomDialog(BuildContext context, ChatRoom chatRoom) async {
-    switch (await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return WarningDialog(
-              icon: Icons.delete,
-              title: Intl.message("deleteChatroom"),
-              message: Intl.message("deleteChatroomConfirm")
-          );
-        })) {
+    final result = await showDialog(
+      context: context,
+      builder: (context) => WarningDialog(
+        icon: Icons.delete,
+        title: Intl.message("deleteChatroom"),
+        message: Intl.message("deleteChatroomConfirm")
+      ),
+    );
+
+    switch(result){
       case DialogResult.cancel:
         break;
       case DialogResult.yes:
