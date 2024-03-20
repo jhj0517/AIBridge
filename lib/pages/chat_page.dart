@@ -184,52 +184,35 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   }
 
   Future<void> _init() async {
-    // init ChatRoomSetting
-    await chatRoomsProvider.readChatRoomSetting(themeProvider.attrs.backgroundColor);
-    // init Request state and add Listener
+    final backgroundColor = themeProvider.attrs.backgroundColor;
+    await chatRoomsProvider.readChatRoomSetting(backgroundColor);
+    await charactersProvider.updateCurrentCharacter(widget.arguments.characterId);
+    await chatRoomsProvider.updateCurrentChatRoom(widget.arguments.characterId);
+
+    await chatProvider.updateChatMessages(chatRoomsProvider.currentChatRoom.id!);
+
     chatProvider.setRequestState(RequestState.initialized);
-    chatProvider.addListener(() {
-      _networkStateListenerFunction();
-    });
-    // init Keyboard height listener to scroll down chat list when keyboard appears
-    _onKeyboardVisibilityChangeSub = _applyKeyboardHeightListener(_keyboardVisibilityController);
-    // init Input focus node to deal with focus when Long-Press touch happens
+    chatProvider.addListener(_networkStateListenerFunction);
+    _onKeyboardVisibilityChangeSub = _observeKeyboardHeight(_keyboardVisibilityController);
     _inputFocusNode.addListener(() {
-      if (_inputFocusNode.hasFocus){
-        setState(() {
-          _isInputMenuVisible = false;
-        });
+      if (_inputFocusNode.hasFocus) {
+        setState(() => _isInputMenuVisible = false);
       }
     });
 
-    await charactersProvider.updateCurrentCharacter(widget.arguments.characterId);
-    await chatRoomsProvider.updateCurrentChatRoom(widget.arguments.characterId);
-    await chatProvider.updateChatMessages(chatRoomsProvider.currentChatRoom.id!);
+    await Future.delayed(const Duration(milliseconds: 30), _scrollChatToBottom);
 
-    // scroll down to bottom of the chat list when user visit page first.
-    await Future.delayed(const Duration(milliseconds: 30), () {
-      _scrollChatToBottom();
-    });
-    // set isLoading false
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 
-  StreamSubscription? _applyKeyboardHeightListener(KeyboardVisibilityController controller){
+  StreamSubscription? _observeKeyboardHeight(KeyboardVisibilityController controller){
     return controller.onChange.listen((bool isVisible) async {
       if (isVisible) {
-        // Scroll Down by Keyboard Height when keyboard is appeared
-        // I have to do this because of this issue https://github.com/flutter/flutter/issues/96279
         await Future.delayed(const Duration(milliseconds: 500));
         double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-        if(keyboardHeight != chatProvider.getKeyboardHeight(context) && keyboardHeight>0){
-          //save Keyboard Height to SharedPreference
-          await chatProvider.setKeyboardHeight(keyboardHeight);
+        if(keyboardHeight >= chatProvider.getKeyboardHeight(context)){
+          chatProvider.setKeyboardHeight(keyboardHeight);
         }
-      } else {
-        //Scroll up by keyboard height when keyboard is disappeared
-        _inputFocusNode.unfocus();
       }
     });
   }
@@ -287,7 +270,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
           mode: mode,
           chatTextEditingController: _chatTextEditingController,
           editChatFocusNode: _editUserChatFocusNode,
-          dialogCallback: () => _openChatDialog(context, content),
+          dialogCallback: () => _openChatDialog(content),
           themeProvider: themeProvider
       );
     }
@@ -312,7 +295,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
           mode: mode,
           chatTextEditingController: _chatTextEditingController,
           editChatFocusNode: _editUserChatFocusNode,
-          dialogCallback: () => _openChatDialog(context, content),
+          dialogCallback: () => _openChatDialog(content),
           themeProvider: themeProvider,
           charactersProvider: charactersProvider,
       );
@@ -384,11 +367,11 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         await chatProvider.insertChatMessage(imageInput);
         _imageURLTextEditingController.text = "";
 
-        await _handleChatSendEvent(character);
+        await _handleSendChatEvent(character);
     }
   }
 
-  Future<void> _handleChatSendEvent(Character character) async {
+  Future<void> _handleSendChatEvent(Character character) async {
     switch(character.service.serviceType){
       case ServiceType.openAI:
         final service = character.service as OpenAIService;
@@ -398,6 +381,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
           chatRoomsProvider.currentChatRoom.id!,
           character,
         );
+
       case ServiceType.paLM:
         final service = character.service as PaLMService;
         await chatProvider.paLMChatCompletion(
@@ -409,48 +393,43 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     }
   }
 
-  Future<void> _openChatDialog(BuildContext context, ChatMessage chatMessage) async {
-    switch (await showDialog(
+  Future<void> _openChatDialog(ChatMessage chatMessage) async {
+    final result = await showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return const ChatOption();
-        })) {
+        builder: (context) => const ChatOption()
+    );
+
+    switch(result){
       case DialogResult.edit:
+        chatMessage.isEditable = true;
         _chatTextEditingController.text = chatMessage.content;
-        final editableChatMessage = ChatMessage(
-          id: chatMessage.id,
-          roomId: chatMessage.roomId,
-          characterId: chatMessage.characterId,
-          chatMessageType: chatMessage.chatMessageType,
-          timestamp: chatMessage.timestamp,
-          role: chatMessage.role,
-          content: chatMessage.content,
-          isEditable: true,
-        );
-        await chatProvider.updateOneChatMessage(editableChatMessage);
         _inputFocusNode.requestFocus();
         setState(() {
-          _messageToEdit = editableChatMessage;
+          _messageToEdit = chatMessage;
           mode = ChatPageMode.editMode;
         });
-        break;
+
       case DialogResult.delete :
         setState(() {
           mode = ChatPageMode.deleteMode;
         });
-        break;
+
       case DialogResult.copy :
         await Clipboard.setData(ClipboardData(text: chatMessage.content));
-        break;
     }
   }
 
   Future<void> _openMovePageDialog(String title, String message) async {
-    switch (await showDialog(
+    final result = await showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return WarningDialog(icon: Icons.key, title: title, message: message);
-        })) {
+        builder: (context) => WarningDialog(
+            icon: Icons.key,
+            title: title,
+            message: message
+        ),
+    );
+
+    switch(result){
       case DialogResult.cancel:
         chatProvider.setRequestState(RequestState.initialized);
         break;
@@ -460,7 +439,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         break;
       case null: // when dialog is dismissed by tab somewhere else
         chatProvider.setRequestState(RequestState.initialized);
-        break;
     }
   }
 
@@ -562,10 +540,10 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     );
 
     await chatProvider.insertChatMessage(inputChatMessage);
-    _scrollChatToBottom();
     _inputTextEditingController.text = "";
+    _scrollChatToBottom();
 
-    await _handleChatSendEvent(character);
+    await _handleSendChatEvent(character);
   }
 
   void _networkStateListenerFunction(){
