@@ -185,22 +185,24 @@ class CharactersPageState extends State<CharactersPage> {
     // initialize something
   }
 
-  Future<void> _openCharacterOptionDialog(BuildContext context,
-      Character character) async {
-    switch (await showDialog(
+  Future<void> _openCharacterOptionDialog(BuildContext context, Character character) async {
+    final dialogResult = await showDialog(
         context: context,
-        builder: (BuildContext context) {
-          return CharacterOption(characterName: character.characterName);
-        })) {
+        builder: (context) => CharacterOption(
+          characterName: character.characterName
+        ),
+    );
+
+    switch (dialogResult){
       case DialogResult.edit:
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                CharacterCreationPage(
-                  arguments: CharacterCreationPageArguments(
-                      character: character),
+            builder: (context) => CharacterCreationPage(
+                arguments: CharacterCreationPageArguments(
+                    character: character
                 ),
+              ),
           ),
         );
         break;
@@ -210,21 +212,17 @@ class CharactersPageState extends State<CharactersPage> {
     }
   }
 
-  Future<void> _openDeleteDialog(BuildContext context,
-      String characterId) async {
-    switch (await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return const DeleteCheckDialog();
-        })) {
+  Future<void> _openDeleteDialog(BuildContext context, String characterId) async {
+    final dialogResult = await showDialog(
+      context: context,
+      builder: (context) => const DeleteCheckDialog(),
+    );
+
+    switch(dialogResult){
       case DialogResult.cancel:
         break;
       case DialogResult.yes:
-        final characterProvider = Provider.of<CharactersProvider>(
-            context, listen: false);
-        final chatRoomsProvider = Provider.of<ChatRoomsProvider>(
-            context, listen: false);
-        await characterProvider.deleteCharacter(characterId);
+        await charactersProvider.deleteCharacter(characterId);
         await chatRoomsProvider.updateChatRooms();
         break;
     }
@@ -267,93 +265,93 @@ class CharactersPageState extends State<CharactersPage> {
   }
 
   Widget _buildItem(BuildContext context, Character? character) {
-    if (character != null) {
-      return Column(
-        children: [
-          Ink(
-            color: themeProvider.attrs.backgroundColor,
-            child: InkWell(
-              onLongPress: () async {
-                await _openCharacterOptionDialog(context, character);
-              },
-              onTap: () {
-                if (Utilities.isKeyboardShowing(context)) {
-                  Utilities.closeKeyboard(context);
-                }
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        CharacterProfilePage(
-                          arguments: CharacterProfilePageArguments(
-                              characterId: character.id!,
-                              comingFromChatPage: false
+    if (character == null){
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      children: [
+        Ink(
+          color: themeProvider.attrs.backgroundColor,
+          child: InkWell(
+            onLongPress: () async {
+              await _openCharacterOptionDialog(context, character);
+            },
+            onTap: () {
+              if (Utilities.isKeyboardShowing(context)) {
+                Utilities.closeKeyboard(context);
+              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      CharacterProfilePage(
+                        arguments: CharacterProfilePageArguments(
+                            characterId: character.id!,
+                            comingFromChatPage: false
+                        ),
+                      ),
+                ),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              child: Row(
+                children: <Widget>[
+                  Material(
+                    color: Colors.transparent,
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                    clipBehavior: Clip.hardEdge,
+                    child: character.photoBLOB.isNotEmpty
+                        ? SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: Image.memory(
+                          character.photoBLOB,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, object, stackTrace) {
+                            return const Icon(
+                              Icons.account_circle_rounded,
+                              size: 50,
+                              color: ColorConstants.greyColor,
+                            );
+                          },
+                        )
+                    )
+                        : const Icon(
+                      Icons.account_circle,
+                      size: 50,
+                      color: ColorConstants.greyColor,
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          character.characterName,
+                          style: TextStyle(
+                            color: themeProvider.attrs.fontColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ],
+                    ),
                   ),
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                child: Row(
-                  children: <Widget>[
-                    Material(
-                      color: Colors.transparent,
-                      borderRadius: const BorderRadius.all(Radius.circular(20)),
-                      clipBehavior: Clip.hardEdge,
-                      child: character.photoBLOB.isNotEmpty
-                          ? SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: Image.memory(
-                              character.photoBLOB,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, object, stackTrace) {
-                                return const Icon(
-                                  Icons.account_circle_rounded,
-                                  size: 50,
-                                  color: ColorConstants.greyColor,
-                                );
-                              },
-                            )
-                          )
-                          : const Icon(
-                            Icons.account_circle,
-                            size: 50,
-                            color: ColorConstants.greyColor,
-                          ),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            character.characterName,
-                            style: TextStyle(
-                              color: themeProvider.attrs.fontColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                ],
               ),
             ),
           ),
-          Divider(
-            height: 0.1,
-            thickness: 0.3,
-            color: themeProvider.attrs.dividerColor,
-          ),
-        ],
-      );
-    } else {
-      return const SizedBox.shrink();
-    }
+        ),
+        Divider(
+          height: 0.1,
+          thickness: 0.3,
+          color: themeProvider.attrs.dividerColor,
+        ),
+      ],
+    );
   }
 
   Widget _buildAddButton(BuildContext context) {
