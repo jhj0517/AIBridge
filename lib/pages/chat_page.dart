@@ -31,29 +31,35 @@ enum ChatPageMode{
 
 class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
-  bool _isLoading = true;
-
-  bool _isInputMenuVisible = false;
+  // State variables
   ChatPageMode mode = ChatPageMode.chatMode;
-
+  bool _isLoading = true;
+  bool _isInputMenuVisible = false;
   bool _isSendEnabled = true;
   ChatMessage _messageToEdit = ChatMessage.placeHolder();
-  final ValueNotifier<List<ChatMessage>> _messagesToDeleteNotifier = ValueNotifier<List<ChatMessage>>([]);
+  final ValueNotifier<List<ChatMessage>> _messagesToDeleteNotifier =
+  ValueNotifier<List<ChatMessage>>([]);
 
-  final KeyboardVisibilityController _keyboardVisibilityController = KeyboardVisibilityController();
-  StreamSubscription? _onKeyboardVisibilityChangeSub;
+  // Controllers
   final TextEditingController _inputTextEditingController = TextEditingController();
   final TextEditingController _chatTextEditingController = TextEditingController();
   final TextEditingController _imageURLTextEditingController = TextEditingController();
   final ScrollController _chatScrollController = ScrollController();
+  final KeyboardVisibilityController _keyboardVisibilityController = KeyboardVisibilityController();
+
+  // FocusNodes
   final FocusNode _inputFocusNode = FocusNode();
   final FocusNode _editCharacterChatFocusNode = FocusNode();
   final FocusNode _editUserChatFocusNode = FocusNode();
 
+  // Providers
   late ThemeProvider themeProvider;
   late ChatProvider chatProvider;
   late CharactersProvider charactersProvider;
   late ChatRoomsProvider chatRoomsProvider;
+
+  // Keyboard Height Listener
+  StreamSubscription? _onKeyboardVisibilityChangeSub;
 
   @override
   void initState() {
@@ -71,7 +77,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   @override
   Widget build(BuildContext context) {
     themeProvider = context.watch<ThemeProvider>();
-    charactersProvider = context.watch<CharactersProvider>(); // makes new instance of the page whenever character is updated
+    charactersProvider = context.watch<CharactersProvider>();
     return Selector<ChatRoomsProvider, ChatRoomSetting>(
       selector: (_, provider) => provider.chatRoomSetting!,
       builder: (context, settings, _) {
@@ -179,7 +185,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     _editUserChatFocusNode.dispose();
     // Dispose ValueNotifiers
     _messagesToDeleteNotifier.dispose();
-    chatProvider.removeListener(_networkStateListenerFunction);
+    chatProvider.removeListener(_onNetworkStateChanged);
     WidgetsBinding.instance.removeObserver(this);
   }
 
@@ -192,7 +198,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     await chatProvider.updateChatMessages(chatRoomsProvider.currentChatRoom.id!);
 
     chatProvider.setRequestState(RequestState.initialized);
-    chatProvider.addListener(_networkStateListenerFunction);
+    chatProvider.addListener(_onNetworkStateChanged);
     _onKeyboardVisibilityChangeSub = _observeKeyboardHeight(_keyboardVisibilityController);
     _inputFocusNode.addListener(() {
       if (_inputFocusNode.hasFocus) {
@@ -304,39 +310,27 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   }
 
   Future<bool> _onBackPress() async {
-    if(mode == ChatPageMode.deleteMode){
-      _messagesToDeleteNotifier.value = [];
-      setState(() {
-        mode = ChatPageMode.chatMode;
-      });
-    }else if(mode == ChatPageMode.editMode){
-      if(_editCharacterChatFocusNode.hasFocus || _editUserChatFocusNode.hasFocus){
+    switch(mode){
+      case ChatPageMode.deleteMode:
+        _messagesToDeleteNotifier.value = [];
+        break;
+      case ChatPageMode.editMode:
         _editCharacterChatFocusNode.unfocus();
         _editUserChatFocusNode.unfocus();
-      }
-      final editedChatMessage = ChatMessage(
-        id: _messageToEdit.id,
-        roomId: _messageToEdit.roomId,
-        characterId: _messageToEdit.characterId,
-        chatMessageType: _messageToEdit.chatMessageType,
-        timestamp: _messageToEdit.timestamp,
-        role: _messageToEdit.role,
-        content: _messageToEdit.content,
-        isEditable: false,
-      );
-      chatProvider.updateOneChatMessage(editedChatMessage);
-      _messageToEdit = ChatMessage.placeHolder();
-      _chatTextEditingController.text = "";
-      setState(() {
-        mode = ChatPageMode.chatMode;
-      });
-    } else if(_isInputMenuVisible){
-      setState(() {
-        _isInputMenuVisible=false;
-      });
-    } else {
-      Navigator.pop(context);
+        chatProvider.updateOneChatMessage(_messageToEdit.copyWith(isEditable: false));
+        _messageToEdit = ChatMessage.placeHolder();
+        _chatTextEditingController.text = "";
+        break;
+      case ChatPageMode.chatMode:
+        if (_isInputMenuVisible) {
+          setState(() => _isInputMenuVisible = false);
+          break;
+        }
+        Navigator.pop(context);
+        break;
     }
+
+    setState(() => mode = ChatPageMode.chatMode);
     return Future.value(false);
   }
 
@@ -435,7 +429,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         break;
       case DialogResult.yes:
         chatProvider.setRequestState(RequestState.initialized);
-        navigateTo(const MainNavigationPage(initialIndex: 0));
+        _navigateTo(const MainNavigationPage(initialIndex: 0));
         break;
       case null: // when dialog is dismissed by tab somewhere else
         chatProvider.setRequestState(RequestState.initialized);
@@ -467,16 +461,11 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   }
 
   Future<void> _onEditChat() async {
-    final editedChatMessage = ChatMessage(
-      id: _messageToEdit.id,
-      roomId: _messageToEdit.roomId,
-      characterId: _messageToEdit.characterId,
-      chatMessageType: _messageToEdit.chatMessageType,
-      timestamp: _messageToEdit.timestamp,
-      role: _messageToEdit.role,
+    final editedChatMessage = _messageToEdit.copyWith(
       content: _chatTextEditingController.text,
-      isEditable: false,
+      isEditable: false
     );
+
     await chatProvider.updateOneChatMessage(editedChatMessage);
     await chatRoomsProvider.updateChatRooms();
     setState(() {
@@ -492,7 +481,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         icon: Icons.edit,
         label: Intl.message("editProfile"),
         onPressed: () => {
-          navigateTo(CharacterCreationPage(
+          _navigateTo(CharacterCreationPage(
             arguments: CharacterCreationPageArguments(
                 character: charactersProvider.currentCharacter
             ),
@@ -502,7 +491,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         icon: Icons.settings,
         label: Intl.message("chatRoomSetting"),
         onPressed: () => {
-          navigateTo(const ChatRoomSettingPage())
+          _navigateTo(const ChatRoomSettingPage())
       }),
       ChatMenuItem(
         icon: Icons.image,
@@ -515,7 +504,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     ];
   }
 
-  void navigateTo(StatefulWidget page){
+  void _navigateTo(StatefulWidget page){
     if (context.mounted) {
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -546,7 +535,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     await _handleSendChatEvent(character);
   }
 
-  void _networkStateListenerFunction(){
+  void _onNetworkStateChanged(){
     switch(chatProvider.requestState){
       case RequestState.invalidOpenAIAPIKey:
         _openMovePageDialog(Intl.message("chatGPTAPIKeyErrorTitle"), Intl.message("chatGPTAPIisInvalid"));

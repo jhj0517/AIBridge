@@ -187,7 +187,7 @@ class ChatOption extends BaseDialog {
     return [
       InkWell(
         onTap: () {
-          Navigator.pop(context, DialogResult.delete);
+          Navigator.pop(context, DialogResult.edit);
         },
         child: Container(
           margin: const EdgeInsets.only(left: 20),
