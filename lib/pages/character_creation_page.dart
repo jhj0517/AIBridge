@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:aibridge/widgets/character_creation_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -150,15 +151,14 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                           // Different UI by Service
                           if (OpenAIService.openAIModels.contains(_selectedModel)) ...[
                             // 1. Instruction System prompt
-                            _buildPromptsListView(),
+                            _buildOpenAIPromptsListView(),
                             const SizedBox(height: 15),
                           ] else if (PaLMService.paLMModels.contains(_selectedModel)) ... [
                             // Context prompt
-                            _buildPromptSizedTextField(
-                                Intl.message("paLMContextPromptLabel"),
-                                Intl.message("paLMContextPromptHint"),
-                                _textFieldControllerPaLMContext,
-                                null
+                            PromptField(
+                                labelText: Intl.message("paLMContextPromptLabel"),
+                                hintText: Intl.message("paLMContextPromptHint"),
+                                controller: _textFieldControllerPaLMContext
                             ),
                             const SizedBox(height: 15),
                             // Example prompt
@@ -620,16 +620,17 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     );
   }
 
-  Widget _buildPromptsListView() {
+  Widget _buildOpenAIPromptsListView(){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch, // To ensure full width
       children: [
         for (int index = 0; index < _textFieldControllersSystemPrompts.length; index++)
-          _buildPromptSizedTextField(
-            index == 0 ? Intl.message("description") : Intl.message("systemPrompt"),
-              index == 0 ? Intl.message("descriptionHint") : Intl.message("systemPromptHint"),
-            _textFieldControllersSystemPrompts[index],
-            index
+          PromptField(
+            labelText: index == 0 ? Intl.message("description") : Intl.message("systemPrompt"),
+            hintText: index == 0 ? Intl.message("descriptionHint") : Intl.message("systemPromptHint"),
+            controller: _textFieldControllersSystemPrompts[index],
+            index: index,
+            onRemove: (index) { _removePromptField(index); },
           ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center, // Align buttons at each end
@@ -657,6 +658,12 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         ),
       ],
     );
+  }
+
+  void _removePromptField(int index){
+    setState(() {
+      _textFieldControllersSystemPrompts.removeAt(index);
+    });
   }
 
   Widget _buildPaLMExampleInputField(){
