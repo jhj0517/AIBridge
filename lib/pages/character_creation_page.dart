@@ -211,7 +211,11 @@ class CharacterCreationState extends State<CharacterCreationPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildChangeBackgroundIcon(),
+                  BackGroundButton(
+                    onPressed: () async => await _pickImageFromGallery(
+                      imageData: _selectedBackgroundImageBLOB!
+                    ),
+                  ),
                   _buildImportIcon()
                 ],
               ),
@@ -313,7 +317,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     }
   }
 
-  Future<void> _pickBackgroundImageFromGallery() async {
+  Future<void> _pickImageFromGallery({required Uint8List imageData}) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
@@ -325,7 +329,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         final File compressedImageFile = await ImageConverter.compressImage(imageFile);
         Uint8List BLOB = await ImageConverter.convertImageToBLOB(compressedImageFile);
         setState(() {
-          _selectedBackgroundImageBLOB = BLOB;
+          imageData = BLOB;
         });
       } else {
         Fluttertoast.showToast(msg: Intl.message("toastSelectStaticImage"));
@@ -483,40 +487,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     setState(() {
       _textFieldControllersSystemPrompts.removeAt(index);
     });
-  }
-
-  Widget _buildChangeBackgroundIcon() {
-    return Material(
-      color: Colors.transparent,
-      child: SizedBox(
-        height: 80,
-        width: 80,
-        child: InkWell(
-          onTap: () async {
-            // Implement your functionality to change the background
-            _pickBackgroundImageFromGallery();
-          },
-          child: Column(
-            children: [
-              const SizedBox(height: 15),
-              const Icon(
-                Icons.image, // Use any icon you want
-                color: Colors.white,
-                size: 30,
-              ),
-              const SizedBox(height: 5),
-              Text(
-                Intl.message("background"),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   Widget _buildImportIcon(){
