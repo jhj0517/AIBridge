@@ -58,26 +58,7 @@ class UsagePolicyPage extends StatelessWidget {
                 fontSize: 16,
               ),
             ),
-            const SizedBox(height: 40),
-            _buildUsageTitle(Intl.message("usagePolicy1Title")),
-            const SizedBox(height: 10),
-            _buildUsageContent(Intl.message("usagePolicy1Content")),
-            const SizedBox(height: 40),
-            _buildUsageTitle(Intl.message("usagePolicy2Title")),
-            const SizedBox(height: 10),
-            _buildUsageContent(Intl.message("usagePolicy2Content")),
-            const SizedBox(height: 40),
-            _buildUsageTitle(Intl.message("usagePolicy3Title")),
-            const SizedBox(height: 10),
-            _buildUsageContent(Intl.message("usagePolicy3Content")),
-            const SizedBox(height: 40),
-            _buildUsageTitle(Intl.message("usagePolicy4Title")),
-            const SizedBox(height: 10),
-            _buildUsageContent(Intl.message("usagePolicy4Content")),
-            const SizedBox(height: 40),
-            _buildUsageTitle(Intl.message("usagePolicy5Title")),
-            const SizedBox(height: 10),
-            _buildUsageContent(Intl.message("usagePolicy5Content")),
+            ..._buildUsagePolicySections(),
             const SizedBox(height: 40),
             _buildUsageTitle(Intl.message("usagePolicy6Title")),
             const SizedBox(height: 10),
@@ -114,7 +95,6 @@ class UsagePolicyPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
-            // More Text Widgets for other paragraphs or sections could go here.
           ],
         ),
       ),
@@ -138,6 +118,29 @@ class UsagePolicyPage extends StatelessWidget {
           fontSize: 16,
           color: ColorConstants.thickGreyColor
       ),
+    );
+  }
+
+  List<Widget> _buildUsagePolicySections() {
+    final items = <Widget>[];
+    for (var i = 1; i <= 5; i++) {
+      final title = Intl.message("usagePolicy${i}Title");
+      final content = Intl.message("usagePolicy${i}Content");
+      items.add(_buildUsagePolicySection(title: title, content: content));
+      items.add(const SizedBox(height: 40.0));
+    }
+
+    return items;
+  }
+
+  Widget _buildUsagePolicySection({required String title, required String content}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildUsageTitle(title),
+        const SizedBox(height: 10.0),
+        _buildUsageContent(content),
+      ],
     );
   }
 
