@@ -41,8 +41,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
   TextEditingController _textFieldControllerYourName = TextEditingController();
   TextEditingController _textFieldControllerFirstMessage = TextEditingController();
   TextEditingController _textFieldControllerImport = TextEditingController();
-  double _openAITemperature = 1; // default value that I set
-  double _paLMTemperature = 0.5; // default value that I set
+  double _currentTemperature = 0;
 
   bool _isDoneButtonEnabled=false;
 
@@ -141,13 +140,23 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                           //ProfilePicture
                           _buildProfilePicture(),
                           const SizedBox(height: 5),
-                          //Name
-                          _buildNameTextField(),
+                          NameEnteringField(
+                              label: Intl.message("name"),
+                              hint: Intl.message("characterNameHint"),
+                              controller: _textFieldControllerName
+                          ),
                           const SizedBox(height: 20),
                           //ModelSelection
                           _buildModelSelectionDropdown(),
                           const SizedBox(height: 20),
-                          _buildTemperatureSlider(),
+                          TemperatureSlider(
+                            serviceType: _getServiceType(),
+                            onTemperatureChange: (value) {
+                              _onTemperatureChanged(value);
+                            },
+                            initialTemperature: _currentTemperature,
+                          ),
+                          //_buildTemperatureSlider(),
                           const SizedBox(height: 20),
                           // Different UI by Service
                           if (OpenAIService.openAIModels.contains(_selectedModel)) ...[
@@ -167,7 +176,11 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                             )
                           ],
                           const SizedBox(height: 20),
-                          _buildYourNameTextField(),
+                          NameEnteringField(
+                            label: Intl.message("characterRecognizeUserName"),
+                            hint: Intl.message("characterRecognizeUserNameHint"),
+                            controller: _textFieldControllerYourName
+                          ),
                           const SizedBox(height: 20),
                           PromptField(
                             labelText: Intl.message("firstMessageLabel"),
@@ -241,7 +254,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         }
         setState(() {
           _selectedModel = service.modelName;
-          _openAITemperature = service.temperature;
+          _currentTemperature = service.temperature;
         });
         break;
       case ServiceType.paLM:
@@ -249,7 +262,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         _textFieldControllerPaLMContext = TextEditingController(text: service.context ?? "");
         setState(() {
           _selectedModel = service.modelName;
-          _paLMTemperature = service.temperature;
+          _currentTemperature = service.temperature;
           _textFieldControllerPaLMContext = TextEditingController(text: service.context);
           _textFieldControllerPaLMExampleInput =  TextEditingController(text: service.exampleInput);
           _textFieldControllerPaLMExampleOutput = TextEditingController(text: service.exampleOutput);
@@ -376,78 +389,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     );
   }
 
-  Widget _buildNameTextField(){
-    return TextField(
-      controller: _textFieldControllerName,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-      cursorColor: Colors.white,
-      decoration: InputDecoration(
-        labelText: Intl.message("name"),
-        hintText: Intl.message("characterNameHint"),
-        hintStyle: TextStyle(
-          color: Colors.white.withOpacity(0.8),
-          fontWeight: FontWeight.w300,
-        ),
-        labelStyle: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.normal
-        ),
-        suffixIcon: const Icon(
-          Icons.edit, // Pencil icon
-          color: Colors.white,
-          size: 18, // Adjust the size of the icon
-        ),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-        ),
-        enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildYourNameTextField(){
-    return TextField(
-      controller: _textFieldControllerYourName,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-      cursorColor: Colors.white,
-      decoration: InputDecoration(
-        labelText: Intl.message("characterRecognizeUserName"),
-        labelStyle: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.normal
-        ),
-        hintText: Intl.message("characterRecognizeUserNameHint"),
-        hintStyle: TextStyle(
-          color: Colors.white.withOpacity(0.8),
-          fontWeight: FontWeight.w300,
-        ),
-        suffixIcon: const Icon(
-          Icons.edit, // Pencil icon
-          color: Colors.white,
-          size: 18, // Adjust the size of the icon
-        ),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-        ),
-        enabledBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-        ),
-      ),
-    );
-  }
-
   Widget _buildModelSelectionDropdown() {
     DropdownMenuItem<String> buildDropdownOption(String optionName) {
       String imagePath = "";
@@ -494,58 +435,8 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     );
   }
 
-  Widget _buildTemperatureSlider() {
-    var Service = null;
-    if (OpenAIService.openAIModels.contains(_selectedModel)){
-      Service = ServiceType.openAI;
-    } else {
-      Service = ServiceType.paLM;
-    }
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-            Intl.message("temperatureLabel"),
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white
-            )
-        ),
-        const SizedBox(height: 5),
-        Slider.adaptive(
-          value: Service == ServiceType.openAI
-                ? _openAITemperature
-                : _paLMTemperature,
-          min: 0,
-          max: Service == ServiceType.openAI
-              ? 2
-              : 1,
-          divisions: 200, // Number of discrete divisions
-          label: Service == ServiceType.openAI
-              ? _openAITemperature.toStringAsFixed(2)
-              : _paLMTemperature.toStringAsFixed(2), // Label to show value
-          activeColor: Colors.white,
-          inactiveColor: Colors.white60,
-          onChanged: (value) {
-            setState(() {
-              if (Service == ServiceType.openAI){
-                _openAITemperature = value;
-              } else {
-                _paLMTemperature = value;
-              }
-            });
-          },
-        ),
-        Text(
-            Service == ServiceType.openAI
-            ? _openAITemperature.toStringAsFixed(2)
-            : _paLMTemperature.toStringAsFixed(2),
-            style: const TextStyle(
-                color: Colors.white
-            )
-        ),
-      ],
-    );
+  void _onTemperatureChanged(double temperature){
+    _currentTemperature = temperature;
   }
 
   Widget _buildOpenAIPromptsListView(){
@@ -740,6 +631,8 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         }
         await chatRoomsProvider.updateChatRooms();
 
+        debugPrint("currentTemp:${_currentTemperature}");
+
         if (context.mounted) {
           Navigator.of(context).pop();
         }
@@ -759,6 +652,16 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     );
   }
 
+  ServiceType _getServiceType(){
+    if (OpenAIService.openAIModels.contains(_selectedModel)){
+      return ServiceType.openAI;
+    }
+    if (PaLMService.paLMModels.contains(_selectedModel)){
+      return ServiceType.paLM;
+    }
+    else { throw Exception("No supported service"); }
+  }
+
   IService _getService(){
     if (OpenAIService.openAIModels.contains(_selectedModel)){
       List<String> _systemPrompts = [];
@@ -768,7 +671,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
       return OpenAIService(
           characterId: widget.arguments.character.id!,
           modelName: _selectedModel!,
-          temperature: _openAITemperature,
+          temperature: _currentTemperature,
           systemPrompts: _systemPrompts,
       );
     } else if (PaLMService.paLMModels.contains(_selectedModel)){
@@ -778,7 +681,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
           context: _textFieldControllerPaLMContext.text,
           exampleInput: _textFieldControllerPaLMExampleInput.text,
           exampleOutput: _textFieldControllerPaLMExampleOutput.text,
-          temperature: _paLMTemperature,
+          temperature: _currentTemperature,
           candidateCount: 1
       );
     } else {

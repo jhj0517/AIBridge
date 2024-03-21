@@ -8,6 +8,8 @@ class PaLMService implements IService {
   static const paLMModelNameMapping = {
     ModelConstants.paLMBison : ModelConstants.paLMBisonId
   };
+  static const double defaultTemperature = 0.5;
+  static const double maxTemperature = 1;
 
   @override
   final ServiceType serviceType = ServiceType.paLM;

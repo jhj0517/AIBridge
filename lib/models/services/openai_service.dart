@@ -12,6 +12,8 @@ class OpenAIService implements IService {
     ModelConstants.chatGPT4 : ModelConstants.chatGPT4Id,
     ModelConstants.chatGPT4Vision : ModelConstants.chatGPT4VisionId
   };
+  static const double defaultTemperature = 1;
+  static const double maxTemperature = 2;
 
   @override
   final ServiceType serviceType = ServiceType.openAI;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../models/models.dart';
+
 class PromptField extends StatelessWidget {
   final String labelText;
   final String hintText;
@@ -151,5 +153,143 @@ class PaLMExamplePromptFields extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class NameEnteringField extends StatelessWidget {
+
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+
+  const NameEnteringField({
+    super.key,
+    required this.label,
+    required this.hint,
+    required this.controller
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+      cursorColor: Colors.white,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.normal,
+        ),
+        hintText: hint,
+        hintStyle: TextStyle(
+          color: Colors.white.withOpacity(0.8),
+          fontWeight: FontWeight.w300,
+        ),
+        suffixIcon: const Icon(
+          Icons.edit, // Pencil icon
+          color: Colors.white,
+          size: 18, // Adjust the size of the icon
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+        ),
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+        ),
+      ),
+    );
+  }
+}
+
+class TemperatureSlider extends StatefulWidget {
+  final ServiceType serviceType;
+  final double? initialTemperature;
+  final Function(double) onTemperatureChange;
+
+  const TemperatureSlider({
+    super.key,
+    required this.serviceType,
+    required this.onTemperatureChange,
+    this.initialTemperature
+  });
+
+  @override
+  _TemperatureSliderState createState() => _TemperatureSliderState();
+}
+
+class _TemperatureSliderState extends State<TemperatureSlider> {
+  double _currentTemperature = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initDefault();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          Intl.message("temperatureLabel"),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Slider.adaptive(
+          value: _currentTemperature,
+          min: 0.0,
+          max: _initMax(),
+          divisions: 200,
+          label: _currentTemperature.toStringAsFixed(2),
+          activeColor: Colors.white,
+          inactiveColor: Colors.white60,
+          onChanged: (value) {
+            setState(() {
+              _currentTemperature = value;
+              widget.onTemperatureChange(value);
+            });
+          },
+        ),
+        Text(
+          _currentTemperature.toStringAsFixed(2),
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _initDefault(){
+    if (widget.initialTemperature != null){
+      _currentTemperature = widget.initialTemperature!;
+      return;
+    }
+
+    switch(widget.serviceType){
+      case ServiceType.openAI:
+        _currentTemperature = OpenAIService.defaultTemperature;
+      case ServiceType.paLM:
+        _currentTemperature = PaLMService.defaultTemperature;
+    }
+  }
+
+  double _initMax(){
+    switch(widget.serviceType){
+      case ServiceType.openAI:
+        return OpenAIService.maxTemperature;
+      case ServiceType.paLM:
+        return PaLMService.maxTemperature;
+    }
   }
 }
