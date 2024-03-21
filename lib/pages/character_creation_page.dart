@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:aibridge/widgets/character_creation_widgets.dart';
+import 'package:aibridge/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -154,15 +155,16 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                             _buildOpenAIPromptsListView(),
                             const SizedBox(height: 15),
                           ] else if (PaLMService.paLMModels.contains(_selectedModel)) ... [
-                            // Context prompt
                             PromptField(
                                 labelText: Intl.message("paLMContextPromptLabel"),
                                 hintText: Intl.message("paLMContextPromptHint"),
                                 controller: _textFieldControllerPaLMContext
                             ),
                             const SizedBox(height: 15),
-                            // Example prompt
-                            _buildPaLMExampleInputField()
+                            PaLMExamplePromptFields(
+                              inputExampleController: _textFieldControllerPaLMExampleInput,
+                              outputExampleController: _textFieldControllerPaLMExampleOutput
+                            )
                           ],
                           const SizedBox(height: 20),
                           _buildYourNameTextField(),
@@ -665,67 +667,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
       _textFieldControllersSystemPrompts.removeAt(index);
     });
   }
-
-  Widget _buildPaLMExampleInputField(){
-    return Card(
-      elevation: 4.0,
-      color: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        side: const BorderSide(color: Colors.white, width: 1.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                Text(
-                  Intl.message("paLMExamplePromptLabel"),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.normal,
-                  ),
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  Intl.message("paLMExamplePromptHint"),
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(left: 40, right: 10),
-            child: _buildPromptSizedTextField(
-                Intl.message("paLMExampleInputLabel"),
-                Intl.message("paLMExampleInputHint"),
-                _textFieldControllerPaLMExampleInput,
-                null
-            ),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(left: 10, right: 40),
-            child: _buildPromptSizedTextField(
-                Intl.message("paLMExampleOutputLabel"),
-                Intl.message("paLMExampleOutputHint"),
-                _textFieldControllerPaLMExampleOutput,
-                null
-            ),
-          ),
-          const SizedBox(height: 10),
-        ],
-      ),
-    );
-  }
-
 
   Widget _buildChangeBackgroundIcon() {
     return Material(
