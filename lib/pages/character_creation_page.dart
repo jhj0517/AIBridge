@@ -48,7 +48,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
   Uint8List? _selectedProfileImageBLOB;
   Uint8List? _selectedBackgroundImageBLOB;
 
-  final List models= [...OpenAIService.openAIModels, ...PaLMService.paLMModels];
+  final List<String> models= [...OpenAIService.openAIModels, ...PaLMService.paLMModels];
   late String? _selectedModel;
 
   @override
@@ -147,10 +147,15 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                           ),
                           const SizedBox(height: 20),
                           //ModelSelection
-                          _buildModelSelectionDropdown(),
+                          //_buildModelSelectionDropdown(),
+                          ModelsDropdown(
+                            models: models,
+                            selectedModel: _selectedModel!,
+                            onModelSelected: (newModel) => setState(() => _selectedModel = newModel)
+                          ),
                           const SizedBox(height: 20),
                           TemperatureSlider(
-                            serviceType: _getServiceType(),
+                            serviceType: _getServiceType(_selectedModel!),
                             onTemperatureChange: (value) {
                               _onTemperatureChanged(value);
                             },
@@ -216,7 +221,9 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                       imageData: _selectedBackgroundImageBLOB!
                     ),
                   ),
-                  _buildImportIcon()
+                  ImportCharacterButton(
+                    onPressed: () async => await _handleImport()
+                  ),
                 ],
               ),
             ],
@@ -258,7 +265,9 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         }
         setState(() {
           _selectedModel = service.modelName;
-          _currentTemperature = service.temperature;
+          if(_currentTemperature < OpenAIService.maxTemperature){
+            _currentTemperature = service.temperature;
+          }
         });
         break;
       case ServiceType.paLM:
@@ -266,6 +275,9 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         _textFieldControllerPaLMContext = TextEditingController(text: service.context ?? "");
         setState(() {
           _selectedModel = service.modelName;
+          if(_currentTemperature > PaLMService.maxTemperature){
+            _currentTemperature = PaLMService.defaultTemperature;
+          }
           _currentTemperature = service.temperature;
           _textFieldControllerPaLMContext = TextEditingController(text: service.context);
           _textFieldControllerPaLMExampleInput =  TextEditingController(text: service.exampleInput);
@@ -339,6 +351,55 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     }
   }
 
+  Future<void> _handleImport() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    final mimeType = lookupMimeType(image.path);
+    if (mimeType == null || !mimeType.startsWith('image/gif')) {
+      final imageFile = File(image.path);
+      final character = await ChunkManager.decodeCharacter(pickedFile: imageFile);
+
+      if (character == null) {
+        Fluttertoast.showToast(msg: Intl.message("failedToImport"));
+        return;
+      }
+
+      final compressedImageFile = await ImageConverter.compressImage(imageFile);
+      final compressedBLOB = await ImageConverter.convertImageToBLOB(compressedImageFile);
+
+      await _updateCharacter(character: character, image: compressedBLOB);
+    } else {
+      Fluttertoast.showToast(msg: Intl.message("toastSelectStaticImage"));
+    }
+  }
+
+  Future<void> _updateCharacter({
+    required Character character,
+    required Uint8List image
+  }) async {
+    setState(() {
+      _textFieldControllerName.text = character.characterName;
+      _selectedBackgroundImageBLOB = character.backgroundPhotoBLOB;
+      _selectedProfileImageBLOB = image;
+      _textFieldControllerYourName.text = character.userName;
+      _textFieldControllerFirstMessage.text = character.firstMessage;
+
+      if (character.service.serviceType == ServiceType.openAI) {
+        final openAIService = character.service as OpenAIService;
+        _selectedModel = openAIService.modelName;
+
+        _textFieldControllersSystemPrompts.clear();
+        for (final systemPrompt in openAIService.systemPrompts) {
+          final controller = TextEditingController(text: systemPrompt);
+          _textFieldControllersSystemPrompts.add(controller);
+        }
+      }
+      _textFieldControllerImport.text = "";
+    });
+  }
+
   Widget _buildProfilePicture() {
     return Stack(
       children: [
@@ -393,52 +454,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     );
   }
 
-  Widget _buildModelSelectionDropdown() {
-    DropdownMenuItem<String> buildDropdownOption(String optionName) {
-      String imagePath = "";
-      if (OpenAIService.openAIModels.contains(optionName)) {
-        imagePath = PathConstants.chatGPTImage;
-      } else if (PaLMService.paLMModels.contains(optionName)){
-        imagePath = PathConstants.paLMImage;
-      }
-      return DropdownMenuItem<String>(
-        value: optionName,
-        child: Row(
-          children: [
-            Image.asset(
-              imagePath,
-              width: 20,
-              height: 20,
-            ),
-            const SizedBox(width: 8),
-            Text(optionName),
-          ],
-        ),
-      );
-    }
-
-    return Container(
-      padding: const EdgeInsets.only(right: 8, left: 5),// Wrap the DropdownButton with a Container
-      decoration: BoxDecoration(
-        color: Colors.white, // Set the background color to white
-        borderRadius: BorderRadius.circular(5.0), // Optional: add a border radius
-      ),
-      child: DropdownButton<String>(
-        value: _selectedModel,
-        hint: Text(Intl.message("selectModel")),
-        onChanged: (String? newModel) {
-          setState(() {
-            _selectedModel = newModel!;
-          });
-        },
-        items: models.map<DropdownMenuItem<String>>((value) { // Add type annotation here
-          return buildDropdownOption(value as String); // Cast the value to String
-        }).toList(),
-        underline: const SizedBox.shrink(), // Optional: remove the underline
-      ),
-    );
-  }
-
   void _onTemperatureChanged(double temperature){
     _currentTemperature = temperature;
   }
@@ -489,86 +504,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     });
   }
 
-  Widget _buildImportIcon(){
-    return Material(
-      color: Colors.transparent,
-      child: SizedBox(
-        height: 80,
-        width: 80,
-        child: InkWell(
-          onTap: () async {
-            final ImagePicker picker = ImagePicker();
-            final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-            if (image != null) {
-              final mimeType = lookupMimeType(image.path);
-              if (mimeType != null && !mimeType.startsWith('image/gif')) {
-
-                final File imageFile = File(image.path);
-                final _character = await ChunkManager.decodeCharacter(pickedFile: imageFile);
-
-                if (_character == null){
-                  Fluttertoast.showToast(msg: Intl.message("failedToImport"));
-                  return;
-                }
-
-                final File compressedImageFile = await ImageConverter.compressImage(imageFile);
-                Uint8List compressedBLOB = await ImageConverter.convertImageToBLOB(compressedImageFile);
-
-                setState(() {
-                  _textFieldControllerName.text = _character.characterName;
-                  _selectedBackgroundImageBLOB = _character.backgroundPhotoBLOB;
-                  _selectedProfileImageBLOB = compressedBLOB;
-                  _textFieldControllerYourName.text = _character.userName;
-                  _textFieldControllerFirstMessage.text = _character.firstMessage;
-
-                  if(_character.service.serviceType== ServiceType.openAI){
-                    final importedService = _character.service as OpenAIService;
-                    _selectedModel = importedService.modelName;
-
-                    if (importedService.systemPrompts.isNotEmpty){
-                      for (final (index, systemPrompt) in importedService.systemPrompts.indexed) {
-                        if(index==0){
-                          _textFieldControllersSystemPrompts.first.text = systemPrompt;
-                        } else {
-                          _textFieldControllersSystemPrompts.add(TextEditingController());
-                          _textFieldControllersSystemPrompts[index].text = systemPrompt;
-                        }
-                      }
-                    }
-                  }
-                  _textFieldControllerImport.text = "";
-                });
-              } else {
-                Fluttertoast.showToast(msg: Intl.message("toastSelectStaticImage"));
-              }
-            } else {
-              debugPrint('No image selected.');
-            }
-          },
-          child: Column(
-            children: [
-              const SizedBox(height: 15),
-              const Icon(
-                Icons.file_download_outlined, // Use any icon you want
-                color: Colors.white,
-                size: 30,
-              ),
-              const SizedBox(height: 5),
-              Text(
-                Intl.message("import"),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildDoneButton() {
     Color textColor = _isDoneButtonEnabled ? Colors.white : Colors.white38;
     return TextButton(
@@ -601,13 +536,11 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         }
         await chatRoomsProvider.updateChatRooms();
 
-        debugPrint("currentTemp:${_currentTemperature}");
-
         if (context.mounted) {
           Navigator.of(context).pop();
         }
       }
-          : null,
+      : null,
       style: TextButton.styleFrom(
         foregroundColor: Colors.white,
       ),
@@ -622,11 +555,11 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     );
   }
 
-  ServiceType _getServiceType(){
-    if (OpenAIService.openAIModels.contains(_selectedModel)){
+  ServiceType _getServiceType(String modelName){
+    if (OpenAIService.openAIModels.contains(modelName)){
       return ServiceType.openAI;
     }
-    if (PaLMService.paLMModels.contains(_selectedModel)){
+    if (PaLMService.paLMModels.contains(modelName)){
       return ServiceType.paLM;
     }
     else { throw Exception("No supported service"); }
