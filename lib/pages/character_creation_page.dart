@@ -107,7 +107,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
             elevation: 0, // Remove AppBar Shadow
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new),
-              color: Colors.white, // Update the color of the back button to match the text color
+              color: Colors.white,
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -250,57 +250,25 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     super.dispose();
   }
 
-  void _init(){
-    final serviceType = widget.arguments.character.service.serviceType;
-    switch (serviceType) {
+  void _init() {
+    final service = widget.arguments.character.service;
+    switch (service.serviceType) {
       case ServiceType.openAI:
-        final service = widget.arguments.character.service as OpenAIService;
-        if (service.systemPrompts.isNotEmpty){
-          for (final (index, systemPrompt) in service.systemPrompts.indexed) {
-            if(index==0){
-              _textFieldControllersSystemPrompts.first.text = systemPrompt;
-            } else {
-              _textFieldControllersSystemPrompts.add(TextEditingController());
-              _textFieldControllersSystemPrompts[index].text = systemPrompt;
-            }
-          }
-        }
-        setState(() {
-          _selectedModel = service.modelName;
-          if(_currentTemperature < OpenAIService.maxTemperature){
-            _currentTemperature = service.temperature;
-          }
-        });
+        _handleOpenAIService(service as OpenAIService);
         break;
       case ServiceType.paLM:
-        final service = widget.arguments.character.service as PaLMService;
-        _textFieldControllerPaLMContext = TextEditingController(text: service.context ?? "");
-        setState(() {
-          _selectedModel = service.modelName;
-          if(_currentTemperature > PaLMService.maxTemperature){
-            _currentTemperature = PaLMService.defaultTemperature;
-          }
-          _currentTemperature = service.temperature;
-          _textFieldControllerPaLMContext = TextEditingController(text: service.context);
-          _textFieldControllerPaLMExampleInput =  TextEditingController(text: service.exampleInput);
-          _textFieldControllerPaLMExampleOutput = TextEditingController(text: service.exampleOutput);
-        });
+        _handlePaLMService(service as PaLMService);
         break;
       default:
-        throw Exception('Unknown service type: $serviceType');
+        throw Exception('Unknown service type: $service.serviceType');
     }
 
     _textFieldControllerName = TextEditingController(text: widget.arguments.character.characterName);
     _textFieldControllerYourName = TextEditingController(text: widget.arguments.character.userName);
     _textFieldControllerFirstMessage = TextEditingController(text: widget.arguments.character.firstMessage);
 
-    widget.arguments.character.photoBLOB.isNotEmpty ?
-    _selectedProfileImageBLOB = widget.arguments.character.photoBLOB :
-    _selectedProfileImageBLOB = Uint8List(0);
-
-    widget.arguments.character.backgroundPhotoBLOB.isNotEmpty ?
-    _selectedBackgroundImageBLOB = widget.arguments.character.backgroundPhotoBLOB :
-    _selectedBackgroundImageBLOB = Uint8List(0);
+    _selectedProfileImageBLOB = widget.arguments.character.photoBLOB;
+    _selectedBackgroundImageBLOB = widget.arguments.character.backgroundPhotoBLOB;
 
     _isDoneButtonEnabled = _textFieldControllerName.text.isNotEmpty;
     _textFieldControllerName.addListener(() {
@@ -308,6 +276,92 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         _isDoneButtonEnabled = _textFieldControllerName.text.isNotEmpty;
       });
     });
+  }
+
+  void _handleOpenAIService(OpenAIService service) {
+    if (service.systemPrompts.isNotEmpty) {
+      _textFieldControllersSystemPrompts.clear();
+      for (final systemPrompt in service.systemPrompts) {
+        _textFieldControllersSystemPrompts.add(TextEditingController(text: systemPrompt));
+      }
+    }
+    setState(() {
+      _selectedModel = service.modelName;
+      _currentTemperature = service.temperature;
+    });
+  }
+
+  void _handlePaLMService(PaLMService service) {
+    _textFieldControllerPaLMContext = TextEditingController(text: service.context ?? "");
+    setState(() {
+      _selectedModel = service.modelName;
+      _currentTemperature = service.temperature;
+      _textFieldControllerPaLMContext.text = service.context;
+      _textFieldControllerPaLMExampleInput.text = service.exampleInput;
+      _textFieldControllerPaLMExampleOutput.text = service.exampleOutput;
+    });
+  }
+
+  Widget _buildOpenAIPromptsListView(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (int index = 0; index < _textFieldControllersSystemPrompts.length; index++)
+          PromptField(
+            labelText: index == 0 ? Intl.message("description") : Intl.message("systemPrompt"),
+            hintText: index == 0 ? Intl.message("descriptionHint") : Intl.message("systemPromptHint"),
+            controller: _textFieldControllersSystemPrompts[index],
+            index: index,
+            onRemove: (index) { _removePromptField(index); },
+          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ), // Circular shape
+                fixedSize: const Size(30, 30),
+              ),
+              child: const Icon(
+                Icons.add,
+                color: Colors.black,
+                size: 24,
+              ),
+              onPressed: () {
+                setState(() {
+                  _textFieldControllersSystemPrompts.add(TextEditingController());
+                });
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDoneButton() {
+    Color textColor = _isDoneButtonEnabled ? Colors.white : Colors.white38;
+    return TextButton(
+      onPressed: _isDoneButtonEnabled
+      ? () async {
+        await _onDone();
+      }
+      : null,
+      style: TextButton.styleFrom(
+        foregroundColor: Colors.white,
+      ),
+      child: Text(
+        Intl.message("done"),
+        style: TextStyle(
+          color: textColor,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 
   Future<void> _pickImageFromGallery({required Uint8List imageData}) async {
@@ -385,72 +439,10 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     _currentTemperature = temperature;
   }
 
-  Widget _buildOpenAIPromptsListView(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch, // To ensure full width
-      children: [
-        for (int index = 0; index < _textFieldControllersSystemPrompts.length; index++)
-          PromptField(
-            labelText: index == 0 ? Intl.message("description") : Intl.message("systemPrompt"),
-            hintText: index == 0 ? Intl.message("descriptionHint") : Intl.message("systemPromptHint"),
-            controller: _textFieldControllersSystemPrompts[index],
-            index: index,
-            onRemove: (index) { _removePromptField(index); },
-          ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center, // Align buttons at each end
-          children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white, // Light background color
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8), // Rounded corners
-                ), // Circular shape
-                fixedSize: const Size(30, 30),
-              ),
-              child: const Icon(
-                Icons.add,
-                color: Colors.black,
-                size: 24,
-              ),
-              onPressed: () {
-                setState(() {
-                  _textFieldControllersSystemPrompts.add(TextEditingController());
-                });
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   void _removePromptField(int index){
     setState(() {
       _textFieldControllersSystemPrompts.removeAt(index);
     });
-  }
-
-  Widget _buildDoneButton() {
-    Color textColor = _isDoneButtonEnabled ? Colors.white : Colors.white38;
-    return TextButton(
-      onPressed: _isDoneButtonEnabled
-      ? () async {
-        await _onDone();
-      }
-      : null,
-      style: TextButton.styleFrom(
-        foregroundColor: Colors.white,
-      ),
-      child: Text(
-        Intl.message("done"),
-        style: TextStyle(
-          color: textColor,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
   }
 
   Future<void> _onDone() async {
