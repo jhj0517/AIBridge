@@ -521,7 +521,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
             characterName: _textFieldControllerName.text,
             userName: _textFieldControllerYourName.text,
             firstMessage: _textFieldControllerFirstMessage.text,
-            service: _getService()
+            service: _getServiceData()
         );
         await characterProvider.insertOrUpdateCharacter(newCharacter);
         if(newCharacter.firstMessage.isNotEmpty){
@@ -565,7 +565,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     else { throw Exception("No supported service"); }
   }
 
-  IService _getService(){
+  IService _getServiceData(){
     if (OpenAIService.openAIModels.contains(_selectedModel)){
       List<String> _systemPrompts = [];
       for (final (index, controller) in _textFieldControllersSystemPrompts.indexed) {
