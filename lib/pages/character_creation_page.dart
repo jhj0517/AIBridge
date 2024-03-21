@@ -169,11 +169,10 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                           const SizedBox(height: 20),
                           _buildYourNameTextField(),
                           const SizedBox(height: 20),
-                          _buildPromptSizedTextField(
-                              Intl.message("firstMessageLabel"),
-                              Intl.message("firstMessageHint"),
-                              _textFieldControllerFirstMessage,
-                              null
+                          PromptField(
+                            labelText: Intl.message("firstMessageLabel"),
+                            hintText: Intl.message("firstMessageHint"),
+                            controller: _textFieldControllerFirstMessage
                           ),
                           const SizedBox(height: 30),
                         ],
@@ -546,79 +545,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
             )
         ),
       ],
-    );
-  }
-
-  Widget _buildPromptSizedTextField(
-      String labelText,
-      String hintText,
-      TextEditingController controller,
-      int? index
-      ){
-    void _removeTextField(int index) {
-      setState(() {
-        _textFieldControllersSystemPrompts.removeAt(index);
-      });
-    }
-
-    return ValueListenableBuilder<TextEditingValue>(
-      valueListenable: controller,
-      builder: (BuildContext context, TextEditingValue value, Widget? child) {
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              scrollPhysics: const BouncingScrollPhysics(),
-              cursorColor: Colors.white,
-              maxLines: null, // unlimited lines
-              keyboardType: TextInputType.multiline,
-              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-              controller: controller,
-              decoration: InputDecoration(
-                hintText: hintText,
-                hintStyle: TextStyle(
-                  color: Colors.white.withOpacity(0.8),
-                  fontWeight: FontWeight.w300,
-                ),
-                hintMaxLines: 10,
-                border: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.white),
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.white),
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.white),
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                labelText: labelText,
-                labelStyle: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.normal,
-                ),
-                counterStyle: const TextStyle(color: Colors.white),
-                suffixIcon: index != null
-                ? IconButton(
-                  icon: const CircleAvatar(
-                    backgroundColor: Colors.black,
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 15,
-                    ),
-                  ),
-                  onPressed: () => _removeTextField(index),
-                )
-                : null,
-              ),
-            ),
-            const SizedBox(height: 15)
-          ],
-        );
-      },
     );
   }
 
