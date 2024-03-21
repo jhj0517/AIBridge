@@ -137,8 +137,15 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         children: [
-                          //ProfilePicture
-                          _buildProfilePicture(),
+                          ProfilePicture(
+                            width: 100,
+                            height: 100,
+                            imageBLOBData: _selectedProfileImageBLOB,
+                            onPickImage: () async => {
+                              await _pickImageFromGallery(imageData: _selectedProfileImageBLOB!)
+                            },
+                            isMutable: true
+                          ),
                           const SizedBox(height: 5),
                           NameEnteringField(
                               label: Intl.message("name"),
@@ -146,8 +153,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                               controller: _textFieldControllerName
                           ),
                           const SizedBox(height: 20),
-                          //ModelSelection
-                          //_buildModelSelectionDropdown(),
                           ModelsDropdown(
                             models: models,
                             selectedModel: _selectedModel!,
@@ -161,11 +166,9 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                             },
                             initialTemperature: _currentTemperature,
                           ),
-                          //_buildTemperatureSlider(),
                           const SizedBox(height: 20),
                           // Different UI by Service
                           if (OpenAIService.openAIModels.contains(_selectedModel)) ...[
-                            // 1. Instruction System prompt
                             _buildOpenAIPromptsListView(),
                             const SizedBox(height: 15),
                           ] else if (PaLMService.paLMModels.contains(_selectedModel)) ... [
@@ -202,15 +205,14 @@ class CharacterCreationState extends State<CharacterCreationPage> {
               ),
             ),
           ),
-          // Bottom navigation bar
           bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0), // Add padding to left and right
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
                 child: Divider(
-                  color: Colors.white, // Choose the color you prefer
-                  thickness: 0.3, // Adjust the thickness if needed
+                  color: Colors.white,
+                  thickness: 0.3,
                 ),
               ),
               Row(
@@ -308,27 +310,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     });
   }
 
-  Future<void> _pickProfileImageFromGallery() async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      final mimeType = lookupMimeType(image.path);
-      if (mimeType != null && !mimeType.startsWith('image/gif')) { //check if image is gif
-        final File imageFile = File(image.path);
-        final File compressedImageFile = await ImageConverter.compressImage(imageFile);
-        Uint8List BLOB = await ImageConverter.convertImageToBLOB(compressedImageFile);
-        setState(() {
-          _selectedProfileImageBLOB = BLOB;
-        });
-      } else {
-        Fluttertoast.showToast(msg: Intl.message("toastSelectStaticImage"));
-      }
-    } else {
-      debugPrint('No image selected.');
-    }
-  }
-
   Future<void> _pickImageFromGallery({required Uint8List imageData}) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -369,13 +350,13 @@ class CharacterCreationState extends State<CharacterCreationPage> {
       final compressedImageFile = await ImageConverter.compressImage(imageFile);
       final compressedBLOB = await ImageConverter.convertImageToBLOB(compressedImageFile);
 
-      await _updateCharacter(character: character, image: compressedBLOB);
+      _updateCharacter(character: character, image: compressedBLOB);
     } else {
       Fluttertoast.showToast(msg: Intl.message("toastSelectStaticImage"));
     }
   }
 
-  Future<void> _updateCharacter({
+  void _updateCharacter({
     required Character character,
     required Uint8List image
   }) async {
@@ -398,60 +379,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
       }
       _textFieldControllerImport.text = "";
     });
-  }
-
-  Widget _buildProfilePicture() {
-    return Stack(
-      children: [
-        GestureDetector(
-          onTap: () async {
-            _pickProfileImageFromGallery();
-          },
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: const BorderRadius.all(Radius.circular(40)),
-            clipBehavior: Clip.hardEdge,
-            child: _selectedProfileImageBLOB!.isNotEmpty
-                ? SizedBox(
-                width: 100,
-                height: 100,
-                child: Image.memory(
-                  _selectedProfileImageBLOB!,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, object, stackTrace) {
-                    return const Icon(
-                      Icons.account_circle_rounded,
-                      size: 100,
-                      color: ColorConstants.greyColor,
-                    );
-                  },
-                )
-            )
-                : const Icon(
-              Icons.account_circle_rounded,
-              size: 100,
-              color: ColorConstants.greyColor,
-            ),
-          ),
-        ),
-        Positioned(
-          right: 0,
-          bottom: 0,
-          child: FloatingActionButton(
-            mini: true,
-            onPressed: () async {
-              // Implement your functionality to pick an image from the gallery
-              _pickProfileImageFromGallery();
-            },
-            backgroundColor: Colors.white,
-            child: const Icon(
-              Icons.photo_library,
-              color: ColorConstants.primaryColor,
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   void _onTemperatureChanged(double temperature){
@@ -509,36 +436,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     return TextButton(
       onPressed: _isDoneButtonEnabled
       ? () async {
-        if (Utilities.isKeyboardShowing(context)) {
-          Utilities.closeKeyboard(context);
-        }
-        _selectedBackgroundImageBLOB!.isEmpty ? _selectedBackgroundImageBLOB = await ImageConverter.convertAssetImageToBLOB(PathConstants.defaultCharacterBackgroundImage) : Uint8List(0);
-
-        final newCharacter = Character(
-            id: widget.arguments.character.id,
-            photoBLOB: _selectedProfileImageBLOB!,
-            backgroundPhotoBLOB: _selectedBackgroundImageBLOB!,
-            characterName: _textFieldControllerName.text,
-            userName: _textFieldControllerYourName.text,
-            firstMessage: _textFieldControllerFirstMessage.text,
-            service: _getServiceData()
-        );
-        await characterProvider.insertOrUpdateCharacter(newCharacter);
-        if(newCharacter.firstMessage.isNotEmpty){
-          // This only insert first Message if chatroom doesn't exist
-          final firstChatRoom = ChatRoom.firstChatRoom(newCharacter);
-          final firstMessage = ChatMessage.firstMessage(firstChatRoom.id!, newCharacter.id!, _textFieldControllerFirstMessage.text);
-          await characterProvider.insertFirstMessage(newCharacter, firstMessage);
-        }
-
-        if(widget.arguments.character.id != null){
-          await characterProvider.updateCurrentCharacter(widget.arguments.character.id!);
-        }
-        await chatRoomsProvider.updateChatRooms();
-
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
+        await _onDone();
       }
       : null,
       style: TextButton.styleFrom(
@@ -553,6 +451,39 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _onDone() async {
+    if (Utilities.isKeyboardShowing(context)) {
+      Utilities.closeKeyboard(context);
+    }
+    _selectedBackgroundImageBLOB!.isEmpty ? _selectedBackgroundImageBLOB = await ImageConverter.convertAssetImageToBLOB(PathConstants.defaultCharacterBackgroundImage) : Uint8List(0);
+
+    final newCharacter = Character(
+        id: widget.arguments.character.id,
+        photoBLOB: _selectedProfileImageBLOB!,
+        backgroundPhotoBLOB: _selectedBackgroundImageBLOB!,
+        characterName: _textFieldControllerName.text,
+        userName: _textFieldControllerYourName.text,
+        firstMessage: _textFieldControllerFirstMessage.text,
+        service: _getServiceData()
+    );
+    await characterProvider.insertOrUpdateCharacter(newCharacter);
+    if(newCharacter.firstMessage.isNotEmpty){
+      // This only insert first Message if chatroom doesn't exist
+      final firstChatRoom = ChatRoom.firstChatRoom(newCharacter);
+      final firstMessage = ChatMessage.firstMessage(firstChatRoom.id!, newCharacter.id!, _textFieldControllerFirstMessage.text);
+      await characterProvider.insertFirstMessage(newCharacter, firstMessage);
+    }
+
+    if(widget.arguments.character.id != null){
+      await characterProvider.updateCurrentCharacter(widget.arguments.character.id!);
+    }
+    await chatRoomsProvider.updateChatRooms();
+
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   ServiceType _getServiceType(String modelName){

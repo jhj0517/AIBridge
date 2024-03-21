@@ -3,8 +3,79 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../constants/color_constants.dart';
 import '../constants/path_constants.dart';
 import '../models/models.dart';
+
+class ProfilePicture extends StatelessWidget {
+  final double width;
+  final double height;
+  final Future<void> Function() onPickImage;
+  final Uint8List? imageBLOBData;
+  final bool? isMutable;
+
+  const ProfilePicture({
+    super.key,
+    required this.width,
+    required this.height,
+    required this.onPickImage,
+    this.imageBLOBData,
+    this.isMutable,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        GestureDetector(
+          onTap: isMutable != null && isMutable! ? onPickImage : null,
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: const BorderRadius.all(Radius.circular(40)),
+            clipBehavior: Clip.hardEdge,
+            child: imageBLOBData?.isNotEmpty ?? false
+            ? SizedBox(
+              width: width,
+              height: height,
+              child: Image.memory(
+                imageBLOBData!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, object, stackTrace) {
+                  return Icon(
+                    Icons.account_circle_rounded,
+                    size: width,
+                    color: ColorConstants.greyColor,
+                  );
+                },
+              ),
+            )
+            : Icon(
+              Icons.account_circle_rounded,
+              size: width,
+              color: ColorConstants.greyColor,
+            ),
+          ),
+        ),
+        isMutable != null && isMutable!
+        ? Positioned(
+          right: 0,
+          bottom: 0,
+          child: FloatingActionButton(
+            mini: true,
+            onPressed: () => onPickImage(),
+            backgroundColor: Colors.white,
+            child: const Icon(
+              Icons.photo_library,
+              color: ColorConstants.primaryColor,
+            ),
+          ),
+        )
+        : const SizedBox.shrink()
+      ],
+    );
+  }
+}
+
 
 class PromptField extends StatelessWidget {
   final String labelText;
