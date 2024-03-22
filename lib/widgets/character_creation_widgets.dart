@@ -28,7 +28,7 @@ class ProfilePicture extends StatelessWidget {
     return Stack(
       children: [
         GestureDetector(
-          onTap: isMutable != null && isMutable! ? onPickImage : null,
+          onTap: onPickImage,
           child: Material(
             color: Colors.transparent,
             borderRadius: const BorderRadius.all(Radius.circular(40)),

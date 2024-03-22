@@ -92,8 +92,19 @@ class CharacterProfileState extends State<CharacterProfilePage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Profile picture
-                    _buildProfilePicture(),
+                    ProfilePicture(
+                      width: 100,
+                      height: 100,
+                      imageBLOBData: charactersProvider.currentCharacter.photoBLOB,
+                      onPickImage: () => _navigateTo(
+                        FullPhotoPage(
+                          arguments: FullPhotoPageArguments(
+                              title: charactersProvider.currentCharacter.characterName,
+                              photoBLOB: charactersProvider.currentCharacter.photoBLOB
+                          ),
+                        )
+                      )
+                    ),
                     // Name
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -109,7 +120,6 @@ class CharacterProfileState extends State<CharacterProfilePage> {
                       endIndent: 20,
                       indent: 20,
                     ),
-                    // Chatting and Edit Profile buttons
                     Padding(
                       padding: const EdgeInsets.all(1.0),
                       child: Row(
@@ -149,46 +159,11 @@ class CharacterProfileState extends State<CharacterProfilePage> {
     });
   }
 
-  Widget _buildProfilePicture(){
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => FullPhotoPage(
-              arguments: FullPhotoPageArguments(
-                  title: charactersProvider.currentCharacter.characterName,
-                  photoBLOB: charactersProvider.currentCharacter.photoBLOB
-              ),
-            ),
-          ),
-        );
-      },
-      child:Material(
-        color: Colors.transparent,
-        borderRadius: const BorderRadius.all(Radius.circular(40)),
-        clipBehavior: Clip.hardEdge,
-        child: charactersProvider.currentCharacter.photoBLOB.isNotEmpty
-            ? SizedBox(
-            width: 100,
-            height: 100,
-            child: Image.memory(
-              charactersProvider.currentCharacter.photoBLOB,
-              fit: BoxFit.cover,
-              errorBuilder: (context, object, stackTrace) {
-                return const Icon(
-                  Icons.account_circle_rounded,
-                  size: 100,
-                  color: ColorConstants.greyColor,
-                );
-              },
-            )
-        )
-            : const Icon(
-          Icons.account_box_rounded,
-          size: 100,
-          color: ColorConstants.greyColor,
-        ),
+  Future<void> _navigateTo(StatelessWidget page) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => page,
       ),
     );
   }
@@ -326,3 +301,4 @@ class CharacterProfilePageArguments {
     required this.comingFromChatPage
   }); // note : just receive Character
 }
+// Clean this.
