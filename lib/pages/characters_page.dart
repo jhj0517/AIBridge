@@ -22,7 +22,6 @@ class CharactersPage extends StatefulWidget {
 class CharactersPageState extends State<CharactersPage> {
   CharactersPageState({Key? key});
 
-  final ScrollController listScrollController = ScrollController();
   bool isLoading = false;
 
   bool _isSearching = false;
@@ -139,7 +138,6 @@ class CharactersPageState extends State<CharactersPage> {
                                   }
                                 },
                                 itemCount: filteredCharacters.length + 1,
-                                controller: listScrollController,
                               );
                             } else {
                               return Center(
@@ -177,7 +175,6 @@ class CharactersPageState extends State<CharactersPage> {
   void dispose() {
     super.dispose();
     searchBarTec.dispose();
-    listScrollController.removeListener(() {});
   }
 
   Future<void> _init() async {
