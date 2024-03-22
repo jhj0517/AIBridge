@@ -40,6 +40,7 @@ dependencies:
   image_gallery_saver: ^2.0.3
   png_chunks_encode: ^1.0.0
   png_chunks_extract: ^1.0.2
+  social_login_buttons: ^1.0.7
 
 dev_dependencies:
   flutter_test:
