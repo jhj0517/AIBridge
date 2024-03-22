@@ -112,47 +112,44 @@ class CharactersPageState extends State<CharactersPage> {
                     Expanded(
                       child: Builder(
                         builder: (BuildContext context) {
-                          List<Character> characters = charactersProvider.characters;
-                          if (characters.isEmpty) {
+                          List<Character> filteredCharacters = _getFilteredCharacters(
+                              charactersProvider.characters,
+                              _textSearch
+                          );
+                          if (_isSearching && filteredCharacters.isEmpty){
+                            return Center(
+                              child: Text(
+                                Intl.message("noCharacter"),
+                                style: const TextStyle(
+                                    fontSize: 20,
+                                    color: ColorConstants.themeColor,
+                                    fontWeight: FontWeight.normal,
+                                    fontFamily: "MouldyCheeseRegular"
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (filteredCharacters.isEmpty) {
                             return ListView.builder(
                               itemBuilder: (context, index) {
                                 return _buildAddButton(context);
                               },
                               itemCount: 1,
                             );
-                          } else {
-                            List<Character> filteredCharacters =
-                            characters.where((character) =>
-                            _textSearch.isEmpty ||
-                            character.characterName.toLowerCase().contains(_textSearch.toLowerCase()))
-                            .toList();
-
-                            if (filteredCharacters.isNotEmpty) {
-                              return ListView.builder(
-                                padding: const EdgeInsets.fromLTRB(0.5, 0.5, 0.5, 50),
-                                itemBuilder: (context, index) {
-                                  if (index == filteredCharacters.length) {
-                                    return _buildAddButton(context);
-                                  } else {
-                                    return _buildItem(context, filteredCharacters[index]);
-                                  }
-                                },
-                                itemCount: filteredCharacters.length + 1,
-                              );
-                            } else {
-                              return Center(
-                                child: Text(
-                                  Intl.message("noCharacter"),
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      color: ColorConstants.themeColor,
-                                      fontWeight: FontWeight.normal,
-                                      fontFamily: "MouldyCheeseRegular"
-                                  ),
-                                ),
-                              );
-                            }
                           }
+
+                          return ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(0.5, 0.5, 0.5, 50),
+                            itemBuilder: (context, index) {
+                              if (index == filteredCharacters.length) {
+                                return _buildAddButton(context);
+                              } else {
+                                return _buildItem(context, filteredCharacters[index]);
+                              }
+                            },
+                            itemCount: filteredCharacters.length + 1,
+                          );
                         },
                       ),
                     ),
@@ -181,6 +178,13 @@ class CharactersPageState extends State<CharactersPage> {
     // initialize something
   }
 
+  List<Character> _getFilteredCharacters(List<Character> characters, String searchText) {
+    if (searchText.isEmpty) return characters;
+    return characters.where((character) =>
+        character.characterName.toLowerCase().contains(searchText.toLowerCase())).toList();
+  }
+
+
   Future<void> _openCharacterOptionDialog(Character character) async {
     final dialogResult = await showDialog(
         context: context,
@@ -191,20 +195,16 @@ class CharactersPageState extends State<CharactersPage> {
 
     switch (dialogResult){
       case DialogResult.edit:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CharacterCreationPage(
-                arguments: CharacterCreationPageArguments(
-                    character: character
-                ),
-              ),
+        _navigateTo(
+          CharacterCreationPage(
+            arguments: CharacterCreationPageArguments(
+                character: character
+            ),
           ),
         );
-        break;
+
       case DialogResult.delete:
         await _openDeleteDialog(character.id!);
-        break;
     }
   }
 
@@ -220,7 +220,6 @@ class CharactersPageState extends State<CharactersPage> {
       case DialogResult.yes:
         await charactersProvider.deleteCharacter(characterId);
         await chatRoomsProvider.updateChatRooms();
-        break;
     }
   }
 
@@ -277,47 +276,22 @@ class CharactersPageState extends State<CharactersPage> {
               if (Utilities.isKeyboardShowing(context)) {
                 Utilities.closeKeyboard(context);
               }
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      CharacterProfilePage(
-                        arguments: CharacterProfilePageArguments(
-                            characterId: character.id!,
-                        ),
-                      ),
-                ),
+              _navigateTo(
+                  CharacterProfilePage(
+                    arguments: CharacterProfilePageArguments(
+                      characterId: character.id!,
+                    ),
+                  )
               );
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               child: Row(
                 children: <Widget>[
-                  Material(
-                    color: Colors.transparent,
-                    borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    clipBehavior: Clip.hardEdge,
-                    child: character.photoBLOB.isNotEmpty
-                        ? SizedBox(
-                        width: 50,
-                        height: 50,
-                        child: Image.memory(
-                          character.photoBLOB,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, object, stackTrace) {
-                            return const Icon(
-                              Icons.account_circle_rounded,
-                              size: 50,
-                              color: ColorConstants.greyColor,
-                            );
-                          },
-                        )
-                    )
-                        : const Icon(
-                      Icons.account_circle,
-                      size: 50,
-                      color: ColorConstants.greyColor,
-                    ),
+                  ProfilePicture(
+                    width: 50,
+                    height: 50,
+                    imageBLOBData: character.photoBLOB,
                   ),
                   const SizedBox(width: 20),
                   Expanded(
@@ -363,15 +337,12 @@ class CharactersPageState extends State<CharactersPage> {
         color: Colors.white,
         child: InkWell(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CharacterCreationPage(
+            _navigateTo(
+                CharacterCreationPage(
                   arguments: CharacterCreationPageArguments(
                       character: Character.defaultCharacter()
                   ),
-                ),
-              ),
+                )
             );
           },
           child: Ink(
@@ -384,6 +355,15 @@ class CharactersPageState extends State<CharactersPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _navigateTo(StatefulWidget page){
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => page,
       ),
     );
   }
