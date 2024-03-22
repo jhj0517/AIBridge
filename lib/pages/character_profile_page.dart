@@ -159,7 +159,7 @@ class CharacterProfileState extends State<CharacterProfilePage> {
     });
   }
 
-  Future<void> _navigateTo(StatelessWidget page) async {
+  Future<void> _navigateTo<T extends Widget>(T page) async {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -213,14 +213,21 @@ class CharacterProfileState extends State<CharacterProfilePage> {
           onTap: () async {
             //Chat Button On Tap event
             if (charactersProvider.currentCharacter.firstMessage.isNotEmpty){
-              // This only insert Chatroom and first message in case there's no chatroom
-              final firstChatRoom = ChatRoom.firstChatRoom(charactersProvider.currentCharacter);
+              final firstChatRoom = ChatRoom.newChatRoom(charactersProvider.currentCharacter);
               final firstMessage = ChatMessage.firstMessage(firstChatRoom.id!, charactersProvider.currentCharacter.id!, charactersProvider.currentCharacter.firstMessage);
               await charactersProvider.insertFirstMessage(charactersProvider.currentCharacter, firstMessage);
             } else {
               await chatRoomsProvider.insertChatRoom(charactersProvider.currentCharacter);
             }
             chatRoomsProvider.updateChatRooms();
+
+            // _navigateTo(
+            //     ChatPage(
+            //         arguments: ChatPageArguments(
+            //             characterId: widget.arguments.characterId
+            //         )
+            //     )
+            // );
 
             if (context.mounted) {
               if(widget.arguments.comingFromChatPage){

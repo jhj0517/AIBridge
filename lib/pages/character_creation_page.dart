@@ -463,7 +463,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     await characterProvider.insertOrUpdateCharacter(newCharacter);
     if(newCharacter.firstMessage.isNotEmpty){
       // This only insert first Message if chatroom doesn't exist
-      final firstChatRoom = ChatRoom.firstChatRoom(newCharacter);
+      final firstChatRoom = ChatRoom.newChatRoom(newCharacter);
       final firstMessage = ChatMessage.firstMessage(firstChatRoom.id!, newCharacter.id!, _textFieldControllerFirstMessage.text);
       await characterProvider.insertFirstMessage(newCharacter, firstMessage);
     }

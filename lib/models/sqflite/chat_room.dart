@@ -56,7 +56,7 @@ class ChatRoom {
     );
   }
 
-  factory ChatRoom.firstChatRoom(Character character){
+  factory ChatRoom.newChatRoom(Character character){
     var uuid = const Uuid();
     return ChatRoom(
       id: uuid.v4(),
