@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:aibridge/providers/theme_provider.dart';
+import 'package:aibridge/widgets/character_creation_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -146,50 +147,6 @@ abstract class BaseChatBox extends StatelessWidget {
       style: const TextStyle(
         fontSize: 10.0,
         color: Colors.grey,
-      ),
-    );
-  }
-
-  Widget buildProfilePicture(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (context.mounted) {
-          Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => CharacterProfilePage(
-                  arguments: CharacterProfilePageArguments(
-                      characterId: charactersProvider!.currentCharacter.id!,
-                      comingFromChatPage: true
-                  ),
-                ),
-              )
-          );
-        }
-      },
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
-        clipBehavior: Clip.hardEdge,
-        child: charactersProvider!.currentCharacter.photoBLOB.isNotEmpty
-        ? SizedBox(
-          width: 50,
-          height: 50,
-          child: Image.memory(
-            charactersProvider!.currentCharacter.photoBLOB,
-            fit: BoxFit.cover,
-            errorBuilder: (context, object, stackTrace) {
-              return const Icon(
-                Icons.account_circle_rounded,
-                size: 50,
-                color: ColorConstants.greyColor,
-              );
-            })
-        )
-        : const Icon(
-          Icons.account_circle,
-          size: 50,
-          color: ColorConstants.greyColor,
-        ),
       ),
     );
   }
@@ -357,6 +314,9 @@ class UserChatBoxDeleteMode extends BaseChatBox {
 }
 
 class CharacterChatBox extends BaseChatBox {
+
+  final Future<void> Function() profileCallback;
+
   const CharacterChatBox({
     super.key,
     required super.chatMessage,
@@ -367,6 +327,7 @@ class CharacterChatBox extends BaseChatBox {
     required super.dialogCallback,
     required super.themeProvider,
     required super.charactersProvider,
+    required this.profileCallback
   });
 
   @override
@@ -377,7 +338,12 @@ class CharacterChatBox extends BaseChatBox {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(width: 10.0),
-              buildProfilePicture(context),
+              ProfilePicture(
+                width: 50,
+                height: 50,
+                onPickImage: profileCallback,
+                imageBLOBData: charactersProvider!.currentCharacter.photoBLOB,
+              ),
               const SizedBox(width: 8.0),
               Expanded(
                   child: Column(
@@ -471,7 +437,11 @@ class CharacterChatBoxDeleteMode extends BaseChatBox {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(width: 10.0),
-                        buildProfilePicture(context),
+                        ProfilePicture(
+                          width: 50,
+                          height: 50,
+                          imageBLOBData: charactersProvider!.currentCharacter.photoBLOB,
+                        ),
                         const SizedBox(width: 8.0),
                         Expanded(
                           child: Column(
@@ -544,7 +514,11 @@ class CharacterChatBoxLoading extends BaseChatBox{
         Row(
           children: [
             const SizedBox(width: 10.0),
-            buildProfilePicture(context),
+            ProfilePicture(
+              width: 50,
+              height: 50,
+              imageBLOBData: charactersProvider!.currentCharacter.photoBLOB,
+            ),
             const SizedBox(width: 8.0),
             Expanded(
               child: Column(

@@ -10,7 +10,7 @@ import '../models/models.dart';
 class ProfilePicture extends StatelessWidget {
   final double width;
   final double height;
-  final Future<void> Function() onPickImage;
+  final Future<void> Function()? onPickImage;
   final Uint8List? imageBLOBData;
   final bool? isMutable;
 
@@ -18,8 +18,8 @@ class ProfilePicture extends StatelessWidget {
     super.key,
     required this.width,
     required this.height,
-    required this.onPickImage,
     this.imageBLOBData,
+    this.onPickImage,
     this.isMutable,
   });
 
@@ -62,7 +62,7 @@ class ProfilePicture extends StatelessWidget {
           bottom: 0,
           child: FloatingActionButton(
             mini: true,
-            onPressed: () => onPickImage(),
+            onPressed: () => onPickImage!(),
             backgroundColor: Colors.white,
             child: const Icon(
               Icons.photo_library,

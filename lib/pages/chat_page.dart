@@ -302,6 +302,16 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
           chatTextEditingController: _chatTextEditingController,
           editChatFocusNode: _editUserChatFocusNode,
           dialogCallback: () => _openChatDialog(content),
+          profileCallback: () async => {
+            _navigateTo(
+              CharacterProfilePage(
+                arguments: CharacterProfilePageArguments(
+                  characterId: charactersProvider.currentCharacter.id!,
+                  fromChatPage: true
+                )
+              )
+            )
+          },
           themeProvider: themeProvider,
           charactersProvider: charactersProvider,
       );

@@ -287,7 +287,6 @@ class CharactersPageState extends State<CharactersPage> {
                       CharacterProfilePage(
                         arguments: CharacterProfilePageArguments(
                             characterId: character.id!,
-                            comingFromChatPage: false
                         ),
                       ),
                 ),

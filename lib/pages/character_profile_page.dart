@@ -221,16 +221,8 @@ class CharacterProfileState extends State<CharacterProfilePage> {
             }
             chatRoomsProvider.updateChatRooms();
 
-            // _navigateTo(
-            //     ChatPage(
-            //         arguments: ChatPageArguments(
-            //             characterId: widget.arguments.characterId
-            //         )
-            //     )
-            // );
-
             if (context.mounted) {
-              if(widget.arguments.comingFromChatPage){
+              if(widget.arguments.fromChatPage == true){
                 Navigator.of(context).pop();
               } else {
                 Navigator.of(context).pushReplacement(
@@ -301,11 +293,11 @@ class CharacterProfileState extends State<CharacterProfilePage> {
 
 class CharacterProfilePageArguments {
   final String characterId;
-  final bool comingFromChatPage;
+  final bool? fromChatPage;
 
   CharacterProfilePageArguments({
     required this.characterId,
-    required this.comingFromChatPage
+    this.fromChatPage=false
   }); // note : just receive Character
 }
 // Clean this.
