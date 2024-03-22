@@ -25,6 +25,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "InitializingTokenizer":
             MessageLookupByLibrary.simpleMessage("トークナイザーの初期化.."),
         "appTitle": MessageLookupByLibrary.simpleMessage("AIブリッジ"),
+        "appleSignIn":
+            MessageLookupByLibrary.simpleMessage("Sign in with Apple"),
         "background": MessageLookupByLibrary.simpleMessage("背景"),
         "cancel": MessageLookupByLibrary.simpleMessage("キャンセル"),
         "characterChatBoxBackgroundColor":
@@ -92,6 +94,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "firstMessageLabel":
             MessageLookupByLibrary.simpleMessage("キャラクターのファーストメッセージ"),
         "fontSize": MessageLookupByLibrary.simpleMessage("フォントサイズ"),
+        "googleSignIn":
+            MessageLookupByLibrary.simpleMessage("Sign in with Google"),
         "gpt4VisionOnly": MessageLookupByLibrary.simpleMessage(
             "この機能は「GPT-4 Vision」のみに対応しています。"),
         "image": MessageLookupByLibrary.simpleMessage("画像"),
@@ -137,6 +141,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "searchCharacter": MessageLookupByLibrary.simpleMessage("キャラクター名を検索"),
         "selectModel": MessageLookupByLibrary.simpleMessage("モデルを選択"),
         "settingsPageTitle": MessageLookupByLibrary.simpleMessage("設定"),
+        "signIn": MessageLookupByLibrary.simpleMessage("Sign in"),
         "systemPrompt": MessageLookupByLibrary.simpleMessage("システムプロンプト"),
         "systemPromptHint": MessageLookupByLibrary.simpleMessage(
             "ChatGPT に何をさせたいかを指示するプロンプトを表示します。"),

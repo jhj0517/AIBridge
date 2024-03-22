@@ -25,6 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "InitializingTokenizer":
             MessageLookupByLibrary.simpleMessage("토크나이저 초기화 중.."),
         "appTitle": MessageLookupByLibrary.simpleMessage("AI 브리지"),
+        "appleSignIn": MessageLookupByLibrary.simpleMessage("Apple 로그인"),
         "background": MessageLookupByLibrary.simpleMessage("배경"),
         "cancel": MessageLookupByLibrary.simpleMessage("취소"),
         "characterChatBoxBackgroundColor":
@@ -88,6 +89,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("캐릭터의 첫 메시지를 정할 수 있습니다."),
         "firstMessageLabel": MessageLookupByLibrary.simpleMessage("캐릭터의 첫 메시지"),
         "fontSize": MessageLookupByLibrary.simpleMessage("글자 크기"),
+        "googleSignIn": MessageLookupByLibrary.simpleMessage("Google 로그인"),
         "gpt4VisionOnly": MessageLookupByLibrary.simpleMessage(
             "이 기능은 현재 GPT-4 Vision 에서만 지원됩니다."),
         "image": MessageLookupByLibrary.simpleMessage("이미지"),
@@ -132,6 +134,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "searchCharacter": MessageLookupByLibrary.simpleMessage("캐릭터 명 검색"),
         "selectModel": MessageLookupByLibrary.simpleMessage("모델 선택"),
         "settingsPageTitle": MessageLookupByLibrary.simpleMessage("설정"),
+        "signIn": MessageLookupByLibrary.simpleMessage("로그인"),
         "systemPrompt": MessageLookupByLibrary.simpleMessage("시스템 프롬프트"),
         "systemPromptHint": MessageLookupByLibrary.simpleMessage(
             "ChatGPT 에게 어떤 것을 해야할지 주입시키는 프롬프트입니다."),

@@ -107,5 +107,8 @@
   "description": "Description",
   "descriptionHint": "This is the prompt for the character's description.",
   "darkTheme": "Dark Theme",
-  "lightTheme": "Light Theme"
+  "lightTheme": "Light Theme",
+  "signIn": "Sign in",
+  "googleSignIn": "Sign in with Google",
+  "appleSignIn": "Sign in with Apple"
 }

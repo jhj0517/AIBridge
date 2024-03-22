@@ -108,5 +108,8 @@
   "description": "설명",
   "descriptionHint": "캐릭터의 설명에 대한 프롬프트입니다.",
   "darkTheme": "다크 테마",
-  "lightTheme": "라이트 테마"
+  "lightTheme": "라이트 테마",
+  "signIn": "로그인",
+  "googleSignIn": "Google 로그인",
+  "appleSignIn": "Apple 로그인"
 }

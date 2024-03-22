@@ -1,4 +1,5 @@
 import 'package:aibridge/providers/providers.dart';
+import 'package:aibridge/widgets/character_creation_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ import '../constants/constants.dart';
 import '../pages/pages.dart';
 import '../utils/utilities.dart';
 import '../localdb/localdb.dart';
+import '../widgets/widgets.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -58,6 +60,14 @@ class SettingsPageState extends State<SettingsPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                _buildMoreRow(Intl.message('signIn'), Icons.person, () async {
+                  final social = await showDialog(
+                    context: context,
+                    builder: (context) => const SignInDialog()
+                  );
+                  //authProvider.handleSignIn(social);
+                }
+                ),
                 _buildMoreRow(themeProvider.attrs.toggleThemeName, themeProvider.attrs.toggleThemeIcon, (){
                   themeProvider.toggleTheme();
                 }
@@ -115,47 +125,15 @@ class SettingsPageState extends State<SettingsPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const SizedBox(width: 30),
-        Stack(
-          children: [
-            SizedBox(
-              width: 50,
-              height: 50,
-              child: ClipOval(
-                child: Image.network(
-                  "", // Replace with your image URL
-                  fit: BoxFit.cover,
-                  width: 50,
-                  height: 50,
-                  loadingBuilder: (BuildContext context, Widget child,
-                      ImageChunkEvent? loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: ColorConstants.themeColor,
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, object, stackTrace) {
-                    return const Icon(
-                      Icons.account_circle,
-                      size: 50,
-                      color: ColorConstants.greyColor,
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
+        const ProfilePicture(
+            width: 50,
+            height: 50
         ),
         const SizedBox(width: 15),
         Expanded(
           child: Container(
             alignment: Alignment.centerLeft,
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

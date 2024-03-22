@@ -107,5 +107,8 @@
   "description": "説明",
   "descriptionHint": "これはキャラクターの説明のためのプロンプトです。",
   "darkTheme": "ダークテーマ",
-  "lightTheme": "ライトテーマ"
+  "lightTheme": "ライトテーマ",
+  "signIn": "Sign in",
+  "googleSignIn": "Sign in with Google",
+  "appleSignIn": "Sign in with Apple"
 }

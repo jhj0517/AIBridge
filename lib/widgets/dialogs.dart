@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:social_login_buttons/social_login_buttons.dart';
 
 import '../constants/constants.dart';
 
@@ -11,6 +12,11 @@ enum DialogResult {
   edit,
   delete,
   copy,
+}
+
+enum SocialLogins {
+  google,
+  apple,
 }
 
 abstract class BaseDialog extends StatelessWidget {
@@ -92,6 +98,47 @@ class CharacterOption extends BaseDialog{
             ),
           ),
         ),
+      ),
+    ];
+  }
+}
+
+class SignInDialog extends BaseDialog{
+
+  const SignInDialog({
+    super.key,
+  });
+
+  @override
+  List<Widget> buildContent(BuildContext context) {
+    return [
+      Container(
+        margin: const EdgeInsets.only(left: 20),
+        alignment: Alignment.centerLeft,
+        height: 50,
+        color: Colors.transparent,
+        child: Text(
+          Intl.message("signIn"),
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      SocialLoginButton(
+        buttonType: SocialLoginButtonType.google,
+        text: Intl.message("googleSignIn"),
+        onPressed: () {
+          Navigator.pop(context, SocialLogins.google);
+        }
+      ),
+      SocialLoginButton(
+        buttonType: SocialLoginButtonType.apple,
+        text: Intl.message("appleSignIn"),
+        onPressed: () {
+          Navigator.pop(context, SocialLogins.apple);
+        }
       ),
     ];
   }

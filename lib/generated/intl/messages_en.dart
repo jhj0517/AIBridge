@@ -25,6 +25,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "InitializingTokenizer":
             MessageLookupByLibrary.simpleMessage("Initializing Tokenizer.."),
         "appTitle": MessageLookupByLibrary.simpleMessage("AI Bridge"),
+        "appleSignIn":
+            MessageLookupByLibrary.simpleMessage("Sign in with Apple"),
         "background": MessageLookupByLibrary.simpleMessage("Background"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "characterChatBoxBackgroundColor": MessageLookupByLibrary.simpleMessage(
@@ -99,6 +101,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "firstMessageLabel":
             MessageLookupByLibrary.simpleMessage("Character\'s First Message"),
         "fontSize": MessageLookupByLibrary.simpleMessage("Font Size"),
+        "googleSignIn":
+            MessageLookupByLibrary.simpleMessage("Sign in with Google"),
         "gpt4VisionOnly": MessageLookupByLibrary.simpleMessage(
             "This feature is supported for GPT-4 Vision only."),
         "image": MessageLookupByLibrary.simpleMessage("Image"),
@@ -150,6 +154,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Search character name"),
         "selectModel": MessageLookupByLibrary.simpleMessage("Select Model"),
         "settingsPageTitle": MessageLookupByLibrary.simpleMessage("Settings"),
+        "signIn": MessageLookupByLibrary.simpleMessage("Sign in"),
         "systemPrompt": MessageLookupByLibrary.simpleMessage("System Prompt"),
         "systemPromptHint": MessageLookupByLibrary.simpleMessage(
             "Provide a prompt to instruct ChatGPT on what you want it to do."),
