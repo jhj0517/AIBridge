@@ -11,9 +11,6 @@ enum AuthStatus {
   authenticateError,
   authenticateException,
   authenticateCanceled,
-  deletingAuth,
-  deletionAuthCompleted,
-  deletionAuthError,
 }
 
 class AuthProvider extends ChangeNotifier {
@@ -34,8 +31,7 @@ class AuthProvider extends ChangeNotifier {
 
 
   Future<bool> handleGoogleSignIn() async {
-    _status = AuthStatus.authenticating;
-    notifyListeners();
+    _setStatus(AuthStatus.authenticating);
 
     GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     if (googleUser == null) {
@@ -55,6 +51,8 @@ class AuthProvider extends ChangeNotifier {
           credential)).user;
     } catch (error, stacktrace) {
       debugPrint('Authentication Error : $error\n$stacktrace');
+      _setStatus(AuthStatus.authenticateError);
+      return false;
     }
 
     if (firebaseUser == null){
@@ -67,10 +65,56 @@ class AuthProvider extends ChangeNotifier {
     return true;
   }
 
+  Future<bool> handleAppleSignIn() async {
+    _setStatus(AuthStatus.authenticating);
+
+    final appleCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+    );
+
+    final oauthCredential = OAuthProvider('apple.com').credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode
+    );
+
+    User? firebaseUser;
+    try{
+      firebaseUser = (await firebaseAuth.signInWithCredential(oauthCredential)).user;
+    } catch (error, stacktrace) {
+      debugPrint('Authentication Error : $error\n$stacktrace');
+      _setStatus(AuthStatus.authenticateError);
+      return false;
+    }
+
+    if (firebaseUser == null){
+      _setStatus(AuthStatus.authenticateError);
+      return false;
+    }
+
+    _currentUser = firebaseUser;
+    _setStatus(_status = AuthStatus.authenticated);
+    return true;
+  }
+
+  Future<void> handleSignOut() async {
+    await firebaseAuth.signOut();
+    // Note: Do this to prevent google sign-in from automatically selecting the previous account.
+    // See also : https://www.deepl.com/write#en/Note%20%3A%20Do%20this%20to%20prevent%20to%20google%20automatically%20choose%20previous%20account
+    if(await googleSignIn.isSignedIn()){
+      await googleSignIn.disconnect();
+      await googleSignIn.signOut();
+    }
+
+    _currentUser = null;
+    _setStatus(AuthStatus.uninitialized);
+  }
+
   void _setStatus(AuthStatus status){
     _status = status;
     notifyListeners();
   }
-
 
 }
