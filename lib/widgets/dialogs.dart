@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:social_login_buttons/social_login_buttons.dart';
 
 import '../constants/constants.dart';
+import '../providers/auth_provider.dart';
 
 enum DialogResult {
   yes,
@@ -12,11 +13,6 @@ enum DialogResult {
   edit,
   delete,
   copy,
-}
-
-enum SocialLogins {
-  google,
-  apple,
 }
 
 abstract class BaseDialog extends StatelessWidget {

@@ -13,7 +13,12 @@ enum AuthStatus {
   authenticateCanceled,
 }
 
-class AuthProvider extends ChangeNotifier {
+enum SocialLogins {
+  google,
+  apple,
+}
+
+class SocialAuthProvider extends ChangeNotifier {
 
   final GoogleSignIn googleSignIn;
   final FirebaseAuth firebaseAuth;
@@ -24,10 +29,14 @@ class AuthProvider extends ChangeNotifier {
   User? _currentUser;
   User? get currentUser => _currentUser;
 
-  AuthProvider({
+  SocialAuthProvider({
     required this.firebaseAuth,
     required this.googleSignIn,
   }){}
+
+  Future<void> handleSocialSignIn() async {
+
+  }
 
 
   Future<bool> handleGoogleSignIn() async {
