@@ -1,5 +1,7 @@
+import 'package:aibridge/providers/auth_provider.dart';
 import 'package:aibridge/providers/providers.dart';
 import 'package:aibridge/widgets/character_creation_widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,12 +24,14 @@ class SettingsPageState extends State<SettingsPage> {
 
   late SQFliteHelper sqFliteHelper;
   late ThemeProvider themeProvider;
+  late SocialAuthProvider authProvider;
 
   @override
   void initState() {
     super.initState();
     themeProvider = context.read<ThemeProvider>();
     sqFliteHelper = context.read<SQFliteHelper>();
+    authProvider = context.read<SocialAuthProvider>();
     _init();
   }
 
@@ -65,15 +69,12 @@ class SettingsPageState extends State<SettingsPage> {
                     context: context,
                     builder: (context) => const SignInDialog()
                   );
-                  //authProvider.handleSignIn(social);
-                }
-                ),
+                  await authProvider.handleSocialSignIn(social);
+                }),
                 _buildMoreRow(themeProvider.attrs.toggleThemeName, themeProvider.attrs.toggleThemeIcon, (){
                   themeProvider.toggleTheme();
-                }
-                ),
+                }),
                 _buildMoreRow(Intl.message('chatRoomSetting'), Icons.settings, () async {
-                  //onTab chatRoomSetting
                   if (context.mounted) {
                     Navigator.of(context).push(
                         MaterialPageRoute(
@@ -81,19 +82,15 @@ class SettingsPageState extends State<SettingsPage> {
                         )
                     );
                   }
-                }
-                ),
+                }),
                 _buildMoreRow(Intl.message('privacyPolicy'), Icons.lock, () async {
-                  //onTab Privacy Policy
                   if(Intl.getCurrentLocale()=="ko"){
                     Utilities.launchURL(AppConstants.privacyPolicyKO);
                   } else {
                     Utilities.launchURL(AppConstants.privacyPolicyEN);
                   }
-                }
-                ),
+                }),
                 _buildMoreRow(Intl.message('usagePolicy'), Icons.gavel_sharp, (){
-                  //onTab Usage Policy
                   if (context.mounted) {
                     Navigator.of(context).push(
                         MaterialPageRoute(
@@ -101,8 +98,7 @@ class SettingsPageState extends State<SettingsPage> {
                         )
                     );
                   }
-                }
-                ),
+                }),
               ],
             ),
           ),

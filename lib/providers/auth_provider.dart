@@ -34,8 +34,14 @@ class SocialAuthProvider extends ChangeNotifier {
     required this.googleSignIn,
   }){}
 
-  Future<void> handleSocialSignIn() async {
-
+  Future<void> handleSocialSignIn(SocialLogins social) async {
+    switch(social){
+      case SocialLogins.google:
+        await handleGoogleSignIn();
+        break;
+      case SocialLogins.apple:
+        await handleAppleSignIn();
+    }
   }
 
 
