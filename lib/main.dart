@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:provider/provider.dart';
@@ -42,6 +44,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<SocialAuthProvider>(
+          create: (context) => SocialAuthProvider(
+            firebaseAuth: FirebaseAuth.instance,
+            googleSignIn: GoogleSignIn()
+          ),
+        ),
         ChangeNotifierProvider<ThemeProvider>(
           create: (context) => ThemeProvider(
             prefs: prefs
