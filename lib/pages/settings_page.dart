@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 import '../constants/constants.dart';
 import '../pages/pages.dart';
 import '../utils/utilities.dart';
-import '../localdb/localdb.dart';
 import '../widgets/widgets.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -22,7 +21,6 @@ class SettingsPage extends StatefulWidget {
 
 class SettingsPageState extends State<SettingsPage> {
 
-  late SQFliteHelper sqFliteHelper;
   late ThemeProvider themeProvider;
   late SocialAuthProvider authProvider;
 
@@ -30,7 +28,6 @@ class SettingsPageState extends State<SettingsPage> {
   void initState() {
     super.initState();
     themeProvider = context.read<ThemeProvider>();
-    sqFliteHelper = context.read<SQFliteHelper>();
     authProvider = context.read<SocialAuthProvider>();
     _init();
   }
@@ -64,6 +61,14 @@ class SettingsPageState extends State<SettingsPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                const SizedBox(height: 10),
+                _buildProfileSection(),
+                const SizedBox(height: 10),
+                Divider(
+                  height: 0.1,
+                  thickness: 0.2,
+                  color: themeProvider.attrs.dividerColor,
+                ),
                 _buildMoreRow(Intl.message('signIn'), Icons.person, () async {
                   final social = await showDialog(
                     context: context,
@@ -117,36 +122,47 @@ class SettingsPageState extends State<SettingsPage> {
   }
 
   Widget _buildProfileSection() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const SizedBox(width: 30),
-        const ProfilePicture(
-            width: 50,
-            height: 50
-        ),
-        const SizedBox(width: 15),
-        Expanded(
-          child: Container(
-            alignment: Alignment.centerLeft,
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Guest", // Replace with the actual nickname
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  "", // Replace with the actual email
-                  style: const TextStyle(fontSize: 13, color: Colors.grey),
-                ),
-              ],
+    return Consumer<SocialAuthProvider>(
+      builder: (context, authProvider, child) {
+        final User? user = authProvider.currentUser;
+
+        if (user == null){
+          return const SizedBox.shrink();
+        }
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(width: 30),
+            ProfilePicture(
+              width: 50,
+              height: 50,
+              photoURL: user.photoURL!,
             ),
-          ),
-        ),
-      ],
+            const SizedBox(width: 15),
+            Expanded(
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      user.displayName!,
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      user.email!,
+                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -41,13 +41,13 @@ class SocialAuthProvider extends ChangeNotifier {
         break;
       case SocialLogins.apple:
         await handleAppleSignIn();
+        break;
     }
   }
 
 
   Future<bool> handleGoogleSignIn() async {
     _setStatus(AuthStatus.authenticating);
-
     GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     if (googleUser == null) {
       _setStatus(AuthStatus.authenticateCanceled);
@@ -91,8 +91,8 @@ class SocialAuthProvider extends ChangeNotifier {
     );
 
     final oauthCredential = OAuthProvider('apple.com').credential(
-        idToken: appleCredential.identityToken,
-        accessToken: appleCredential.authorizationCode
+      idToken: appleCredential.identityToken,
+      accessToken: appleCredential.authorizationCode,
     );
 
     User? firebaseUser;

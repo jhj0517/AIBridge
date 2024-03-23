@@ -11,6 +11,7 @@ class ProfilePicture extends StatelessWidget {
   final double width;
   final double height;
   final Future<void> Function()? onPickImage;
+  final String? photoURL;
   final Uint8List? imageBLOBData;
   final bool? isMutable;
 
@@ -19,6 +20,7 @@ class ProfilePicture extends StatelessWidget {
     required this.width,
     required this.height,
     this.imageBLOBData,
+    this.photoURL,
     this.onPickImage,
     this.isMutable,
   });
@@ -33,27 +35,7 @@ class ProfilePicture extends StatelessWidget {
             color: Colors.transparent,
             borderRadius: const BorderRadius.all(Radius.circular(40)),
             clipBehavior: Clip.hardEdge,
-            child: imageBLOBData?.isNotEmpty ?? false
-            ? SizedBox(
-              width: width,
-              height: height,
-              child: Image.memory(
-                imageBLOBData!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, object, stackTrace) {
-                  return Icon(
-                    Icons.account_circle_rounded,
-                    size: width,
-                    color: ColorConstants.greyColor,
-                  );
-                },
-              ),
-            )
-            : Icon(
-              Icons.account_circle_rounded,
-              size: width,
-              color: ColorConstants.greyColor,
-            ),
+            child: _buildPhoto(),
           ),
         ),
         isMutable != null && isMutable!
@@ -73,6 +55,57 @@ class ProfilePicture extends StatelessWidget {
         : const SizedBox.shrink()
       ],
     );
+  }
+
+  Widget _buildPhoto(){
+     if(photoURL?.isNotEmpty ?? false){
+       return SizedBox(
+         width: width,
+         height: height,
+         child: Image.network(
+           photoURL!, // Replace with the actual URL of the image
+           fit: BoxFit.cover,
+           errorBuilder: (context, object, stackTrace) {
+             return Icon(
+               Icons.account_circle_rounded,
+               size: width,
+               color: ColorConstants.greyColor,
+             );
+           },
+           frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+             if (wasSynchronouslyLoaded) return child;
+             return AnimatedSwitcher(
+               duration: const Duration(milliseconds: 300),
+               child: frame != null ? child : const CircularProgressIndicator(),
+             );
+           },
+         ),
+       );
+     }
+
+     if(imageBLOBData?.isNotEmpty ?? false){
+       return SizedBox(
+         width: width,
+         height: height,
+         child: Image.memory(
+           imageBLOBData!,
+           fit: BoxFit.cover,
+           errorBuilder: (context, object, stackTrace) {
+             return Icon(
+               Icons.account_circle_rounded,
+               size: width,
+               color: ColorConstants.greyColor,
+             );
+           },
+         ),
+       );
+     }
+
+     return Icon(
+       Icons.account_circle_rounded,
+       size: width,
+       color: ColorConstants.greyColor,
+     );
   }
 }
 
