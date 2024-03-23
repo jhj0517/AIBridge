@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'firebase_options.dart';
 
 import 'generated/l10n.dart';
 import 'pages/pages.dart';
@@ -20,8 +22,16 @@ Future<SharedPreferences> _initSharedPreference() async {
   return await SharedPreferences.getInstance();
 }
 
+Future<void> _initFirebase() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+}
+
+
 void main() async {
   final SharedPreferences prefs = await _initSharedPreference();
+  await _initFirebase();
 
   runApp(
       Phoenix(
