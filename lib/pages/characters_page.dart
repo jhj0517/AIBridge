@@ -25,7 +25,7 @@ class CharactersPageState extends State<CharactersPage> {
   bool isLoading = false;
 
   bool _isSearching = false;
-  String _textSearch = "";
+  List<Character> filteredCharacters=[];
   TextEditingController searchBarTec = TextEditingController();
   FocusNode searchBarFocusNode = FocusNode();
 
@@ -64,7 +64,17 @@ class CharactersPageState extends State<CharactersPage> {
           backgroundColor: themeProvider.attrs.backgroundColor,
           appBar: AppBar(
             title: _isSearching
-                ? _buildSearchBar()
+                ? CharacterSearchBar(
+                  focusNode: searchBarFocusNode,
+                  controller: searchBarTec,
+                  onChanged: (text) {
+                    filteredCharacters = _getFilteredCharacters(
+                      charactersProvider.characters,
+                      text
+                    );
+                    setState(() {});
+                  },
+                )
                 : Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -96,7 +106,6 @@ class CharactersPageState extends State<CharactersPage> {
                     } else {
                       searchBarFocusNode.unfocus();
                       searchBarTec.clear();
-                      _textSearch = "";
                     }
                   });
                 },
@@ -114,7 +123,7 @@ class CharactersPageState extends State<CharactersPage> {
                         builder: (BuildContext context) {
                           List<Character> filteredCharacters = _getFilteredCharacters(
                               charactersProvider.characters,
-                              _textSearch
+                              searchBarTec.value.text
                           );
                           if (_isSearching && filteredCharacters.isEmpty){
                             return Center(
