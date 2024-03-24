@@ -59,14 +59,10 @@ class _CharacterSearchBarState extends State<CharacterSearchBar> {
 
 class SearchBarButton extends StatefulWidget {
   final Function() onToggle;
-  final FocusNode searchBarFocusNode;
-  final TextEditingController searchBarTec;
 
   const SearchBarButton({
     super.key,
     required this.onToggle,
-    required this.searchBarFocusNode,
-    required this.searchBarTec,
   });
 
   @override
@@ -74,22 +70,19 @@ class SearchBarButton extends StatefulWidget {
 }
 
 class _SearchBarButtonState extends State<SearchBarButton> {
+  bool _isSearching=false;
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon(
-        widget.isSearching ? Icons.close : Icons.search,
+        _isSearching ? Icons.close : Icons.search,
         color: Colors.white,
       ),
       onPressed: () {
         setState(() {
-          widget.isSearching = !widget.isSearching;
-          if (widget.isSearching) {
-            widget.searchBarFocusNode.requestFocus();
-          } else {
-            widget.searchBarFocusNode.unfocus();
-            widget.searchBarTec.clear();
-          }
+          _isSearching = !_isSearching;
+          widget.onToggle();
         });
       },
     );

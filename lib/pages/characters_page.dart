@@ -26,7 +26,7 @@ class CharactersPageState extends State<CharactersPage> {
 
   bool _isSearching = false;
   List<Character> filteredCharacters=[];
-  TextEditingController searchBarTec = TextEditingController();
+  TextEditingController searchBarController = TextEditingController();
   FocusNode searchBarFocusNode = FocusNode();
 
   late ThemeProvider themeProvider;
@@ -66,7 +66,7 @@ class CharactersPageState extends State<CharactersPage> {
             title: _isSearching
                 ? CharacterSearchBar(
                   focusNode: searchBarFocusNode,
-                  controller: searchBarTec,
+                  controller: searchBarController,
                   onChanged: (text) {
                     filteredCharacters = _getFilteredCharacters(
                       charactersProvider.characters,
@@ -91,25 +91,19 @@ class CharactersPageState extends State<CharactersPage> {
             centerTitle: false,
             automaticallyImplyLeading: false,
             actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  _isSearching
-                  ? Icons.close
-                  : Icons.search,
-                  color: Colors.white,
-                ),
-                onPressed: () {
+              SearchBarButton(
+                onToggle: () {
                   setState(() {
                     _isSearching = !_isSearching;
                     if (_isSearching) {
                       searchBarFocusNode.requestFocus();
                     } else {
                       searchBarFocusNode.unfocus();
-                      searchBarTec.clear();
+                      searchBarController.clear();
                     }
                   });
                 },
-              ),
+              )
             ],
           ),
           body: SafeArea(
@@ -121,10 +115,6 @@ class CharactersPageState extends State<CharactersPage> {
                     Expanded(
                       child: Builder(
                         builder: (BuildContext context) {
-                          List<Character> filteredCharacters = _getFilteredCharacters(
-                              charactersProvider.characters,
-                              searchBarTec.value.text
-                          );
                           if (_isSearching && filteredCharacters.isEmpty){
                             return Center(
                               child: Text(
@@ -180,7 +170,7 @@ class CharactersPageState extends State<CharactersPage> {
   @override
   void dispose() {
     super.dispose();
-    searchBarTec.dispose();
+    searchBarController.dispose();
   }
 
   Future<void> _init() async {
@@ -230,42 +220,6 @@ class CharactersPageState extends State<CharactersPage> {
         await charactersProvider.deleteCharacter(characterId);
         await chatRoomsProvider.updateChatRooms();
     }
-  }
-
-  Widget _buildSearchBar() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Icon(
-          Icons.search,
-          color: Colors.white,
-        ),
-        const SizedBox(width: 5),
-        Expanded(
-          child: TextFormField(
-            focusNode: searchBarFocusNode,
-            cursorColor: Colors.white,
-            textInputAction: TextInputAction.search,
-            controller: searchBarTec,
-            onChanged: (value) {
-              setState(() {
-                _textSearch = value;
-              });
-            },
-            decoration: InputDecoration.collapsed(
-              hintText: Intl.message("searchCharacter"),
-              hintStyle: const TextStyle(
-                fontSize: 15, color: ColorConstants.weakGreyColor
-              ),
-            ),
-            style: const TextStyle(
-                color: Colors.white,
-                fontSize: 15
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildItem(BuildContext context, Character? character) {
