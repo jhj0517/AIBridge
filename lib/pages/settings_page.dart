@@ -1,8 +1,4 @@
-import 'package:aibridge/providers/auth_provider.dart';
-import 'package:aibridge/providers/providers.dart';
-import 'package:aibridge/widgets/character_creation_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +7,7 @@ import '../constants/constants.dart';
 import '../pages/pages.dart';
 import '../utils/utilities.dart';
 import '../widgets/widgets.dart';
+import '../providers/providers.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -23,12 +20,14 @@ class SettingsPageState extends State<SettingsPage> {
 
   late ThemeProvider themeProvider;
   late SocialAuthProvider authProvider;
+  late GDriveProvider gDriveProvider;
 
   @override
   void initState() {
     super.initState();
     themeProvider = context.read<ThemeProvider>();
     authProvider = context.read<SocialAuthProvider>();
+    gDriveProvider = context.read<GDriveProvider>();
     _init();
   }
 
@@ -77,7 +76,9 @@ class SettingsPageState extends State<SettingsPage> {
                   await authProvider.handleSocialSignIn(social);
                 }),
                 _buildRow(Intl.message('backupData'), Icons.backup, () async {
-
+                  if(authProvider.googleAuthData!=null){
+                    await gDriveProvider.upload(authProvider.googleAuthData!);
+                  }
                 }),
                 _buildRow(Intl.message('loadData'), Icons.cloud_download_outlined, () async {
 
