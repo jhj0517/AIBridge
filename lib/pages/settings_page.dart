@@ -76,6 +76,12 @@ class SettingsPageState extends State<SettingsPage> {
                   );
                   await authProvider.handleSocialSignIn(social);
                 }),
+                _buildRow(Intl.message('backupData'), Icons.backup, () async {
+
+                }),
+                _buildRow(Intl.message('loadData'), Icons.cloud_download_outlined, () async {
+
+                }),
                 _buildRow(themeProvider.attrs.toggleThemeName, themeProvider.attrs.toggleThemeIcon, (){
                   themeProvider.toggleTheme();
                 }),

@@ -1169,6 +1169,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Backup Data`
+  String get backupData {
+    return Intl.message(
+      'Backup Data',
+      name: 'backupData',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Load Data`
+  String get loadData {
+    return Intl.message(
+      'Load Data',
+      name: 'loadData',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -28,6 +28,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "appleSignIn":
             MessageLookupByLibrary.simpleMessage("Sign in with Apple"),
         "background": MessageLookupByLibrary.simpleMessage("Background"),
+        "backupData": MessageLookupByLibrary.simpleMessage("Backup Data"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "characterChatBoxBackgroundColor": MessageLookupByLibrary.simpleMessage(
             "Character\'s ChatBox Background Color"),
@@ -111,6 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "keyPageTitle":
             MessageLookupByLibrary.simpleMessage("API Key Management"),
         "lightTheme": MessageLookupByLibrary.simpleMessage("Light Theme"),
+        "loadData": MessageLookupByLibrary.simpleMessage("Load Data"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "neverLeakAPIKey": MessageLookupByLibrary.simpleMessage(
             "Never leak the API key to anywhere else!"),

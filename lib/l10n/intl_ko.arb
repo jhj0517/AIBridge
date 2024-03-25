@@ -111,5 +111,7 @@
   "lightTheme": "라이트 테마",
   "signIn": "로그인",
   "googleSignIn": "Google 로그인",
-  "appleSignIn": "Apple 로그인"
+  "appleSignIn": "Apple 로그인",
+  "backupData": "데이터 백업",
+  "loadData": "데이터 로드"
 }

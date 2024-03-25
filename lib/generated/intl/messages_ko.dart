@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "appTitle": MessageLookupByLibrary.simpleMessage("AI 브리지"),
         "appleSignIn": MessageLookupByLibrary.simpleMessage("Apple 로그인"),
         "background": MessageLookupByLibrary.simpleMessage("배경"),
+        "backupData": MessageLookupByLibrary.simpleMessage("데이터 백업"),
         "cancel": MessageLookupByLibrary.simpleMessage("취소"),
         "characterChatBoxBackgroundColor":
             MessageLookupByLibrary.simpleMessage("캐릭터 채팅 배경 색상"),
@@ -97,6 +98,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "isSaved": MessageLookupByLibrary.simpleMessage(" 가 저장되었습니다."),
         "keyPageTitle": MessageLookupByLibrary.simpleMessage("API 키 관리"),
         "lightTheme": MessageLookupByLibrary.simpleMessage("라이트 테마"),
+        "loadData": MessageLookupByLibrary.simpleMessage("데이터 로드"),
         "name": MessageLookupByLibrary.simpleMessage("이름"),
         "neverLeakAPIKey":
             MessageLookupByLibrary.simpleMessage("절대 API 키를 유출하지 마세요!"),

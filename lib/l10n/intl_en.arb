@@ -110,5 +110,7 @@
   "lightTheme": "Light Theme",
   "signIn": "Sign in",
   "googleSignIn": "Sign in with Google",
-  "appleSignIn": "Sign in with Apple"
+  "appleSignIn": "Sign in with Apple",
+  "backupData": "Backup Data",
+  "loadData": "Load Data"
 }

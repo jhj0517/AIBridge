@@ -28,6 +28,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "appleSignIn":
             MessageLookupByLibrary.simpleMessage("Sign in with Apple"),
         "background": MessageLookupByLibrary.simpleMessage("背景"),
+        "backupData": MessageLookupByLibrary.simpleMessage("Backup Data"),
         "cancel": MessageLookupByLibrary.simpleMessage("キャンセル"),
         "characterChatBoxBackgroundColor":
             MessageLookupByLibrary.simpleMessage("キャラクターのチャットボックス背景色"),
@@ -103,6 +104,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "isSaved": MessageLookupByLibrary.simpleMessage("が保存されました."),
         "keyPageTitle": MessageLookupByLibrary.simpleMessage("API キー管理"),
         "lightTheme": MessageLookupByLibrary.simpleMessage("ライトテーマ"),
+        "loadData": MessageLookupByLibrary.simpleMessage("Load Data"),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "neverLeakAPIKey":
             MessageLookupByLibrary.simpleMessage("APIキーを他へ漏らさないこと！"),
