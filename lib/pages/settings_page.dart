@@ -69,17 +69,17 @@ class SettingsPageState extends State<SettingsPage> {
                   thickness: 0.2,
                   color: themeProvider.attrs.dividerColor,
                 ),
-                _buildMoreRow(Intl.message('signIn'), Icons.person, () async {
+                _buildRow(Intl.message('signIn'), Icons.person, () async {
                   final social = await showDialog(
                     context: context,
                     builder: (context) => const SignInDialog()
                   );
                   await authProvider.handleSocialSignIn(social);
                 }),
-                _buildMoreRow(themeProvider.attrs.toggleThemeName, themeProvider.attrs.toggleThemeIcon, (){
+                _buildRow(themeProvider.attrs.toggleThemeName, themeProvider.attrs.toggleThemeIcon, (){
                   themeProvider.toggleTheme();
                 }),
-                _buildMoreRow(Intl.message('chatRoomSetting'), Icons.settings, () async {
+                _buildRow(Intl.message('chatRoomSetting'), Icons.settings, () async {
                   if (context.mounted) {
                     Navigator.of(context).push(
                         MaterialPageRoute(
@@ -88,14 +88,14 @@ class SettingsPageState extends State<SettingsPage> {
                     );
                   }
                 }),
-                _buildMoreRow(Intl.message('privacyPolicy'), Icons.lock, () async {
+                _buildRow(Intl.message('privacyPolicy'), Icons.lock, () async {
                   if(Intl.getCurrentLocale()=="ko"){
                     Utilities.launchURL(AppConstants.privacyPolicyKO);
                   } else {
                     Utilities.launchURL(AppConstants.privacyPolicyEN);
                   }
                 }),
-                _buildMoreRow(Intl.message('usagePolicy'), Icons.gavel_sharp, (){
+                _buildRow(Intl.message('usagePolicy'), Icons.gavel_sharp, (){
                   if (context.mounted) {
                     Navigator.of(context).push(
                         MaterialPageRoute(
@@ -166,7 +166,7 @@ class SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildMoreRow(String text, Object iconOrImagePath, VoidCallback onTap) {
+  Widget _buildRow(String text, Object iconOrImagePath, VoidCallback onTap) {
     return Column(
       children: [
         InkWell(
