@@ -130,7 +130,14 @@ class SettingsPageState extends State<SettingsPage> {
   Widget _buildProfileSection() {
     return Consumer<SocialAuthProvider>(
       builder: (context, authProvider, child) {
+        final AuthStatus status = authProvider.status;
         final User? user = authProvider.currentUser;
+
+        if (status == AuthStatus.authenticating){
+          return const CircularProgressIndicator(
+            color: Colors.purple,
+          );
+        }
 
         if (user == null){
           return const SizedBox.shrink();
