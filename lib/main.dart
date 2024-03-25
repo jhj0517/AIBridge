@@ -9,6 +9,10 @@ import 'package:intl/intl.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'firebase_options.dart';
+import 'package:googleapis/drive/v3.dart';
+import 'package:http/http.dart';
+import 'package:googleapis_auth/auth_io.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'generated/l10n.dart';
 import 'pages/pages.dart';
@@ -28,8 +32,12 @@ Future<void> _initFirebase() async {
   );
 }
 
+Future<void> _initDotEnv() async{
+  await dotenv.load(fileName: ".env");
+}
 
 void main() async {
+  await _initDotEnv();
   final SharedPreferences prefs = await _initSharedPreference();
   await _initFirebase();
 
@@ -68,6 +76,11 @@ class MyApp extends StatelessWidget {
         Provider<SQFliteHelper>(
           create: (context) => SQFliteHelper(
             prefs: prefs
+          ),
+        ),
+        ChangeNotifierProvider<GDriveProvider>(
+          create: (context) => GDriveProvider(
+            localDB: SQFliteHelper(prefs: prefs)
           ),
         ),
         ChangeNotifierProvider<KeyProvider>(

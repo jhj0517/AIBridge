@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
 import 'dart:io' as io;
 import 'package:googleapis/drive/v3.dart';
+import 'package:googleapis_auth/auth_io.dart';
 
 import '../localdb/localdb.dart';
 
@@ -18,16 +20,18 @@ class GDriveProvider extends ChangeNotifier {
   BackupStatus _status = BackupStatus.uninitialized;
   BackupStatus get status => _status;
 
-  final DriveApi driveApi;
+  DriveApi? driveApi;
   final SQFliteHelper localDB;
 
   GDriveProvider({
-    required this.driveApi,
     required this.localDB
-  }){}
+  }){
+    final key = dotenv.get("GOOGLE_API_ANDROID");
+    driveApi = DriveApi(clientViaApiKey(key));
+  }
 
   Future<File?> isFileExist(String displayName) async {
-    final driveFileList = await driveApi.files.list(spaces: 'AIBridge');
+    final driveFileList = await driveApi!.files.list(spaces: 'AIBridge');
     final isExist = driveFileList.files?.firstWhere(
           (element) => element.name == _fileName(displayName),
     );
@@ -35,6 +39,7 @@ class GDriveProvider extends ChangeNotifier {
   }
 
   Future<void> upload(String displayName) async {
+    debugPrint("executed");
     _setStatus(BackupStatus.initialized);
 
     final dbPath = await localDB.getDBPath();
@@ -47,7 +52,7 @@ class GDriveProvider extends ChangeNotifier {
     _setStatus(BackupStatus.isOnTask);
     if(existingFile != null){
       try{
-        await driveApi.files.update(
+        await driveApi!.files.update(
           gDriveFile,
           existingFile.id!,
           uploadMedia: Media(dbFile.openRead(), dbFile.lengthSync())
@@ -61,7 +66,7 @@ class GDriveProvider extends ChangeNotifier {
     }
 
     try{
-      await driveApi.files.create(
+      await driveApi!.files.create(
         gDriveFile,
         uploadMedia: Media(dbFile.openRead(), dbFile.lengthSync())
       );
@@ -84,7 +89,7 @@ class GDriveProvider extends ChangeNotifier {
 
     Media? gDriveFile;
     try {
-      gDriveFile = await driveApi.files.get(existingFile.id!,
+      gDriveFile = await driveApi!.files.get(existingFile.id!,
           downloadOptions: DownloadOptions.fullMedia) as Media;
     } catch (err){
       _setStatus(BackupStatus.failed);
