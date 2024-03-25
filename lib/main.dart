@@ -65,7 +65,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<SocialAuthProvider>(
           create: (context) => SocialAuthProvider(
             firebaseAuth: FirebaseAuth.instance,
-            googleSignIn: GoogleSignIn()
+            googleSignIn: GoogleSignIn(
+              scopes: [
+                'email',
+                'https://www.googleapis.com/auth/drive',
+              ],
+            )
           ),
         ),
         ChangeNotifierProvider<ThemeProvider>(

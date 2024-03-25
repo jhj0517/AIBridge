@@ -29,6 +29,9 @@ class SocialAuthProvider extends ChangeNotifier {
   User? _currentUser;
   User? get currentUser => _currentUser;
 
+  GoogleSignInAccount? _googleAuthData;
+  GoogleSignInAccount? get googleAuthData => _googleAuthData;
+
   SocialAuthProvider({
     required this.firebaseAuth,
     required this.googleSignIn,
@@ -45,16 +48,15 @@ class SocialAuthProvider extends ChangeNotifier {
     }
   }
 
-
   Future<bool> handleGoogleSignIn() async {
     _setStatus(AuthStatus.authenticating);
-    GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-    if (googleUser == null) {
+    _googleAuthData = await googleSignIn.signIn();
+    if (_googleAuthData == null) {
       _setStatus(AuthStatus.authenticateCanceled);
       return false;
     }
 
-    GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+    GoogleSignInAuthentication? googleAuth = await _googleAuthData!.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
@@ -62,8 +64,7 @@ class SocialAuthProvider extends ChangeNotifier {
 
     User? firebaseUser;
     try {
-      firebaseUser = (await firebaseAuth.signInWithCredential(
-          credential)).user;
+      firebaseUser = (await firebaseAuth.signInWithCredential(credential)).user;
     } catch (error, stacktrace) {
       debugPrint('Authentication Error : $error\n$stacktrace');
       _setStatus(AuthStatus.authenticateError);
