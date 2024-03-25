@@ -20,45 +20,123 @@ enum BackupStatus{
 
 class GDriveProvider extends ChangeNotifier {
 
+  static const folderName = "AIBridge";
+  static const folderMime = "application/vnd.google-apps.folder";
+
   BackupStatus _status = BackupStatus.uninitialized;
   BackupStatus get status => _status;
 
   DriveApi? driveApi;
+
   final SQFliteHelper localDB;
 
   GDriveProvider({
     required this.localDB,
-  }){
-    final key = dotenv.get("GOOGLE_API_ANDROID");
-    driveApi = DriveApi(clientViaApiKey(key));
-  }
+  }){}
 
-  Future<void> setDrive(GoogleSignInAccount googleAuthData) async {
+  Future<void> _setDrive(GoogleSignInAccount googleAuthData) async {
     final client = GoogleHttpClient(
         await googleAuthData.authHeaders
     );
     driveApi = DriveApi(client);
   }
 
-  Future<File?> isFileExist(String displayName) async {
-    final gDriveFile = File();
-    gDriveFile.name = _fileName(displayName);
-    final driveFileList = await driveApi!.files.list(
-        q: "name = '${gDriveFile.name}'",
-    );
-    final files = driveFileList.files!;
-    if (files.isNotEmpty) {
-      return files.first;
+  Future<void> upload(GoogleSignInAccount auth) async {
+    _setStatus(BackupStatus.initialized);
+    await _setDrive(auth);
+
+    final dbPath = await localDB.getDBPath();
+    final dbFile = io.File(dbPath);
+
+    final File gDriveFile = File();
+    gDriveFile.name = basename(dbFile.absolute.path);
+
+    final existingFile = await _isFileExist(gDriveFile.name!);
+
+    _setStatus(BackupStatus.isOnTask);
+    if (existingFile != null){
+      try{
+        await driveApi!.files.update(
+            gDriveFile,
+            existingFile.id!,
+            uploadMedia: Media(dbFile.openRead(), dbFile.lengthSync())
+        );
+      } catch (err){
+        _setStatus(BackupStatus.failed);
+        debugPrint('G-Drive Error : $err');
+      }
+      _setStatus(BackupStatus.complete);
+      return;
     }
-    return null;
+
+    final folderId =  await _folderId();
+    gDriveFile.parents = [folderId!];
+    try{
+      await driveApi!.files.create(
+        gDriveFile,
+        uploadMedia: Media(dbFile.openRead(), dbFile.lengthSync()),
+      );
+    } catch (err){
+      _setStatus(BackupStatus.failed);
+      debugPrint('G-Drive Error : $err');
+    }
+
+    _setStatus(BackupStatus.complete);
   }
 
-  Future<String?> _getFolderId() async {
-    final mimeType = "application/vnd.google-apps.folder";
-    String folderName = "AIBridge";
+  Future<void> download(GoogleSignInAccount auth) async{
+    // _setStatus(BackupStatus.initialized);
+    // await _setDrive(auth);
+    // _setStatus(BackupStatus.initialized);
+    //
+    // final existingFile = await _isFileExist();
+    // if(existingFile ==null){
+    //   _setStatus(BackupStatus.failed);
+    //   debugPrint('File not exist');
+    //   return;
+    // }
+    //
+    // Media? gDriveFile;
+    // try {
+    //   gDriveFile = await driveApi!.files.get(existingFile.id!,
+    //       downloadOptions: DownloadOptions.fullMedia) as Media;
+    // } catch (err){
+    //   _setStatus(BackupStatus.failed);
+    //   debugPrint('G-Drive Error : $err');
+    // }
+    //
+    // if(gDriveFile==null){
+    //   _setStatus(BackupStatus.failed);
+    //   return;
+    // }
+    //
+    // await _overwriteLocalDB(gDriveFile);
+    // _setStatus(BackupStatus.complete);
+  }
 
+  Future<File?> _isFileExist(String fileName) async {
+    final folderId =  await _folderId();
+    if (folderId == null){
+      return null;
+    }
+
+    final query = "name = '$fileName' and '$folderId' in parents and trashed = false";
+    final driveFileList = await driveApi!.files.list(
+      q: query,
+      spaces: 'drive',
+      $fields: 'files(id, name, mimeType, parents)',
+    );
+
+    if (driveFileList.files == null || driveFileList.files!.isEmpty) {
+      return null;
+    }
+
+    return driveFileList.files!.first;
+  }
+
+  Future<String?> _folderId() async {
     final found = await driveApi!.files.list(
-      q: "mimeType = '$mimeType' and name = '$folderName'",
+      q: "mimeType = '$folderMime' and name = '$folderName'",
       $fields: "files(id, name)",
     );
     final files = found.files;
@@ -66,112 +144,19 @@ class GDriveProvider extends ChangeNotifier {
     if (files == null) {
       return null;
     }
-
     if (files.isEmpty){
-      File folder = File();
-      folder.name = folderName;
-      folder.mimeType = mimeType;
-      final folderCreation = await driveApi!.files.create(folder);
-      debugPrint("Folder ID: ${folderCreation.id}");
-      return folderCreation.id;
+      final newFolder = await _createNewFolder();
+      return newFolder.id;
     }
 
     return files.first.id;
   }
 
-  // Future<void> upload(String displayName) async {
-  //   debugPrint("executed");
-  //   _setStatus(BackupStatus.initialized);
-  //
-  //   final dbPath = await localDB.getDBPath();
-  //   final dbFile = io.File(dbPath);
-  //   final gDriveFile = File();
-  //   gDriveFile.name = _fileName(displayName);
-  //
-  //   final existingFile = await isFileExist(displayName);
-  //
-  //   _setStatus(BackupStatus.isOnTask);
-  //   if(existingFile != null){
-  //     try{
-  //       await driveApi!.files.update(
-  //           gDriveFile,
-  //           existingFile.id!,
-  //           uploadMedia: Media(dbFile.openRead(), dbFile.lengthSync())
-  //       );
-  //     } catch (err){
-  //       _setStatus(BackupStatus.failed);
-  //       debugPrint('G-Drive Error : $err');
-  //     }
-  //     _setStatus(BackupStatus.complete);
-  //     return;
-  //   }
-  //
-  //   try{
-  //     await driveApi!.files.create(
-  //         gDriveFile,
-  //         uploadMedia: Media(dbFile.openRead(), dbFile.lengthSync())
-  //     );
-  //   } catch (err){
-  //     _setStatus(BackupStatus.failed);
-  //     debugPrint('G-Drive Error : $err');
-  //   }
-  //   _setStatus(BackupStatus.complete);
-  // }
-
-  Future<void> upload(GoogleSignInAccount auth) async {
-    _setStatus(BackupStatus.initialized);
-    await setDrive(auth);
-
-    final dbPath = await localDB.getDBPath();
-    final dbFile = io.File(dbPath);
-    final gDriveFile = File();
-    gDriveFile.name = _fileName(auth.displayName!);
-
-    final folderId =  await _getFolderId();
-
-    File fileToUpload = File();
-    fileToUpload.parents = [folderId!];
-    fileToUpload.name = basename(dbFile.absolute.path);
-
-    _setStatus(BackupStatus.isOnTask);
-    await driveApi!.files.create(
-      fileToUpload,
-      uploadMedia: Media(dbFile.openRead(), dbFile.lengthSync()),
-    );
-
-    _setStatus(BackupStatus.complete);
-  }
-
-  Future<void> download(String displayName) async{
-    _setStatus(BackupStatus.initialized);
-
-    final existingFile = await isFileExist(displayName);
-    if(existingFile ==null){
-      _setStatus(BackupStatus.failed);
-      debugPrint('File not exist');
-      return;
-    }
-
-    Media? gDriveFile;
-    try {
-      gDriveFile = await driveApi!.files.get(existingFile.id!,
-          downloadOptions: DownloadOptions.fullMedia) as Media;
-    } catch (err){
-      _setStatus(BackupStatus.failed);
-      debugPrint('G-Drive Error : $err');
-    }
-
-    if(gDriveFile==null){
-      _setStatus(BackupStatus.failed);
-      return;
-    }
-
-    await _overwriteLocalDB(gDriveFile);
-    _setStatus(BackupStatus.complete);
-  }
-
-  String _fileName(String displayName){
-    return 'AIBridge_$displayName';
+  Future<File> _createNewFolder() async{
+    final File folder = File();
+    folder.name = folderName;
+    folder.mimeType = folderMime;
+    return await driveApi!.files.create(folder);
   }
 
   Future<void> _overwriteLocalDB(Media gDriveFile) async {
