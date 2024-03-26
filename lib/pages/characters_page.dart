@@ -25,7 +25,7 @@ class CharactersPageState extends State<CharactersPage> {
   bool isLoading = false;
 
   bool _isSearching = false;
-  List<Character> filteredCharacters=[];
+  String _query="";
   TextEditingController searchBarController = TextEditingController();
   FocusNode searchBarFocusNode = FocusNode();
 
@@ -68,11 +68,7 @@ class CharactersPageState extends State<CharactersPage> {
                   focusNode: searchBarFocusNode,
                   controller: searchBarController,
                   onChanged: (text) {
-                    filteredCharacters = _getFilteredCharacters(
-                      charactersProvider.characters,
-                      text
-                    );
-                    setState(() {});
+                    setState(() => _query = text );
                   },
                 )
                 : Row(
@@ -100,6 +96,7 @@ class CharactersPageState extends State<CharactersPage> {
                     } else {
                       searchBarFocusNode.unfocus();
                       searchBarController.clear();
+                      _query = "";
                     }
                   });
                 },
@@ -115,7 +112,8 @@ class CharactersPageState extends State<CharactersPage> {
                     Expanded(
                       child: Builder(
                         builder: (BuildContext context) {
-                          if (_isSearching && filteredCharacters.isEmpty){
+                          List<Character> filteredItems = _getFilteredCharacters(_query);
+                          if (_isSearching && _query.isEmpty){
                             return Center(
                               child: Text(
                                 Intl.message("noCharacter"),
@@ -129,7 +127,7 @@ class CharactersPageState extends State<CharactersPage> {
                             );
                           }
 
-                          if (filteredCharacters.isEmpty) {
+                          if (filteredItems.isEmpty) {
                             return ListView.builder(
                               itemBuilder: (context, index) {
                                 return _buildAddButton(context);
@@ -141,13 +139,13 @@ class CharactersPageState extends State<CharactersPage> {
                           return ListView.builder(
                             padding: const EdgeInsets.fromLTRB(0.5, 0.5, 0.5, 50),
                             itemBuilder: (context, index) {
-                              if (index == filteredCharacters.length) {
+                              if (index == filteredItems.length) {
                                 return _buildAddButton(context);
                               } else {
-                                return _buildItem(context, filteredCharacters[index]);
+                                return _buildItem(context, filteredItems[index]);
                               }
                             },
-                            itemCount: filteredCharacters.length + 1,
+                            itemCount: filteredItems.length + 1,
                           );
                         },
                       ),
@@ -177,9 +175,9 @@ class CharactersPageState extends State<CharactersPage> {
     // initialize something
   }
 
-  List<Character> _getFilteredCharacters(List<Character> characters, String searchText) {
-    if (searchText.isEmpty) return characters;
-    return characters.where((character) =>
+  List<Character> _getFilteredCharacters(String searchText) {
+    if (searchText.isEmpty) return charactersProvider.characters;
+    return charactersProvider.characters.where((character) =>
         character.characterName.toLowerCase().contains(searchText.toLowerCase())).toList();
   }
 
