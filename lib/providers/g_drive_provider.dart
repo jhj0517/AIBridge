@@ -1,10 +1,7 @@
 import 'package:aibridge/network/google_api.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
 import 'dart:io' as io;
 import 'package:googleapis/drive/v3.dart';
-import 'package:googleapis_auth/auth_io.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path/path.dart';
 
@@ -45,8 +42,7 @@ class GDriveProvider extends ChangeNotifier {
     _setStatus(BackupStatus.initialized);
     await _setDrive(auth);
 
-    final dbPath = await localDB.getDBPath();
-    final dbFile = io.File(dbPath);
+    final dbFile = await localDB.getDBFile();
 
     final File gDriveFile = File();
     gDriveFile.name = basename(dbFile.absolute.path);
@@ -71,6 +67,7 @@ class GDriveProvider extends ChangeNotifier {
 
     final folderId =  await _folderId();
     gDriveFile.parents = [folderId!];
+
     try{
       await driveApi!.files.create(
         gDriveFile,
@@ -80,38 +77,44 @@ class GDriveProvider extends ChangeNotifier {
       _setStatus(BackupStatus.failed);
       debugPrint('G-Drive Error : $err');
     }
-
     _setStatus(BackupStatus.complete);
   }
 
   Future<void> download(GoogleSignInAccount auth) async{
-    // _setStatus(BackupStatus.initialized);
-    // await _setDrive(auth);
-    // _setStatus(BackupStatus.initialized);
-    //
-    // final existingFile = await _isFileExist();
-    // if(existingFile ==null){
-    //   _setStatus(BackupStatus.failed);
-    //   debugPrint('File not exist');
-    //   return;
-    // }
-    //
-    // Media? gDriveFile;
-    // try {
-    //   gDriveFile = await driveApi!.files.get(existingFile.id!,
-    //       downloadOptions: DownloadOptions.fullMedia) as Media;
-    // } catch (err){
-    //   _setStatus(BackupStatus.failed);
-    //   debugPrint('G-Drive Error : $err');
-    // }
-    //
-    // if(gDriveFile==null){
-    //   _setStatus(BackupStatus.failed);
-    //   return;
-    // }
-    //
-    // await _overwriteLocalDB(gDriveFile);
-    // _setStatus(BackupStatus.complete);
+    _setStatus(BackupStatus.initialized);
+    await _setDrive(auth);
+
+    final dbFile = await localDB.getDBFile();
+
+    final File gDriveFile = File();
+    gDriveFile.name = basename(dbFile.absolute.path);
+
+    final existingFile = await _isFileExist(gDriveFile.name!);
+
+    if(existingFile ==null){
+      _setStatus(BackupStatus.failed);
+      return;
+    }
+
+    _setStatus(BackupStatus.isOnTask);
+    Media? downloadedFile;
+    try {
+      downloadedFile = await driveApi!.files.get(
+          existingFile.id!,
+          downloadOptions: DownloadOptions.fullMedia
+      ) as Media;
+    } catch (err){
+      _setStatus(BackupStatus.failed);
+      debugPrint('G-Drive Error : $err');
+    }
+
+    if(downloadedFile==null){
+      _setStatus(BackupStatus.failed);
+      return;
+    }
+
+    await _overwriteLocalDB(downloadedFile);
+    _setStatus(BackupStatus.complete);
   }
 
   Future<File?> _isFileExist(String fileName) async {

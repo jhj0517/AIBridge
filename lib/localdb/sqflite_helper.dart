@@ -136,6 +136,10 @@ class SQFliteHelper {
     return join(path, _databaseName);
   }
 
+  Future<File> getDBFile() async {
+    return File(await getDBPath());
+  }
+
   Future<void> clearDatabase() async {
     if (_database != null && _database!.isOpen) {
       await _database!.close();

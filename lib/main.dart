@@ -9,9 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'firebase_options.dart';
-import 'package:googleapis/drive/v3.dart';
-import 'package:http/http.dart';
-import 'package:googleapis_auth/auth_io.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'generated/l10n.dart';
