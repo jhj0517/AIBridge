@@ -50,7 +50,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   final SharedPreferences prefs;
 
-  MyApp({
+  const MyApp({
     super.key,
     required this.prefs,
   });
