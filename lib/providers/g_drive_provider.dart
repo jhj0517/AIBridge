@@ -7,12 +7,13 @@ import 'package:path/path.dart';
 
 import '../localdb/localdb.dart';
 
-enum BackupStatus{
+enum GDriveStatus{
   uninitialized,
   initialized,
   isOnTask,
   failed,
-  complete,
+  downloadComplete,
+  uploadComplete
 }
 
 class GDriveProvider extends ChangeNotifier {
@@ -20,8 +21,8 @@ class GDriveProvider extends ChangeNotifier {
   static const folderName = "AIBridge";
   static const folderMime = "application/vnd.google-apps.folder";
 
-  BackupStatus _status = BackupStatus.uninitialized;
-  BackupStatus get status => _status;
+  GDriveStatus _status = GDriveStatus.uninitialized;
+  GDriveStatus get status => _status;
 
   DriveApi? driveApi;
 
@@ -39,7 +40,7 @@ class GDriveProvider extends ChangeNotifier {
   }
 
   Future<void> upload(GoogleSignInAccount auth) async {
-    _setStatus(BackupStatus.initialized);
+    _setStatus(GDriveStatus.initialized);
     await _setDrive(auth);
 
     final dbFile = await localDB.getDBFile();
@@ -49,7 +50,7 @@ class GDriveProvider extends ChangeNotifier {
 
     final existingFile = await _isFileExist(gDriveFile.name!);
 
-    _setStatus(BackupStatus.isOnTask);
+    _setStatus(GDriveStatus.isOnTask);
     if (existingFile != null){
       try{
         await driveApi!.files.update(
@@ -58,10 +59,10 @@ class GDriveProvider extends ChangeNotifier {
             uploadMedia: Media(dbFile.openRead(), dbFile.lengthSync())
         );
       } catch (err){
-        _setStatus(BackupStatus.failed);
+        _setStatus(GDriveStatus.failed);
         debugPrint('G-Drive Error : $err');
       }
-      _setStatus(BackupStatus.complete);
+      _setStatus(GDriveStatus.uploadComplete);
       return;
     }
 
@@ -74,14 +75,14 @@ class GDriveProvider extends ChangeNotifier {
         uploadMedia: Media(dbFile.openRead(), dbFile.lengthSync()),
       );
     } catch (err){
-      _setStatus(BackupStatus.failed);
+      _setStatus(GDriveStatus.failed);
       debugPrint('G-Drive Error : $err');
     }
-    _setStatus(BackupStatus.complete);
+    _setStatus(GDriveStatus.uploadComplete);
   }
 
   Future<void> download(GoogleSignInAccount auth) async{
-    _setStatus(BackupStatus.initialized);
+    _setStatus(GDriveStatus.initialized);
     await _setDrive(auth);
 
     final dbFile = await localDB.getDBFile();
@@ -92,11 +93,11 @@ class GDriveProvider extends ChangeNotifier {
     final existingFile = await _isFileExist(gDriveFile.name!);
 
     if(existingFile ==null){
-      _setStatus(BackupStatus.failed);
+      _setStatus(GDriveStatus.failed);
       return;
     }
 
-    _setStatus(BackupStatus.isOnTask);
+    _setStatus(GDriveStatus.isOnTask);
     Media? downloadedFile;
     try {
       downloadedFile = await driveApi!.files.get(
@@ -104,17 +105,17 @@ class GDriveProvider extends ChangeNotifier {
           downloadOptions: DownloadOptions.fullMedia
       ) as Media;
     } catch (err){
-      _setStatus(BackupStatus.failed);
+      _setStatus(GDriveStatus.failed);
       debugPrint('G-Drive Error : $err');
     }
 
     if(downloadedFile==null){
-      _setStatus(BackupStatus.failed);
+      _setStatus(GDriveStatus.failed);
       return;
     }
 
     await _overwriteLocalDB(downloadedFile);
-    _setStatus(BackupStatus.complete);
+    _setStatus(GDriveStatus.downloadComplete);
   }
 
   Future<File?> _isFileExist(String fileName) async {
@@ -169,7 +170,7 @@ class GDriveProvider extends ChangeNotifier {
     await dbFile.writeAsBytes(allBytes, flush: true);
   }
 
-  void _setStatus(BackupStatus status){
+  void _setStatus(GDriveStatus status){
     _status = status;
     notifyListeners();
   }
