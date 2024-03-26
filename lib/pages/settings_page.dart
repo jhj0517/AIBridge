@@ -77,14 +77,10 @@ class SettingsPageState extends State<SettingsPage> {
                   await authProvider.handleSocialSignIn(social);
                 }),
                 _buildRow(Intl.message('backupData'), Icons.backup, () async {
-                  if(authProvider.googleAuthData!=null){
-                    await gDriveProvider.upload(authProvider.googleAuthData!);
-                  }
+                  await gDriveProvider.upload();
                 }),
                 _buildRow(Intl.message('loadData'), Icons.cloud_download_outlined, () async {
-                  if(authProvider.googleAuthData!=null){
-                    await gDriveProvider.download(authProvider.googleAuthData!);
-                  }
+                  await gDriveProvider.download();
                 }),
                 _buildRow(themeProvider.attrs.toggleThemeName, themeProvider.attrs.toggleThemeIcon, (){
                   themeProvider.toggleTheme();
