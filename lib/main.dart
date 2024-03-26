@@ -62,12 +62,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<SocialAuthProvider>(
           create: (context) => SocialAuthProvider(
             firebaseAuth: FirebaseAuth.instance,
-            googleSignIn: GoogleSignIn(
-              scopes: [
-                'email',
-                'https://www.googleapis.com/auth/drive',
-              ],
-            )
+            googleSignIn: GoogleSignIn()
           ),
         ),
         ChangeNotifierProvider<ThemeProvider>(
@@ -82,7 +77,13 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<GDriveProvider>(
           create: (context) => GDriveProvider(
-            localDB: SQFliteHelper(prefs: prefs)
+            localDB: SQFliteHelper(prefs: prefs),
+            googleSignIn:  GoogleSignIn(
+              scopes: [
+                'email',
+                'https://www.googleapis.com/auth/drive',
+              ]
+            )
           ),
         ),
         ChangeNotifierProvider<KeyProvider>(
