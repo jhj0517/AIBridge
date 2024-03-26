@@ -45,20 +45,13 @@ class CharacterProfileState extends State<CharacterProfilePage> {
     CharactersProvider characterProvider = context.watch<CharactersProvider>();
     return Stack(
       children: [
-        // Background placeholder image
-        const SizedBox.expand(
-          child: Image(
-            fit: BoxFit.cover,
-            image: AssetImage(PathConstants.defaultCharacterBackgroundImage),
-          ),
-        ),
         // Background image
         SizedBox.expand(
           child: Image.memory(
             characterProvider.currentCharacter.backgroundPhotoBLOB,
             fit: BoxFit.cover,
             errorBuilder: (context, object, stackTrace) {
-              return const SizedBox.shrink();
+              return const LoadingView();
             },
           ),
         ),
