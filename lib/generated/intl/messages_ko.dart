@@ -104,6 +104,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("절대 API 키를 유출하지 마세요!"),
         "newCharacter": MessageLookupByLibrary.simpleMessage("캐릭터 생성"),
         "noCharacter": MessageLookupByLibrary.simpleMessage("캐릭터가 없습니다."),
+        "notSupportedImage":
+            MessageLookupByLibrary.simpleMessage("지원되는 형식이 아닙니다."),
         "paLM": MessageLookupByLibrary.simpleMessage("PaLM"),
         "paLMAPI": MessageLookupByLibrary.simpleMessage("PaLM API"),
         "paLMAPIKey": MessageLookupByLibrary.simpleMessage("PaLM API 키"),

@@ -141,8 +141,13 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                             width: 100,
                             height: 100,
                             imageBLOBData: _selectedProfileImageBLOB,
-                            onPickImage: () async => {
-                              await _pickImageFromGallery(imageData: _selectedProfileImageBLOB!)
+                            onPickImage: () async {
+                              final data = await _getImageFromGallery();
+                              if(data!=null){
+                                setState(() {
+                                  _selectedProfileImageBLOB = data;
+                                });
+                              }
                             },
                             isMutable: true
                           ),
@@ -219,9 +224,14 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   BackGroundButton(
-                    onPressed: () async => await _pickImageFromGallery(
-                      imageData: _selectedBackgroundImageBLOB!
-                    ),
+                    onPressed: () async {
+                      final data = await _getImageFromGallery();
+                      if(data!=null){
+                        setState(() {
+                          _selectedBackgroundImageBLOB = data;
+                        });
+                      }
+                    }
                   ),
                   ImportCharacterButton(
                     onPressed: () async => await _handleImport()
@@ -364,25 +374,24 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     );
   }
 
-  Future<void> _pickImageFromGallery({required Uint8List imageData}) async {
+  Future<Uint8List?> _getImageFromGallery() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-    if (image != null) {
-      final mimeType = lookupMimeType(image.path);
-
-      if (mimeType != null && !mimeType.startsWith('image/gif')) { //check if image is gif
-        final File imageFile = File(image.path);
-        final File compressedImageFile = await ImageConverter.compressImage(imageFile);
-        Uint8List BLOB = await ImageConverter.convertImageToBLOB(compressedImageFile);
-        setState(() {
-          imageData = BLOB;
-        });
-      } else {
-        Fluttertoast.showToast(msg: Intl.message("toastSelectStaticImage"));
-      }
-    } else {
+    if (image==null){
       debugPrint('No image selected.');
+      return null;
+    }
+
+    final mimeType = lookupMimeType(image.path);
+    if (mimeType != null && !mimeType.startsWith('image/gif')) { //check if image is gif
+      final File imageFile = File(image.path);
+      final File compressedImageFile = await ImageConverter.compressImage(imageFile);
+      Uint8List BLOB = await ImageConverter.convertImageToBLOB(compressedImageFile);
+      return BLOB;
+    } else {
+      Fluttertoast.showToast(msg: Intl.message("notSupportedImage"));
+      return null;
     }
   }
 
@@ -449,7 +458,11 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     if (Utilities.isKeyboardShowing(context)) {
       Utilities.closeKeyboard(context);
     }
-    _selectedBackgroundImageBLOB!.isEmpty ? _selectedBackgroundImageBLOB = await ImageConverter.convertAssetImageToBLOB(PathConstants.defaultCharacterBackgroundImage) : Uint8List(0);
+    _selectedBackgroundImageBLOB!.isEmpty ?
+    _selectedBackgroundImageBLOB = await ImageConverter.convertAssetImageToBLOB(
+        PathConstants.defaultCharacterBackgroundImage
+    )
+    : Uint8List(0);
 
     final newCharacter = Character(
         id: widget.arguments.character.id,

@@ -1189,6 +1189,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Not supported format.`
+  String get notSupportedImage {
+    return Intl.message(
+      'Not supported format.',
+      name: 'notSupportedImage',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

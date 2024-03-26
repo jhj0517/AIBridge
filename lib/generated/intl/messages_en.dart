@@ -118,6 +118,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Never leak the API key to anywhere else!"),
         "newCharacter": MessageLookupByLibrary.simpleMessage("New Character"),
         "noCharacter": MessageLookupByLibrary.simpleMessage("No Characters."),
+        "notSupportedImage":
+            MessageLookupByLibrary.simpleMessage("Not supported format."),
         "paLM": MessageLookupByLibrary.simpleMessage("PaLM"),
         "paLMAPI": MessageLookupByLibrary.simpleMessage("PaLM API"),
         "paLMAPIKey": MessageLookupByLibrary.simpleMessage("PaLM API Key"),

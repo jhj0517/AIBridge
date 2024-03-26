@@ -113,5 +113,6 @@
   "googleSignIn": "Google 로그인",
   "appleSignIn": "Apple 로그인",
   "backupData": "데이터 백업",
-  "loadData": "데이터 로드"
+  "loadData": "데이터 로드",
+  "notSupportedImage": "지원되는 형식이 아닙니다."
 }

@@ -110,6 +110,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("APIキーを他へ漏らさないこと！"),
         "newCharacter": MessageLookupByLibrary.simpleMessage("新キャラクター"),
         "noCharacter": MessageLookupByLibrary.simpleMessage("登場人物はいない"),
+        "notSupportedImage":
+            MessageLookupByLibrary.simpleMessage("Not supported format."),
         "paLM": MessageLookupByLibrary.simpleMessage("PaLM"),
         "paLMAPI": MessageLookupByLibrary.simpleMessage("PaLM API"),
         "paLMAPIKey": MessageLookupByLibrary.simpleMessage("PaLM API キー"),
