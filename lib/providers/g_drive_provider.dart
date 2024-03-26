@@ -27,21 +27,29 @@ class GDriveProvider extends ChangeNotifier {
   DriveApi? driveApi;
 
   final SQFliteHelper localDB;
+  final GoogleSignIn googleSignIn;
 
   GDriveProvider({
     required this.localDB,
+    required this.googleSignIn,
   }){}
 
-  Future<void> _setDrive(GoogleSignInAccount googleAuthData) async {
+  Future<void> _setDrive() async {
+    final googleAuthData = await googleSignIn.signIn();
+
+    if (googleAuthData == null) {
+      throw Exception("sign-in failed");
+    }
+
     final client = GoogleHttpClient(
         await googleAuthData.authHeaders
     );
     driveApi = DriveApi(client);
   }
 
-  Future<void> upload(GoogleSignInAccount auth) async {
+  Future<void> upload() async {
     _setStatus(GDriveStatus.initialized);
-    await _setDrive(auth);
+    await _setDrive();
 
     final dbFile = await localDB.getDBFile();
 
@@ -81,9 +89,9 @@ class GDriveProvider extends ChangeNotifier {
     _setStatus(GDriveStatus.uploadComplete);
   }
 
-  Future<void> download(GoogleSignInAccount auth) async{
+  Future<void> download() async{
     _setStatus(GDriveStatus.initialized);
-    await _setDrive(auth);
+    await _setDrive();
 
     final dbFile = await localDB.getDBFile();
 
