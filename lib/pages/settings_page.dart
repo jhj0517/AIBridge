@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import '../constants/constants.dart';
 import '../pages/pages.dart';
@@ -81,7 +82,9 @@ class SettingsPageState extends State<SettingsPage> {
                   }
                 }),
                 _buildRow(Intl.message('loadData'), Icons.cloud_download_outlined, () async {
-
+                  if(authProvider.googleAuthData!=null){
+                    await gDriveProvider.download(authProvider.googleAuthData!);
+                  }
                 }),
                 _buildRow(themeProvider.attrs.toggleThemeName, themeProvider.attrs.toggleThemeIcon, (){
                   themeProvider.toggleTheme();
@@ -114,6 +117,9 @@ class SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
+          Positioned(
+            child: _buildProgressBar()
+          )
         ],
       ),
     );
@@ -223,6 +229,34 @@ class SettingsPageState extends State<SettingsPage> {
           color: themeProvider.attrs.dividerColor,
         ),
       ],
+    );
+  }
+
+  Widget _buildProgressBar(){
+    return Consumer<GDriveProvider>(
+      builder: (context, gDriveProvider, child) {
+        final GDriveStatus status = gDriveProvider.status;
+
+        Widget content;
+
+        switch (status){
+          case GDriveStatus.initialized:
+          case GDriveStatus.isOnTask:
+            content = const CircularProgressIndicator(color: Colors.purple);
+          case GDriveStatus.downloadComplete:
+            Future.delayed(const Duration(milliseconds: 1000), () {
+              Phoenix.rebirth(context);
+            });
+            content = const Icon(Icons.check, color: Colors.green, size: 60);
+          default:
+            return const SizedBox.shrink();
+        }
+
+        return Container(
+          color: Colors.black.withOpacity(0.5),
+          child: Center(child: content),
+        );
+      },
     );
   }
 
