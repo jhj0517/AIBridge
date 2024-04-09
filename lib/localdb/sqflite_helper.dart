@@ -10,58 +10,58 @@ import '../constants/sharedpreference_constants.dart';
 
 class SQFliteHelper {
   //database
-  static final _databaseName = 'aibridge_database.db';
+  static const _databaseName = 'aibridge_database.db';
   static String get databaseName => _databaseName;
-  static final _databaseVersion = 1;
+  static const _databaseVersion = 1;
   //chatRoom Table
-  static final chatRoomTable = 'chat_rooms';
-  static final chatRoomColumnId = '_id';
-  static final chatRoomColumnCharacterId = 'character_id';
-  static final chatRoomColumnUserName = 'user_name';
-  static final chatRoomColumnCharacterName = 'character_name';
-  static final chatRoomColumnCharacterPhotoBLOB = 'photo_blob';
+  static const chatRoomTable = 'chat_rooms';
+  static const chatRoomColumnId = '_id';
+  static const chatRoomColumnCharacterId = 'character_id';
+  static const chatRoomColumnUserName = 'user_name';
+  static const chatRoomColumnCharacterName = 'character_name';
+  static const chatRoomColumnCharacterPhotoBLOB = 'photo_blob';
   //chatMessage Table
-  static final chatMessageTable = 'chat_messages';
-  static final chatMessageColumnId = '_id';
-  static final chatMessageColumnRoomId = 'chat_room_id';
-  static final chatMessageColumnCharacterId = 'character_id';
-  static final chatMessageColumnChatMessageType = 'type';
-  static final chatMessageColumnTimestamp = 'timestamp';
-  static final chatMessageColumnRole = 'role';
-  static final chatMessageColumnContent = 'content';
-  static final chatMessageColumnImageUrl = 'image_url';
-  static final chatMessageColumnIsEditable = 'is_editable';
+  static const chatMessageTable = 'chat_messages';
+  static const chatMessageColumnId = '_id';
+  static const chatMessageColumnRoomId = 'chat_room_id';
+  static const chatMessageColumnCharacterId = 'character_id';
+  static const chatMessageColumnChatMessageType = 'type';
+  static const chatMessageColumnTimestamp = 'timestamp';
+  static const chatMessageColumnRole = 'role';
+  static const chatMessageColumnContent = 'content';
+  static const chatMessageColumnImageUrl = 'image_url';
+  static const chatMessageColumnIsEditable = 'is_editable';
   //Character Table
-  static final charactersTable = 'characters';
-  static final charactersColumnId = '_id';
-  static final charactersColumnCharacterPhotoBLOB = 'photo_blob';
-  static final charactersColumnCharacterBackgroundPhotoBLOB = 'background_photo_blob';
-  static final charactersColumnCharacterName = 'character_name';
-  static final charactersColumnUserName = 'user_name';
-  static final charactersColumnFirstMessage= 'first_message';
-  static final charactersColumnService = 'service';
+  static const charactersTable = 'characters';
+  static const charactersColumnId = '_id';
+  static const charactersColumnCharacterPhotoBLOB = 'photo_blob';
+  static const charactersColumnCharacterBackgroundPhotoBLOB = 'background_photo_blob';
+  static const charactersColumnCharacterName = 'character_name';
+  static const charactersColumnUserName = 'user_name';
+  static const charactersColumnFirstMessage= 'first_message';
+  static const charactersColumnService = 'service';
   //OpenAI
-  static final openAITable = 'openAI';
-  static final openAIColumnId = '_id';
-  static final openAIColumnServiceType = 'service_type';
-  static final openAIColumnCharacterId = 'character_id';
-  static final openAIColumnModelName = 'model_name';
-  static final openAIColumnModelId = 'model_id';
-  static final openAIColumnTemperature = 'temperature';
-  static final openAIColumnSystemPrompts = 'system_prompt';
-  static final openAIColumnCharacterPrompt = 'character_prompt';
+  static const openAITable = 'openAI';
+  static const openAIColumnId = '_id';
+  static const openAIColumnServiceType = 'service_type';
+  static const openAIColumnCharacterId = 'character_id';
+  static const openAIColumnModelName = 'model_name';
+  static const openAIColumnModelId = 'model_id';
+  static const openAIColumnTemperature = 'temperature';
+  static const openAIColumnSystemPrompts = 'system_prompt';
+  static const openAIColumnCharacterPrompt = 'character_prompt';
   //PaLM
-  static final paLMTable = 'paLM';
-  static final paLMColumnId = '_id';
-  static final paLMColumnServiceType = 'service_type';
-  static final paLMColumnCharacterId = 'character_id';
-  static final paLMColumnModelName = 'model_name';
-  static final paLMColumnModelId = 'model_id';
-  static final paLMColumnTemperature = 'temperature';
-  static final paLMColumnCandidateCount = 'candidate_count';
-  static final paLMColumnContext = 'context';
-  static final paLMColumnExampleInput = 'example_input';
-  static final paLMColumnExampleOutput = 'example_output';
+  static const paLMTable = 'paLM';
+  static const paLMColumnId = '_id';
+  static const paLMColumnServiceType = 'service_type';
+  static const paLMColumnCharacterId = 'character_id';
+  static const paLMColumnModelName = 'model_name';
+  static const paLMColumnModelId = 'model_id';
+  static const paLMColumnTemperature = 'temperature';
+  static const paLMColumnCandidateCount = 'candidate_count';
+  static const paLMColumnContext = 'context';
+  static const paLMColumnExampleInput = 'example_input';
+  static const paLMColumnExampleOutput = 'example_output';
 
   Database? _database;
 
