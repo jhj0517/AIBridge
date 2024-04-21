@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<GDriveProvider>(
           create: (context) => GDriveProvider(
-            localDB: SQFliteHelper(prefs: prefs),
+            localDB: context.read<SQFliteHelper>(),
             googleSignIn:  GoogleSignIn(
               scopes: [
                 'email',
