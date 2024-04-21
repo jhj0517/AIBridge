@@ -1,7 +1,6 @@
-/***
- * This is promised character share format.
- * see more info : https://github.com/malfoyslastname/character-card-spec-v2
- */
+/// *
+/// This is promised character share format.
+/// see more info : https://github.com/malfoyslastname/character-card-spec-v2
 
 class V2 {
   final String name;
@@ -90,7 +89,7 @@ class V2 {
       "mes_example":"",
       "creatorcomment":"",
       "avatar":"none",
-      "chat":"${name} - 2024-1-1 @00h 00m 00s 000ms",
+      "chat":"$name - 2024-1-1 @00h 00m 00s 000ms",
       "talkativeness":"0.5",
       "fav":false,
       "spec":"chara_card_v2",
