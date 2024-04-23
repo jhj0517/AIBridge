@@ -93,15 +93,14 @@ class DarkThemeAttributes implements ThemeAttributes {
   @override
   ThemeData get themeData => ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light,
-      colorScheme: const  ColorScheme.light().copyWith(
+      brightness: Brightness.dark,
+      colorScheme: const  ColorScheme.dark().copyWith(
         background: const Color(0xff000000),
         primary: const Color(0xFF000000),
         secondary: const Color(0xFFE1A7FF),
       ),
       dividerColor: const Color(0xFF3D3D3D),
       appBarTheme: const AppBarTheme().copyWith(
-          backgroundColor: const Color(0xff090909)
       )
   );
   @override
