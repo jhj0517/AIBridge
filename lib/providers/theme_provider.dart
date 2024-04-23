@@ -1,52 +1,51 @@
+import 'package:aibridge/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/constants.dart';
 
-enum MyTheme{
+enum ThemeModes{
  light,
  dark
 }
 
 class ThemeProvider extends ChangeNotifier {
   final SharedPreferences prefs;
-  final initialTheme = MyTheme.light;
+  final initialTheme = ThemeModes.light;
 
   ThemeProvider({
     required this.prefs
   }){
-    _loadThemeMode();
+    _loadTheme();
   }
 
-  MyTheme? _themeMode;
-  MyTheme? get themeMode => _themeMode;
+  ThemeAttributes _attrs = LightThemeAttributes();
+  ThemeAttributes get attrs => _attrs;
 
-  ThemeAttributes get attrs => _themeMode == MyTheme.light
-      ? LightThemeAttributes()
-      : DarkThemeAttributes();
-
-  void toggleTheme() {
-    _themeMode = _themeMode == MyTheme.light ? MyTheme.dark : MyTheme.light;
-    _saveThemeMode();
+  Future<void> toggleTheme() async {
+    bool isLight = attrs.mode == ThemeModes.light;
+    _attrs = isLight ? DarkThemeAttributes() : LightThemeAttributes();
+    _saveTheme();
     notifyListeners();
   }
 
-  void _loadThemeMode() {
-    int? themeIndex = prefs.getInt(SharedPreferenceConstants.theme);
-    _themeMode = themeIndex == null ? initialTheme : MyTheme.values[themeIndex];
+  void _loadTheme() {
+    int? modeIndex = prefs.getInt(SharedPreferenceConstants.theme);
+    ThemeModes mode = modeIndex == null ? initialTheme : ThemeModes.values[modeIndex];
+    _attrs = mode == ThemeModes.light ? LightThemeAttributes() : DarkThemeAttributes();
   }
 
-  void _saveThemeMode() {
-    prefs.setInt(SharedPreferenceConstants.theme, _themeMode!.index);
+  Future<void> _saveTheme() async {
+    prefs.setInt(SharedPreferenceConstants.theme, attrs.mode.index);
   }
+
 }
 
 abstract class ThemeAttributes {
-  Color get backgroundColor;
-  Color get dividerColor;
+  ThemeModes get mode;
+  ThemeData get themeData;
   Color get fontColor;
-  Color get appbarColor;
   Color get navigationBackgroundColor;
   Color get selectedNavigationItemColor;
   Color get unSelectedNavigationItemColor;
@@ -57,13 +56,23 @@ abstract class ThemeAttributes {
 
 class LightThemeAttributes implements ThemeAttributes {
   @override
-  Color get backgroundColor => const Color(0xffffffff);
+  ThemeModes get mode => ThemeModes.light;
   @override
-  Color get dividerColor => Colors.grey[300]!;
+  ThemeData get themeData => ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.light,
+    colorScheme: const  ColorScheme.light().copyWith(
+      background: const Color(0xFFFFFFFF),
+      primary: const Color(0xFF000000),
+      secondary: const Color(0xFFE1A7FF),
+    ),
+    dividerColor: Colors.grey[300]!,
+    appBarTheme: const AppBarTheme().copyWith(
+      backgroundColor: const Color(0xff000000)
+    )
+  );
   @override
   Color get fontColor => const Color(0xFF000000);
-  @override
-  Color get appbarColor => const Color(0xff000000);
   @override
   Color get navigationBackgroundColor => const Color(0xffffffff);
   @override
@@ -80,13 +89,23 @@ class LightThemeAttributes implements ThemeAttributes {
 
 class DarkThemeAttributes implements ThemeAttributes {
   @override
-  Color get backgroundColor => const Color(0xff000000);
+  ThemeModes get mode => ThemeModes.dark;
   @override
-  Color get dividerColor => const Color(0xFF3D3D3D);
+  ThemeData get themeData => ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: const  ColorScheme.light().copyWith(
+        background: const Color(0xff000000),
+        primary: const Color(0xFF000000),
+        secondary: const Color(0xFFE1A7FF),
+      ),
+      dividerColor: const Color(0xFF3D3D3D),
+      appBarTheme: const AppBarTheme().copyWith(
+          backgroundColor: const Color(0xff090909)
+      )
+  );
   @override
   Color get fontColor => const Color(0xFFFFFFFF);
-  @override
-  Color get appbarColor => const Color(0xff090909);
   @override
   Color get navigationBackgroundColor => const Color(0xff090909);
   @override
