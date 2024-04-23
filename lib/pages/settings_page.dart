@@ -36,7 +36,7 @@ class SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
-      backgroundColor: themeProvider.attrs.backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -50,7 +50,7 @@ class SettingsPageState extends State<SettingsPage> {
             ),
           ],
         ),
-        backgroundColor: themeProvider.attrs.appbarColor,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         centerTitle: false,
         automaticallyImplyLeading: false,
       ),
@@ -67,7 +67,7 @@ class SettingsPageState extends State<SettingsPage> {
                 Divider(
                   height: 0.1,
                   thickness: 0.2,
-                  color: themeProvider.attrs.dividerColor,
+                  color: Theme.of(context).dividerColor,
                 ),
                 _buildRow(Intl.message('signIn'), Icons.person, () async {
                   final social = await showDialog(
@@ -222,7 +222,7 @@ class SettingsPageState extends State<SettingsPage> {
         Divider(
           height: 0.1,
           thickness: 0.2,
-          color: themeProvider.attrs.dividerColor,
+          color: Theme.of(context).dividerColor,
         ),
       ],
     );

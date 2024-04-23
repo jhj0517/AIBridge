@@ -45,7 +45,7 @@ class ChatRoomsState extends State<ChatRoomsPage> {
           ),
         ),
         Scaffold(
-          backgroundColor: themeProvider.attrs.backgroundColor,
+          backgroundColor: Theme.of(context).colorScheme.background,
           appBar: AppBar(
             title: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -59,7 +59,7 @@ class ChatRoomsState extends State<ChatRoomsPage> {
                 ),
               ],
             ),
-            backgroundColor: themeProvider.attrs.appbarColor,
+            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
             centerTitle: false,
             automaticallyImplyLeading: false, // Add this line
           ),
@@ -88,7 +88,7 @@ class ChatRoomsState extends State<ChatRoomsPage> {
     return Column(
       children: [
         Ink(
-          color: themeProvider.attrs.backgroundColor,
+          color: Theme.of(context).colorScheme.background,
           child: InkWell(
             onTap: () {
               if (Utilities.isKeyboardShowing(context)) {
@@ -197,7 +197,7 @@ class ChatRoomsState extends State<ChatRoomsPage> {
         Divider(
           height: 0.1,
           thickness: 0.2,
-          color: themeProvider.attrs.dividerColor,
+          color: Theme.of(context).dividerColor,
         ),
       ],
     );

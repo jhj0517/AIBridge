@@ -35,7 +35,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
   }
 
   Future<void> _init() async {
-    await chatRoomsProvider.readChatRoomSetting(themeProvider.attrs.backgroundColor);
+    await chatRoomsProvider.readChatRoomSetting(Theme.of(context).colorScheme.background);
     setState(() {
       currentSettings = ChatRoomSetting.copy(chatRoomsProvider.chatRoomSetting!);
       _isLoading = false;
@@ -46,7 +46,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
   Widget build(BuildContext context) {
     themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
-      backgroundColor: themeProvider.attrs.backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
           title: Text(
             Intl.message("chatRoomSetting"),
@@ -55,7 +55,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
               fontWeight: FontWeight.bold
             ),
           ),
-          backgroundColor: themeProvider.attrs.appbarColor,
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new),
             color: Colors.white,
@@ -107,7 +107,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
                   child: Text(
                     Intl.message("resetToDefaults"),
                     style: TextStyle(
-                      color: themeProvider.attrs.backgroundColor,
+                      color: Theme.of(context).colorScheme.background,
                       fontWeight: FontWeight.bold
                     ),
                   ),
@@ -148,7 +148,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
 
   void _resetToDefaults() {
     setState(() {
-      currentSettings = ChatRoomSetting.defaultChatRoomSetting(themeProvider.attrs.backgroundColor);
+      currentSettings = ChatRoomSetting.defaultChatRoomSetting(Theme.of(context).colorScheme.background);
     });
   }
 }

@@ -103,7 +103,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         Scaffold(
           backgroundColor: Colors.transparent, // Make the Scaffold's background transparent
           appBar: AppBar(
-            backgroundColor: themeProvider.attrs.appbarColor,
+            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
             elevation: 0, // Remove AppBar Shadow
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new),

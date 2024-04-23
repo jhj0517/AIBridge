@@ -44,13 +44,13 @@ class _MainNavigationState extends State<MainNavigationPage> {
   Widget build(BuildContext context) {
     themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
-      backgroundColor: themeProvider.attrs.backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: IndexedStack( //this will call onBackPress() from FriendsPage() in every page
         index: _currentIndex,
         children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: themeProvider.attrs.backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         selectedItemColor: themeProvider.attrs.selectedNavigationItemColor,

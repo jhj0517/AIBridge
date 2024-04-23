@@ -92,7 +92,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                   charactersProvider.currentCharacter.characterName,
                   style: const TextStyle(color: ColorConstants.appbarTextColor),
                 ),
-                backgroundColor: themeProvider.attrs.appbarColor,
+                backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
                 centerTitle: false,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back_ios_new),
@@ -190,7 +190,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   }
 
   Future<void> _init() async {
-    final backgroundColor = themeProvider.attrs.backgroundColor;
+    final backgroundColor = Theme.of(context).colorScheme.background;
     await chatRoomsProvider.readChatRoomSetting(backgroundColor);
     await charactersProvider.updateCurrentCharacter(widget.arguments.characterId);
     await chatRoomsProvider.updateCurrentChatRoom(widget.arguments.characterId);

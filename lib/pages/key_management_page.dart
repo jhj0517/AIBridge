@@ -33,7 +33,7 @@ class KeyManagementPageState extends State<KeyManagementPage> {
   Widget build(BuildContext context) {
     themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
-      backgroundColor: themeProvider.attrs.backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: Text(
           Intl.message("keyPageTitle"),
@@ -42,7 +42,7 @@ class KeyManagementPageState extends State<KeyManagementPage> {
             fontWeight: FontWeight.bold
           ),
         ),
-        backgroundColor: themeProvider.attrs.appbarColor,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         centerTitle: false,
         automaticallyImplyLeading: false,
       ),
@@ -104,7 +104,7 @@ class KeyManagementPageState extends State<KeyManagementPage> {
         Divider(
           height: 0.1,
           thickness: 0.3,
-          color: themeProvider.attrs.dividerColor,
+          color: Theme.of(context).dividerColor,
         ),
       ],
     );
