@@ -82,25 +82,22 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ],
-      child: MaterialApp(
-        title: Intl.message("appTitle"),
-        localizationsDelegates: const [
-          S.delegate, // Add this line
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        theme: ThemeData(
-          primaryColor: ColorConstants.themeColor,
-          primarySwatch: MaterialColor(0xff000000, ColorConstants.swatchColor),
-          textSelectionTheme: const TextSelectionThemeData(
-            selectionHandleColor: ColorConstants.textSelectionHandlerColor, // Change the color of the selection handle
-            selectionColor: ColorConstants.textSelectionColor,
-          ),
-        ),
-        home: const SplashPage(),
-        debugShowCheckedModeBanner: false,
+      child: Consumer<ThemeProvider>(
+        builder: (_, themeProvider, child) {
+          return MaterialApp(
+            title: Intl.message("appTitle"),
+            localizationsDelegates: const [
+              S.delegate, // Add this line
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            theme: themeProvider.attrs.themeData,
+            home: const SplashPage(),
+            debugShowCheckedModeBanner: false,
+          );
+        },
       )
     );
   }
