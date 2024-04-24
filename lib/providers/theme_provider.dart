@@ -11,14 +11,15 @@ enum ThemeModes{
 }
 
 class ThemeProvider extends ChangeNotifier {
-  final SharedPreferences prefs;
-  final initialTheme = ThemeModes.light;
 
   ThemeProvider({
     required this.prefs
   }){
     _loadTheme();
   }
+
+  final SharedPreferences prefs;
+  final initialThemeMode = ThemeModes.light;
 
   ThemeAttributes _attrs = LightThemeAttributes();
   ThemeAttributes get attrs => _attrs;
@@ -32,8 +33,9 @@ class ThemeProvider extends ChangeNotifier {
 
   void _loadTheme() {
     int? modeIndex = prefs.getInt(SharedPreferenceConstants.theme);
-    ThemeModes mode = modeIndex == null ? initialTheme : ThemeModes.values[modeIndex];
-    _attrs = mode == ThemeModes.light ? LightThemeAttributes() : DarkThemeAttributes();
+    ThemeModes mode = modeIndex == null ? initialThemeMode : ThemeModes.values[modeIndex];
+    bool isLight = mode == ThemeModes.light;
+    _attrs = isLight ? LightThemeAttributes() : DarkThemeAttributes();
   }
 
   Future<void> _saveTheme() async {
