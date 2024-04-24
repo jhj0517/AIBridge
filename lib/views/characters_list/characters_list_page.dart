@@ -13,7 +13,7 @@ import '../../utils/utils.dart';
 import '../views.dart';
 
 class CharactersListPage extends StatefulWidget {
-  const CharactersListPage({Key? key}) : super(key: key);
+  const CharactersListPage({super.key});
 
   @override
   State createState() => CharactersListPageState();
