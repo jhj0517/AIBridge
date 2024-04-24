@@ -71,6 +71,9 @@ class LightThemeAttributes implements ThemeAttributes {
     dividerColor: Colors.grey[300]!,
     appBarTheme: const AppBarTheme().copyWith(
       backgroundColor: const Color(0xff000000)
+    ),
+    textTheme: const TextTheme().copyWith().apply(
+      bodyColor: const Color(0xFF000000)
     )
   );
   @override
@@ -102,7 +105,9 @@ class DarkThemeAttributes implements ThemeAttributes {
         secondary: const Color(0xFFE1A7FF),
       ),
       dividerColor: const Color(0xFF3D3D3D),
-      appBarTheme: const AppBarTheme().copyWith(
+      appBarTheme: const AppBarTheme().copyWith(),
+      textTheme: const TextTheme().copyWith().apply(
+          bodyColor: const Color(0xFF000000)
       )
   );
   @override
