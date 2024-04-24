@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'widgets/characters_list_appbar.dart';
+import 'widgets/characters_list_app_bar.dart';
 import 'widgets/characters_list.dart';
 import 'widgets/floating_add_button.dart';
 import '../../widgets/widgets.dart';
