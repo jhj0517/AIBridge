@@ -107,7 +107,7 @@ class DarkThemeAttributes implements ThemeAttributes {
       dividerColor: const Color(0xFF3D3D3D),
       appBarTheme: const AppBarTheme().copyWith(),
       textTheme: const TextTheme().copyWith().apply(
-          bodyColor: const Color(0xFF000000)
+          bodyColor: const Color(0xFFFFFFFF)
       )
   );
   @override
