@@ -8,7 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'generated/l10n.dart';
-import 'views/pages.dart';
+import 'views/views.dart';
 import 'constants/constants.dart';
 import 'providers/providers.dart';
 import 'repositories/repositories.dart';

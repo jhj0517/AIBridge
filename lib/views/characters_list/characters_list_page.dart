@@ -10,7 +10,7 @@ import '../../constants/constants.dart';
 import '../../providers/providers.dart';
 import '../../models/models.dart';
 import '../../utils/utils.dart';
-import '../pages.dart';
+import '../views.dart';
 
 class CharactersListPage extends StatefulWidget {
   const CharactersListPage({Key? key}) : super(key: key);

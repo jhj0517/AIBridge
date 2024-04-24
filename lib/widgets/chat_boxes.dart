@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../models/models.dart';
-import '../views/pages.dart';
+import '../views/views.dart';
 import '../providers/providers.dart';
 import '../constants/constants.dart';
 import '../utils/utils.dart';

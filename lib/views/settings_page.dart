@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import '../constants/constants.dart';
-import '../views/pages.dart';
+import '../views/views.dart';
 import '../utils/utilities.dart';
 import '../widgets/widgets.dart';
 import '../providers/providers.dart';

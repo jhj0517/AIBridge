@@ -12,7 +12,7 @@ import '../utils/utils.dart';
 import '../models/models.dart';
 import '../constants/constants.dart';
 import '../providers/providers.dart';
-import 'pages.dart';
+import 'views.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key, required this.arguments}) : super(key: key);
