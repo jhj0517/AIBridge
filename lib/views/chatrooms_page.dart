@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../utils/utils.dart';
 import '../models/models.dart';
-import '../pages/chat_page.dart';
+import '../views/chat_page.dart';
 import '../providers/providers.dart';
 import '../constants/constants.dart';
 import '../widgets/dialogs.dart';

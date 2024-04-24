@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../pages/pages.dart';
+import '../views/pages.dart';
 import '../utils/utilities.dart';
 import '../providers/theme_provider.dart';
 

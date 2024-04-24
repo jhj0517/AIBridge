@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 import '../providers/providers.dart';
-import '../pages/pages.dart';
+import '../views/pages.dart';
 import '../constants/constants.dart';
 import '../widgets/widgets.dart';
 import '../models/models.dart';

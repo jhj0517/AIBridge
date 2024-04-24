@@ -1,4 +1,4 @@
-import 'package:aibridge/pages/characters_list/widgets/characters_list_placeholder.dart';
+import 'package:aibridge/views/characters_list/widgets/characters_list_placeholder.dart';
 import 'package:flutter/material.dart';
 
 import 'package:aibridge/models/models.dart';
