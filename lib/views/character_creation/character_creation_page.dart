@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:aibridge/views/character_creation/widgets/prompts/palm_prompts.dart';
 import 'package:aibridge/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -133,16 +134,11 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                             ),
                             const SizedBox(height: 15),
                           ] else if (PaLMService.paLMModels.contains(_selectedModel)) ... [
-                            PromptBox(
-                                labelText: Intl.message("paLMContextPromptLabel"),
-                                hintText: Intl.message("paLMContextPromptHint"),
-                                controller: _textFieldControllerPaLMContext
+                            PaLMPrompts(
+                              contextController: _textFieldControllerPaLMContext,
+                              exampleInputController: _textFieldControllerPaLMExampleInput,
+                              exampleOutputController: _textFieldControllerPaLMExampleOutput
                             ),
-                            const SizedBox(height: 15),
-                            PaLMPromptBox(
-                              inputExampleController: _textFieldControllerPaLMExampleInput,
-                              outputExampleController: _textFieldControllerPaLMExampleOutput
-                            )
                           ],
                           const SizedBox(height: 20),
                           NameEnterBox(
