@@ -12,10 +12,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
-import '../constants/constants.dart';
-import '../models/models.dart';
-import '../providers/providers.dart';
-import '../utils/utils.dart';
+import '../../constants/constants.dart';
+import '../../models/models.dart';
+import '../../providers/providers.dart';
+import '../../utils/utils.dart';
 
 
 class CharacterCreationPage extends StatefulWidget {
