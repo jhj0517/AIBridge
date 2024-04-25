@@ -22,6 +22,7 @@ import 'widgets/text_fileds/name_enter_box.dart';
 import 'widgets/bottom_buttons/import_character_button.dart';
 import 'widgets/model_dropdown.dart';
 import 'widgets/temperature_slider.dart';
+import 'widgets/appbar/character_creation_app_bar.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
 
 
@@ -72,31 +73,12 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         CharacterCreationBackground(backgroundImageBLOB: _selectedBackgroundImageBLOB),
         Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new),
-              color: Colors.white,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: widget.arguments.character.characterName.isEmpty
-            ? Text(
-              Intl.message("newCharacter"),
-              style: const TextStyle(color: ColorConstants.appbarTextColor),
-            )
-            : Text(
-              Intl.message("editCharacterOption"),
-              style: const TextStyle(color: ColorConstants.appbarTextColor),
-            ),
-            centerTitle: false,
-            actions: [
-              _buildDoneButton(),
-            ],
+          appBar: CharacterCreationAppBar(
+            isNewChar: widget.arguments.character.characterName.isEmpty,
+            onBack: () { Navigator.pop(context); },
+            onDone: () async { await _onDone(); },
+            enableDone: _isDoneButtonEnabled,
           ),
-          // Content
           body: SafeArea(
             child: SingleChildScrollView(
               child: Align(
