@@ -21,6 +21,7 @@ import 'widgets/character_creation_background.dart';
 import 'widgets/prompt_box.dart';
 import 'widgets/palm_prompt_box.dart';
 import 'widgets/name_enter_box.dart';
+import 'widgets/tenperature_slider.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
 
 
