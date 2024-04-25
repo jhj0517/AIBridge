@@ -3,31 +3,35 @@ import 'package:intl/intl.dart';
 
 import 'prompt_box.dart';
 
-class OpenAIPrompts extends StatelessWidget {
-
+class OpenAIPrompts extends StatefulWidget {
   const OpenAIPrompts({
     super.key,
     required this.systemPromptsController,
-    required this.onAdd,
-    required this.onRemove
   });
 
   final List<TextEditingController> systemPromptsController;
-  final Function() onAdd;
-  final Function(int) onRemove;
+
+  @override
+  OpenAIPromptsState createState() => OpenAIPromptsState();
+}
+
+class OpenAIPromptsState extends State<OpenAIPrompts> {
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (int index = 0; index < systemPromptsController.length; index++)
+        for (int index = 0; index < widget.systemPromptsController.length; index++)
           PromptBox(
             labelText: index == 0 ? Intl.message("description") : Intl.message("systemPrompt"),
             hintText: index == 0 ? Intl.message("descriptionHint") : Intl.message("systemPromptHint"),
-            controller: systemPromptsController[index],
+            controller: widget.systemPromptsController[index],
             index: index,
-            onRemove: (index) => onRemove,
+            onRemove: (index) {
+              widget.systemPromptsController.removeAt(index);
+              setState(() { });
+            }
           ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -45,7 +49,10 @@ class OpenAIPrompts extends StatelessWidget {
                 color: Colors.black,
                 size: 24,
               ),
-              onPressed: () => onAdd
+              onPressed: () {
+                widget.systemPromptsController.add(TextEditingController());
+                setState(() { });
+              }
             ),
           ],
         ),
