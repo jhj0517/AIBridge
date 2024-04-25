@@ -16,9 +16,9 @@ import '../../models/models.dart';
 import '../../providers/providers.dart';
 import '../../utils/utils.dart';
 import 'widgets/character_creation_background.dart';
-import 'widgets/text_fileds/prompt_box.dart';
-import 'widgets/text_fileds/palm_prompt_box.dart';
-import 'widgets/text_fileds/name_enter_box.dart';
+import 'widgets/prompts/prompt_box.dart';
+import 'widgets/prompts/palm_prompt_box.dart';
+import 'widgets/prompts/name_enter_box.dart';
 import 'widgets/bottom_buttons/import_character_button.dart';
 import 'widgets/model_dropdown.dart';
 import 'widgets/temperature_slider.dart';
@@ -40,6 +40,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
   late CharactersProvider characterProvider;
   late ChatRoomsProvider chatRoomsProvider;
 
+  // State Variables
   TextEditingController _textFieldControllerName = TextEditingController();
   List<TextEditingController> _textFieldControllersSystemPrompts = [TextEditingController()];
   TextEditingController _textFieldControllerPaLMContext = TextEditingController();
@@ -49,9 +50,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
   TextEditingController _textFieldControllerFirstMessage = TextEditingController();
   TextEditingController _textFieldControllerImport = TextEditingController();
   double _currentTemperature = 0;
-
   bool _isDoneButtonEnabled=false;
-
   Uint8List? _selectedProfileImageBLOB;
   Uint8List? _selectedBackgroundImageBLOB;
 
@@ -305,28 +304,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     );
   }
 
-  Widget _buildDoneButton() {
-    Color textColor = _isDoneButtonEnabled ? Colors.white : Colors.white38;
-    return TextButton(
-      onPressed: _isDoneButtonEnabled
-      ? () async {
-        await _onDone();
-      }
-      : null,
-      style: TextButton.styleFrom(
-        foregroundColor: Colors.white,
-      ),
-      child: Text(
-        Intl.message("done"),
-        style: TextStyle(
-          color: textColor,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
   Future<Uint8List?> _getImageFromGallery() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -395,10 +372,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
       }
       _textFieldControllerImport.text = "";
     });
-  }
-
-  void _onTemperatureChanged(double temperature){
-    _currentTemperature = temperature;
   }
 
   void _removePromptField(int index){
