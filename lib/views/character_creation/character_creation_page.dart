@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:aibridge/widgets/character_creation_widgets.dart';
+import 'package:aibridge/views/character_creation/widgets/character_creation_widgets.dart';
 import 'package:aibridge/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +16,11 @@ import '../../constants/constants.dart';
 import '../../models/models.dart';
 import '../../providers/providers.dart';
 import '../../utils/utils.dart';
+import 'widgets/character_creation_widgets.dart';
+import 'widgets/character_creation_background.dart';
+import 'widgets/prompt_box.dart';
+import 'widgets/palm_prompt_box.dart';
+import 'package:aibridge/views/common/character/profile_picture.dart';
 
 
 class CharacterCreationPage extends StatefulWidget {
@@ -29,7 +34,6 @@ class CharacterCreationPage extends StatefulWidget {
 
 class CharacterCreationState extends State<CharacterCreationPage> {
 
-  late ThemeProvider themeProvider;
   late CharactersProvider characterProvider;
   late ChatRoomsProvider chatRoomsProvider;
 
@@ -53,7 +57,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
 
   @override
   void initState() {
-    themeProvider = context.read<ThemeProvider>();
     characterProvider = context.read<CharactersProvider>();
     chatRoomsProvider = context.read<ChatRoomsProvider>();
     _init();
@@ -62,49 +65,14 @@ class CharacterCreationState extends State<CharacterCreationPage> {
 
   @override
   Widget build(BuildContext context) {
-    themeProvider = context.watch<ThemeProvider>();
     return Stack(
       children: [
-        // Background placeholder image
-        const SizedBox.expand(
-          child: Image(
-            fit: BoxFit.cover,
-            image: AssetImage(PathConstants.characterCreationPageBackgroundPlaceholderImage),
-          ),
-        ),
-        // Background image
-        Visibility(
-          visible: _selectedBackgroundImageBLOB!.isNotEmpty,
-          child: SizedBox.expand(
-              child: SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: Image.memory(
-                    _selectedBackgroundImageBLOB!,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, object, stackTrace) {
-                      return const SizedBox.expand(
-                        child: Image(
-                          fit: BoxFit.cover,
-                          image: AssetImage(PathConstants.characterCreationPageBackgroundPlaceholderImage),
-                        ),
-                      );
-                    },
-                  )
-              )
-          ),
-        ),
-        // Apply a color filter on top of the background image
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.8),
-          ),
-        ),
+        CharacterCreationBackground(backgroundImageBLOB: _selectedBackgroundImageBLOB),
         Scaffold(
-          backgroundColor: Colors.transparent, // Make the Scaffold's background transparent
+          backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-            elevation: 0, // Remove AppBar Shadow
+            elevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new),
               color: Colors.white,
@@ -167,7 +135,8 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                           TemperatureSlider(
                             serviceType: _getServiceType(_selectedModel!),
                             onTemperatureChange: (value) {
-                              _onTemperatureChanged(value);
+                              _currentTemperature = value;
+                              setState(() {});
                             },
                             initialTemperature: _currentTemperature,
                           ),
@@ -177,13 +146,13 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                             _buildOpenAIPromptsListView(),
                             const SizedBox(height: 15),
                           ] else if (PaLMService.paLMModels.contains(_selectedModel)) ... [
-                            PromptField(
+                            PromptBox(
                                 labelText: Intl.message("paLMContextPromptLabel"),
                                 hintText: Intl.message("paLMContextPromptHint"),
                                 controller: _textFieldControllerPaLMContext
                             ),
                             const SizedBox(height: 15),
-                            PaLMExamplePromptFields(
+                            PaLMPromptBox(
                               inputExampleController: _textFieldControllerPaLMExampleInput,
                               outputExampleController: _textFieldControllerPaLMExampleOutput
                             )
@@ -195,7 +164,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                             controller: _textFieldControllerYourName
                           ),
                           const SizedBox(height: 20),
-                          PromptField(
+                          PromptBox(
                             labelText: Intl.message("firstMessageLabel"),
                             hintText: Intl.message("firstMessageHint"),
                             controller: _textFieldControllerFirstMessage
@@ -317,7 +286,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (int index = 0; index < _textFieldControllersSystemPrompts.length; index++)
-          PromptField(
+          PromptBox(
             labelText: index == 0 ? Intl.message("description") : Intl.message("systemPrompt"),
             hintText: index == 0 ? Intl.message("descriptionHint") : Intl.message("systemPromptHint"),
             controller: _textFieldControllersSystemPrompts[index],

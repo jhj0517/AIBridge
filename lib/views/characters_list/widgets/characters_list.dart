@@ -2,7 +2,7 @@ import 'package:aibridge/views/characters_list/widgets/characters_list_placehold
 import 'package:flutter/material.dart';
 
 import 'package:aibridge/models/models.dart';
-import 'package:aibridge/widgets/widgets.dart';
+import 'package:aibridge/views/common/character/profile_picture.dart';
 
 class CharacterList extends StatelessWidget {
   final List<Character?> items;

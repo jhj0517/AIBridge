@@ -9,6 +9,7 @@ import '../views/views.dart';
 import '../utils/utilities.dart';
 import '../widgets/widgets.dart';
 import '../providers/providers.dart';
+import 'package:aibridge/views/common/character/profile_picture.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);

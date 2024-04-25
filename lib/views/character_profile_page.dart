@@ -10,7 +10,7 @@ import '../views/views.dart';
 import '../constants/constants.dart';
 import '../widgets/widgets.dart';
 import '../models/models.dart';
-import '../utils/exif_manager.dart';
+import 'package:aibridge/views/common/character/profile_picture.dart';
 
 class CharacterProfilePage extends StatefulWidget {
   const CharacterProfilePage({Key? key, required this.arguments}) : super(key: key);

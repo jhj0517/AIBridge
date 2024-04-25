@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:aibridge/providers/theme_provider.dart';
-import 'package:aibridge/widgets/character_creation_widgets.dart';
+import 'package:aibridge/views/character_creation/widgets/character_creation_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -10,6 +10,7 @@ import '../views/views.dart';
 import '../providers/providers.dart';
 import '../constants/constants.dart';
 import '../utils/utils.dart';
+import 'package:aibridge/views/common/character/profile_picture.dart';
 
 
 abstract class BaseChatBox extends StatelessWidget {
