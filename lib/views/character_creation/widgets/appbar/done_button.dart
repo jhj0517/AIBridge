@@ -14,10 +14,20 @@ class DoneButton extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return  IconButton(
-        icon: const Icon(Icons.check),
-        onPressed: enableDone? () => onDone : null,
-        tooltip: Intl.message("Done"),
+    Color textColor = enableDone ? Colors.white : Colors.white38;
+    return  TextButton(
+      onPressed: enableDone? onDone : null,
+      style: TextButton.styleFrom(
+        foregroundColor: Colors.white,
+      ),
+      child: Text(
+        Intl.message("done"),
+        style: TextStyle(
+          color: textColor,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 
