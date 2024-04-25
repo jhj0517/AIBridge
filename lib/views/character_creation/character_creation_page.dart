@@ -19,6 +19,7 @@ import 'widgets/character_creation_background.dart';
 import 'widgets/prompts/prompt_box.dart';
 import 'widgets/prompts/palm_prompt_box.dart';
 import 'widgets/prompts/name_enter_box.dart';
+import 'widgets/prompts/open_ai_prompts.dart';
 import 'widgets/bottom_buttons/import_character_button.dart';
 import 'widgets/model_dropdown.dart';
 import 'widgets/temperature_slider.dart';
@@ -126,7 +127,17 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                           const SizedBox(height: 20),
                           // Different UI by Service
                           if (OpenAIService.openAIModels.contains(_selectedModel)) ...[
-                            _buildOpenAIPromptsListView(),
+                            OpenAIPrompts(
+                              systemPromptsController: _textFieldControllersSystemPrompts,
+                              onAdd: () {
+                                _textFieldControllersSystemPrompts.add(TextEditingController());
+                                setState(() {});
+                              },
+                              onRemove: (index) {
+                                _textFieldControllersSystemPrompts.removeAt(index);
+                                setState(() {});
+                              }
+                            ),
                             const SizedBox(height: 15),
                           ] else if (PaLMService.paLMModels.contains(_selectedModel)) ... [
                             PromptBox(
@@ -264,46 +275,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     });
   }
 
-  Widget _buildOpenAIPromptsListView(){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (int index = 0; index < _textFieldControllersSystemPrompts.length; index++)
-          PromptBox(
-            labelText: index == 0 ? Intl.message("description") : Intl.message("systemPrompt"),
-            hintText: index == 0 ? Intl.message("descriptionHint") : Intl.message("systemPromptHint"),
-            controller: _textFieldControllersSystemPrompts[index],
-            index: index,
-            onRemove: (index) { _removePromptField(index); },
-          ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ), // Circular shape
-                fixedSize: const Size(30, 30),
-              ),
-              child: const Icon(
-                Icons.add,
-                color: Colors.black,
-                size: 24,
-              ),
-              onPressed: () {
-                setState(() {
-                  _textFieldControllersSystemPrompts.add(TextEditingController());
-                });
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Future<Uint8List?> _getImageFromGallery() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -371,12 +342,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         }
       }
       _textFieldControllerImport.text = "";
-    });
-  }
-
-  void _removePromptField(int index){
-    setState(() {
-      _textFieldControllersSystemPrompts.removeAt(index);
     });
   }
 

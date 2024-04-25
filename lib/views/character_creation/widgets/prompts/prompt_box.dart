@@ -61,7 +61,7 @@ class PromptBox extends StatelessWidget {
                 ),
                 counterStyle: const TextStyle(color: Colors.white),
                 suffixIcon: index != null
-                    ? IconButton(
+                ? IconButton(
                   icon: const CircleAvatar(
                     backgroundColor: Colors.black,
                     child: Icon(
@@ -72,7 +72,7 @@ class PromptBox extends StatelessWidget {
                   ),
                   onPressed: () => onRemove!(index!),
                 )
-                    : null,
+                : null,
               ),
             ),
             const SizedBox(height: 15),
