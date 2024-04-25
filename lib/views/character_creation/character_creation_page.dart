@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:aibridge/views/character_creation/widgets/character_creation_widgets.dart';
 import 'package:aibridge/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,11 +15,12 @@ import '../../constants/constants.dart';
 import '../../models/models.dart';
 import '../../providers/providers.dart';
 import '../../utils/utils.dart';
-import 'widgets/character_creation_widgets.dart';
 import 'widgets/character_creation_background.dart';
-import 'widgets/prompt_box.dart';
-import 'widgets/palm_prompt_box.dart';
-import 'widgets/name_enter_box.dart';
+import 'widgets/text_fileds/prompt_box.dart';
+import 'widgets/text_fileds/palm_prompt_box.dart';
+import 'widgets/text_fileds/name_enter_box.dart';
+import 'widgets/bottom_buttons/import_character_button.dart';
+import 'widgets/model_dropdown.dart';
 import 'widgets/tenperature_slider.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
 

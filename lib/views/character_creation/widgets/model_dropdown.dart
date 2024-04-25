@@ -1,54 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../constants/path_constants.dart';
-import '../../../models/models.dart';
-
-class ImportCharacterButton extends StatelessWidget {
-  final Future<void> Function() onPressed;
-
-  const ImportCharacterButton({
-    super.key,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: SizedBox(
-        height: 80,
-        width: 80,
-        child: InkWell(
-          onTap: onPressed,
-          child: Column(
-            children: [
-              const SizedBox(height: 15),
-              const Icon(
-                Icons.file_download_outlined,
-                color: Colors.white,
-                size: 30,
-              ),
-              const SizedBox(height: 5),
-              Text(
-                Intl.message("import"),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+import 'package:aibridge/constants/constants.dart';
+import 'package:aibridge/models/models.dart';
 
 class ModelsDropdown extends StatefulWidget {
-  final List<String> models; // List of available models
-  final String selectedModel; // Currently selected model
-  final Function(String)? onModelSelected; // Callback for handling model selection
+  final List<String> models;
+  final String selectedModel;
+  final Function(String)? onModelSelected;
 
   const ModelsDropdown({
     Key? key,
@@ -58,10 +17,10 @@ class ModelsDropdown extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ModelsDropdownState createState() => _ModelsDropdownState();
+  ModelsDropdownState createState() => ModelsDropdownState();
 }
 
-class _ModelsDropdownState extends State<ModelsDropdown> {
+class ModelsDropdownState extends State<ModelsDropdown> {
   late String _currentModel;
 
   @override
@@ -119,4 +78,3 @@ class _ModelsDropdownState extends State<ModelsDropdown> {
     );
   }
 }
-
