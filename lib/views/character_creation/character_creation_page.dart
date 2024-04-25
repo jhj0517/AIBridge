@@ -20,6 +20,7 @@ import 'widgets/character_creation_widgets.dart';
 import 'widgets/character_creation_background.dart';
 import 'widgets/prompt_box.dart';
 import 'widgets/palm_prompt_box.dart';
+import 'widgets/name_enter_box.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
 
 
@@ -120,7 +121,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                             isMutable: true
                           ),
                           const SizedBox(height: 5),
-                          NameEnteringField(
+                          NameEnterBox(
                               label: Intl.message("name"),
                               hint: Intl.message("characterNameHint"),
                               controller: _textFieldControllerName
@@ -158,7 +159,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                             )
                           ],
                           const SizedBox(height: 20),
-                          NameEnteringField(
+                          NameEnterBox(
                             label: Intl.message("characterRecognizeUserName"),
                             hint: Intl.message("characterRecognizeUserNameHint"),
                             controller: _textFieldControllerYourName
