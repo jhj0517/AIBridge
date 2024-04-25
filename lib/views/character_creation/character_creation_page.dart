@@ -21,7 +21,7 @@ import 'widgets/text_fileds/palm_prompt_box.dart';
 import 'widgets/text_fileds/name_enter_box.dart';
 import 'widgets/bottom_buttons/import_character_button.dart';
 import 'widgets/model_dropdown.dart';
-import 'widgets/tenperature_slider.dart';
+import 'widgets/temperature_slider.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
 
 
