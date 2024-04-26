@@ -4,7 +4,7 @@ export 'settings_page.dart';
 export 'characters_list/characters_list_page.dart';
 export 'chatrooms_page.dart';
 export 'character_creation/character_creation_page.dart';
-export 'character_profile_page.dart';
+export 'character_profile/character_profile_page.dart';
 export 'full_photo_page.dart';
 export 'chat_page.dart';
 export 'chatroom_setting_page.dart';

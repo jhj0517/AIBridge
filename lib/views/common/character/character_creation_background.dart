@@ -3,10 +3,10 @@ import 'dart:typed_data';
 
 import 'package:aibridge/constants/path_constants.dart';
 
-class CharacterCreationBackground extends StatelessWidget {
+class CharacterBackground extends StatelessWidget {
   final Uint8List? backgroundImageBLOB;
 
-  const CharacterCreationBackground({
+  const CharacterBackground({
     super.key,
     required this.backgroundImageBLOB,
   });

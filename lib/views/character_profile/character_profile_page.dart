@@ -1,15 +1,16 @@
 import 'dart:async';
 import 'package:aibridge/utils/utils.dart';
+import 'package:aibridge/views/common/character/character_creation_background.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-import '../providers/providers.dart';
-import '../views/views.dart';
-import '../constants/constants.dart';
-import '../widgets/widgets.dart';
-import '../models/models.dart';
+import '../../providers/providers.dart';
+import '../views.dart';
+import '../../constants/constants.dart';
+import '../../widgets/widgets.dart';
+import '../../models/models.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
 
 class CharacterProfilePage extends StatefulWidget {
@@ -42,25 +43,10 @@ class CharacterProfileState extends State<CharacterProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    CharactersProvider characterProvider = context.watch<CharactersProvider>();
+    //CharactersProvider characterProvider = context.watch<CharactersProvider>();
     return Stack(
       children: [
-        // Background image
-        SizedBox.expand(
-          child: Image.memory(
-            characterProvider.currentCharacter.backgroundPhotoBLOB,
-            fit: BoxFit.cover,
-            errorBuilder: (context, object, stackTrace) {
-              return const LoadingView();
-            },
-          ),
-        ),
-        // Apply a color filter on top of the background image
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.6),
-          ),
-        ),
+        CharacterBackground(backgroundImageBLOB: charactersProvider.currentCharacter.backgroundPhotoBLOB),
         Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
@@ -102,7 +88,7 @@ class CharacterProfileState extends State<CharacterProfilePage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        characterProvider.currentCharacter.characterName,
+                        charactersProvider.currentCharacter.characterName,
                         style: const TextStyle(fontSize: 22, color: Colors.white),
                       ),
                     ),
