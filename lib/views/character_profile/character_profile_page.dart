@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:aibridge/utils/utils.dart';
+import 'package:aibridge/views/character_profile/widgets/bottom_button.dart';
+import 'package:aibridge/views/common/appbars/normal_app_bar.dart';
 import 'package:aibridge/views/common/character/character_creation_background.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,7 +10,6 @@ import 'package:intl/intl.dart';
 
 import '../../providers/providers.dart';
 import '../views.dart';
-import '../../constants/constants.dart';
 import '../../widgets/widgets.dart';
 import '../../models/models.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
@@ -43,26 +44,12 @@ class CharacterProfileState extends State<CharacterProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    //CharactersProvider characterProvider = context.watch<CharactersProvider>();
     return Stack(
       children: [
         CharacterBackground(backgroundImageBLOB: charactersProvider.currentCharacter.backgroundPhotoBLOB),
         Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            backgroundColor: ColorConstants.appbarBackgroundColor,
-            elevation: 0, // Remove AppBar Shadow
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new),
-              color: Colors.white,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: null,
-            centerTitle: false,
-          ),
-          // Content
+          appBar: const NormalAppBar(title: "", enableBackButton: true),
           body: SafeArea(
             child: Align(
               alignment: Alignment.bottomCenter,
@@ -104,11 +91,29 @@ class CharacterProfileState extends State<CharacterProfilePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildChatButton(widget.arguments),
+                          BottomButton(
+                            label: Intl.message('chatOption'),
+                            iconData: Icons.chat,
+                            onTap: () async {
+                              await _onChat();
+                            },
+                          ),
                           const SizedBox(width: 20),
-                          _buildEditProfileButton(),
+                          BottomButton(
+                            label: Intl.message('editProfile'),
+                            iconData: Icons.edit,
+                            onTap: () async {
+                              _onEditProfile();
+                            }
+                          ),
                           const SizedBox(width: 20),
-                          _buildExportButton()
+                          BottomButton(
+                            label: Intl.message('export'),
+                            iconData: Icons.file_upload_outlined,
+                            onTap: () async {
+                              await _onExportCharacter();
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -147,125 +152,49 @@ class CharacterProfileState extends State<CharacterProfilePage> {
     );
   }
 
-  Widget _buildEditProfileButton() {
-    return Flexible(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 80, minHeight: 80),
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CharacterCreationPage(
-                    arguments: CharacterCreationPageArguments(
-                        character: charactersProvider.currentCharacter
-                    ),
-                  ),
-                ),
-              );
-            },
-            child: Column(
-              children: [
-                const SizedBox(height: 15),
-                const Icon(
-                  Icons.edit,
-                  color: Colors.white,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  Intl.message('editProfile'),
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        )
-    );
-  }
-
-
-  Widget _buildChatButton(CharacterProfilePageArguments arguments) {
-    return Flexible(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 80, minHeight: 80),
-        child: InkWell(
-          onTap: () async {
-            //Chat Button On Tap event
-            if (charactersProvider.currentCharacter.firstMessage.isNotEmpty){
-              final firstChatRoom = ChatRoom.newChatRoom(charactersProvider.currentCharacter);
-              final firstMessage = ChatMessage.firstMessage(firstChatRoom.id!, charactersProvider.currentCharacter.id!, charactersProvider.currentCharacter.firstMessage);
-              await charactersProvider.insertFirstMessage(charactersProvider.currentCharacter, firstMessage);
-            } else {
-              await chatRoomsProvider.insertChatRoom(charactersProvider.currentCharacter);
-            }
-            chatRoomsProvider.updateChatRooms();
-
-            if (context.mounted) {
-              if(widget.arguments.fromChatPage == true){
-                Navigator.of(context).pop();
-              } else {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => ChatPage(
-                        arguments: ChatPageArguments(
-                            characterId: widget.arguments.characterId
-                        )
-                    ),
-                  ),
-                );
-              }
-            }
-          },
-          child: Column(
-            children: [
-              const SizedBox(height: 15),
-              const Icon(
-                Icons.chat,
-                color: Colors.white,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                Intl.message('chatOption'),
-                style: const TextStyle(color: Colors.white),
-                maxLines: 1,
-              ),
-            ],
-          ),
-        ),
+  void _onEditProfile() {
+    _navigateTo(CharacterCreationPage(
+      arguments: CharacterCreationPageArguments(
+          character: charactersProvider.currentCharacter
       ),
-    );
+    ));
   }
 
-  Widget _buildExportButton() {
-    return Flexible(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 80, minHeight: 80),
-          child: InkWell(
-            onTap: () async {
-              final success = await ChunkManager.saveImageWithChunk(character: charactersProvider.currentCharacter);
-              if (!success){
-                Fluttertoast.showToast(msg: Intl.message("failedToExport"));
-                return;
-              }
-              Fluttertoast.showToast(msg: Intl.message("savedInGallery"));
-            },
-            child: Column(
-              children: [
-                const SizedBox(height: 15),
-                const Icon(
-                  Icons.file_upload_outlined,
-                  color: Colors.white,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  Intl.message('export'),
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
+  Future<void> _onChat() async {
+    if (charactersProvider.currentCharacter.firstMessage.isNotEmpty){
+      final firstChatRoom = ChatRoom.newChatRoom(charactersProvider.currentCharacter);
+      final firstMessage = ChatMessage.firstMessage(firstChatRoom.id!, charactersProvider.currentCharacter.id!, charactersProvider.currentCharacter.firstMessage);
+      await charactersProvider.insertFirstMessage(charactersProvider.currentCharacter, firstMessage);
+    } else {
+      await chatRoomsProvider.insertChatRoom(charactersProvider.currentCharacter);
+    }
+    chatRoomsProvider.updateChatRooms();
+
+    if (context.mounted) {
+      if(widget.arguments.fromChatPage == true){
+        Navigator.pop(context);
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatPage(
+                arguments: ChatPageArguments(
+                    characterId: widget.arguments.characterId
+                )
             ),
           ),
-        )
-    );
+        );
+      }
+    }
+  }
+
+  Future<void> _onExportCharacter() async {
+    final success = await ChunkManager.saveImageWithChunk(character: charactersProvider.currentCharacter);
+    if (!success){
+      Fluttertoast.showToast(msg: Intl.message("failedToExport"));
+      return;
+    }
+    Fluttertoast.showToast(msg: Intl.message("savedInGallery"));
   }
 
 }
