@@ -13,7 +13,7 @@ class CharacterMessageLoading extends BaseMessage{
     required super.mode,
     required super.chatTextEditingController,
     required super.editChatFocusNode,
-    required super.charactersProvider,
+    required super.character,
   });
 
   @override
@@ -26,7 +26,7 @@ class CharacterMessageLoading extends BaseMessage{
             ProfilePicture(
               width: 50,
               height: 50,
-              imageBLOBData: charactersProvider!.currentCharacter.photoBLOB,
+              imageBLOBData: character!.photoBLOB,
             ),
             const SizedBox(width: 8.0),
             Expanded(
