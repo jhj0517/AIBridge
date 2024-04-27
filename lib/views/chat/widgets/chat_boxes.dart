@@ -12,7 +12,7 @@ import '../../../utils/utils.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
 
 
-abstract class BaseChatBox extends StatelessWidget {
+abstract class BaseMessage extends StatelessWidget {
   final ChatMessage chatMessage;
   final ChatRoomSetting settings;
   final ChatPageMode mode;
@@ -22,7 +22,7 @@ abstract class BaseChatBox extends StatelessWidget {
   final CharactersProvider? charactersProvider;
   final ThemeProvider themeProvider;
 
-  const BaseChatBox({
+  const BaseMessage({
     super.key,
     required this.chatMessage,
     required this.settings,
@@ -170,9 +170,9 @@ abstract class BaseChatBox extends StatelessWidget {
   Widget build(BuildContext context);
 }
 
-class UserChatBox extends BaseChatBox {
+class UserMessage extends BaseMessage {
 
-  const UserChatBox({
+  const UserMessage({
     super.key,
     required super.chatMessage,
     required super.settings,
@@ -228,10 +228,10 @@ class UserChatBox extends BaseChatBox {
   }
 }
 
-class UserChatBoxDeleteMode extends BaseChatBox {
+class UserMessageDeleteMode extends BaseMessage {
   final ValueNotifier<List<ChatMessage>> messagesToDeleteNotifier;
 
-  const UserChatBoxDeleteMode({
+  const UserMessageDeleteMode({
     super.key,
     required this.messagesToDeleteNotifier,
     required super.chatMessage,
@@ -313,11 +313,11 @@ class UserChatBoxDeleteMode extends BaseChatBox {
   }
 }
 
-class CharacterChatBox extends BaseChatBox {
+class CharacterMessage extends BaseMessage {
 
   final Future<void> Function() profileCallback;
 
-  const CharacterChatBox({
+  const CharacterMessage({
     super.key,
     required super.chatMessage,
     required super.settings,
@@ -394,11 +394,11 @@ class CharacterChatBox extends BaseChatBox {
   }
 }
 
-class CharacterChatBoxDeleteMode extends BaseChatBox {
+class CharacterMessageDeleteMode extends BaseMessage {
 
   final ValueNotifier<List<ChatMessage>> messagesToDeleteNotifier;
 
-  const CharacterChatBoxDeleteMode({
+  const CharacterMessageDeleteMode({
     super.key,
     required this.messagesToDeleteNotifier,
     required super.chatMessage,
@@ -494,9 +494,9 @@ class CharacterChatBoxDeleteMode extends BaseChatBox {
   }
 }
 
-class CharacterChatBoxLoading extends BaseChatBox{
+class CharacterMessageLoading extends BaseMessage{
 
-  const CharacterChatBoxLoading({
+  const CharacterMessageLoading({
     super.key,
     required super.chatMessage,
     required super.settings,

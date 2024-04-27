@@ -237,7 +237,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     final content = items[index];
 
     if (index == 0 && requestState == RequestState.loading) {
-      return CharacterChatBoxLoading(
+      return CharacterMessageLoading(
         chatMessage: content,
         chatTextEditingController: _chatTextEditingController,
         editChatFocusNode: _editCharacterChatFocusNode,
@@ -250,7 +250,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
     if (content.chatMessageType == ChatMessageType.userMessage) {
       if(mode==ChatPageMode.deleteMode){
-        return UserChatBoxDeleteMode(
+        return UserMessageDeleteMode(
             chatMessage: content,
             settings: settings,
             mode: mode,
@@ -260,7 +260,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
             themeProvider: themeProvider
         );
       }
-      return UserChatBox(
+      return UserMessage(
           chatMessage: content,
           settings: settings,
           mode: mode,
@@ -273,7 +273,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
     if (content.chatMessageType == ChatMessageType.characterMessage){
       if(mode==ChatPageMode.deleteMode){
-        return CharacterChatBoxDeleteMode(
+        return CharacterMessageDeleteMode(
             chatMessage: content,
             settings: settings,
             mode: mode,
@@ -285,7 +285,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         );
       }
 
-      return CharacterChatBox(
+      return CharacterMessage(
           chatMessage: content,
           settings: settings,
           mode: mode,
