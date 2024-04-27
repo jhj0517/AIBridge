@@ -47,7 +47,7 @@ class UserMessage extends BaseMessage {
             child: InkWell(
               splashColor: settings.userChatBoxBackgroundColor.withOpacity(0.5),
               borderRadius: BorderRadius.circular(12.0),
-              onLongPress: dialogCallback,
+              onLongPress: () async => dialogCallback?.call(chatMessage),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                 child: buildMessageContent(context),

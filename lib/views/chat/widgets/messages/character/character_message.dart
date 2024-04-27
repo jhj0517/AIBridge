@@ -1,11 +1,10 @@
+import 'package:aibridge/views/character_profile/character_profile_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:aibridge/views/chat/widgets/messages/base/base_message.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
 
 class CharacterMessage extends BaseMessage {
-
-  final Future<void> Function() profileCallback;
 
   const CharacterMessage({
     super.key,
@@ -15,8 +14,7 @@ class CharacterMessage extends BaseMessage {
     required super.chatTextEditingController,
     required super.editChatFocusNode,
     required super.dialogCallback,
-    required super.charactersProvider,
-    required this.profileCallback
+    required super.character,
   });
 
   @override
@@ -30,8 +28,20 @@ class CharacterMessage extends BaseMessage {
             ProfilePicture(
               width: 50,
               height: 50,
-              onPickImage: profileCallback,
-              imageBLOBData: charactersProvider!.currentCharacter.photoBLOB,
+              onPickImage: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CharacterProfilePage(
+                          arguments: CharacterProfilePageArguments(
+                              characterId: character!.id!,
+                              fromChatPage: true
+                          )
+                      ),
+                    )
+                );
+              },
+              imageBLOBData: character!.photoBLOB,
             ),
             const SizedBox(width: 8.0),
             Expanded(
@@ -71,7 +81,7 @@ class CharacterMessage extends BaseMessage {
             child: InkWell(
               splashColor: settings.characterChatBoxBackgroundColor.withOpacity(0.5),
               borderRadius: BorderRadius.circular(12.0),
-              onLongPress: dialogCallback,
+              onLongPress: () async => dialogCallback?.call(chatMessage),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                 child: buildMessageContent(context),

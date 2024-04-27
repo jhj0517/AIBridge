@@ -13,8 +13,8 @@ abstract class BaseMessage extends StatelessWidget {
   final ChatPageMode mode;
   final TextEditingController chatTextEditingController;
   final FocusNode editChatFocusNode;
-  final Future<void> Function()? dialogCallback;
-  final CharactersProvider? charactersProvider;
+  final Future<void> Function(ChatMessage)? dialogCallback;
+  final Character? character;
 
   const BaseMessage({
     super.key,
@@ -24,7 +24,7 @@ abstract class BaseMessage extends StatelessWidget {
     required this.chatTextEditingController,
     required this.editChatFocusNode,
     this.dialogCallback,
-    this.charactersProvider,
+    this.character,
   });
 
   Widget buildMessageContent(BuildContext context) {
@@ -146,7 +146,7 @@ abstract class BaseMessage extends StatelessWidget {
 
   Widget buildCharacterName(BuildContext context){
     return Text(
-      charactersProvider!.currentCharacter.characterName,
+      character!.characterName,
       style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 16.0,
