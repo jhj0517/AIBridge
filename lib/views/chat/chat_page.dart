@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:aibridge/views/chat/widgets/chat_list/chat_list.dart';
 import 'package:aibridge/views/chat/widgets/chat_menu/menu_item.dart';
+import 'package:aibridge/views/chat/widgets/messages/character/character_message_loading.dart';
 import 'package:aibridge/views/common/appbars/normal_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -97,7 +98,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        //List of messages
                         Expanded(
                             child: ChatList(
                               list: chatProvider.chatMessages,
@@ -111,6 +111,9 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                               dialogCallback: (message) => _openChatDialog(message),
                               settings: settings
                             )
+                        ),
+                        CharacterMessageLoading(
+                          character: charactersProvider.currentCharacter,
                         ),
                         if (mode == ChatPageMode.editMode) ...[
                           EditBar(onPressed: () => _onEditChat()),

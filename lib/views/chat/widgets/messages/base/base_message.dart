@@ -18,9 +18,9 @@ abstract class BaseMessage extends StatelessWidget {
 
   const BaseMessage({
     super.key,
-    required this.chatMessage,
     required this.settings,
     required this.mode,
+    required this.chatMessage,
     required this.chatTextEditingController,
     required this.editChatFocusNode,
     this.dialogCallback,
