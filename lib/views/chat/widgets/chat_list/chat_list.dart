@@ -64,6 +64,7 @@ class ChatListState extends State<ChatList> {
                     messagesToDeleteNotifier: widget.messagesToDeleteNotifier,
                     dialogCallback: widget.dialogCallback,
                     settings: widget.settings,
+                    mode: widget.mode,
                   );
                 }
             ),
