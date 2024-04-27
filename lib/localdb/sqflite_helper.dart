@@ -337,18 +337,18 @@ class SQFliteHelper {
     final db = await database;
 
     // Query to find the latest record with the same characterId and roomId
-    List<Map<String, dynamic>> existingRecords = await db.query(
+    List<Map<String, dynamic>> existingMessage = await db.query(
       chatMessageTable,
       where: '${SQFliteHelper.chatMessageColumnId} = ?',
       whereArgs: [chatMessage.id],
     );
 
-    if (existingRecords.isNotEmpty) {
+    if (existingMessage.isNotEmpty) {
       await db.update(
         chatMessageTable,
         chatMessage.toMap(),
         where: '${SQFliteHelper.chatMessageColumnId} = ?',
-        whereArgs: [existingRecords.first[SQFliteHelper.chatMessageColumnId]],
+        whereArgs: [existingMessage.first[SQFliteHelper.chatMessageColumnId]],
       );
     } else {
       // If no record exists, insert the new one

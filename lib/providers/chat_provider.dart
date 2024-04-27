@@ -1,3 +1,4 @@
+import 'package:dart_openai/dart_openai.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -47,29 +48,29 @@ class ChatProvider extends ChangeNotifier {
     await chatRepository.insertChatMessage(chatMessage);
     if(charactersProvider.currentCharacter.id == chatMessage.characterId){
       //update only in case user is in current chatroom
-      await updateChatMessages(chatMessage.roomId);
+      updateChatMessages(chatMessage.roomId);
     }
-    updateDataAfterCompletion();
+    updateChatRoom();
   }
 
   Future<void> updateOneChatMessage(ChatMessage chatMessage) async {
     await chatRepository.updateOneChatMessage(chatMessage);
-    await updateChatMessages(chatMessage.roomId);
+    updateChatMessages(chatMessage.roomId);
   }
 
   Future<void> updateStreamChatMessage(ChatMessage chatMessage) async {
     await chatRepository.updateStreamChatMessage(chatMessage);
-    await updateChatMessages(chatMessage.roomId);
+    updateChatMessages(chatMessage.roomId);
   }
 
   Future<void> deleteOneChatMessage(String id,String roomId) async {
     await chatRepository.deleteOneChatMessage(id);
-    await updateChatMessages(roomId);
+   updateChatMessages(roomId);
   }
 
   Future<void> deleteChatMessages(List<ChatMessage> messagesToDelete, String roomId) async {
     await chatRepository.deleteChatMessages(messagesToDelete);
-    await updateChatMessages(roomId);
+    updateChatMessages(roomId);
   }
 
   /*
@@ -96,7 +97,7 @@ class ChatProvider extends ChangeNotifier {
         String answerTemp = "";
         final firstMessage = ChatMessage.firstMessage(roomId, character.id!, answerTemp);
         answerStream.handleError((error) {
-          debugPrint("stream error : ${error}");
+          debugPrint("stream error : $error");
           if (error.statusCode == 401){
             setRequestState(RequestState.invalidOpenAIAPIKey);
           } else {
@@ -104,8 +105,7 @@ class ChatProvider extends ChangeNotifier {
             setRequestState(RequestState.done);
           }
         }).listen((event) async {
-          debugPrint("EVENT: ${event.choices.first}");
-          if (event.choices.first.delta.role == "assistant") {
+          if (event.choices.first.delta.role == OpenAIChatMessageRole.assistant) {
             // deal with first index of the event
           } else if (event.choices.first.finishReason==null && event.choices.first.delta.role==null && event.choices.first.delta.content != null) {
             // during stream in answering
@@ -117,15 +117,15 @@ class ChatProvider extends ChangeNotifier {
               characterId: firstMessage.characterId,
               chatMessageType: firstMessage.chatMessageType,
               timestamp: firstMessage.timestamp,
-              role: "assistant",
+              role: OpenAIChatMessageRole.assistant.name,
               content: answerTemp,
             );
-            await updateStreamChatMessage(answerMessage);
+            updateStreamChatMessage(answerMessage);
           } else if (event.choices.first.finishReason != null) {
             // deal with done
           }
         }, onDone: () async {
-          updateDataAfterCompletion();
+          updateChatRoom();
           setRequestState(RequestState.done);
         });
       } catch (e, stacktrace){
@@ -162,20 +162,20 @@ class ChatProvider extends ChangeNotifier {
                     characterId: character.id!,
                     chatMessageType: ChatMessageType.characterMessage,
                     timestamp: Utilities.getTimestamp(),
-                    role: "assistant",
+                    role: OpenAIChatMessageRole.assistant.name,
                     content: value.candidates!.first.content
                 );
                 await insertChatMessage(answer);
-                updateDataAfterCompletion();
+                updateChatRoom();
                 setRequestState(RequestState.done);
               } else if (value.candidates== null && value.filters != null){
-                debugPrint("error : ${value}");
+                debugPrint("error : $value");
                 showToastMessage("Content filtered due to: \"${value.filters!.first.reason.name}\"");
                 setRequestState(RequestState.done);
               }
             },
             error: (value){
-              debugPrint("error : ${value}");
+              debugPrint("error : $value");
               setRequestState(RequestState.done);
               showToastMessage(value.errorMessage);
             }
@@ -204,7 +204,7 @@ class ChatProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> updateDataAfterCompletion() async{
+  Future<void> updateChatRoom() async{
     await chatRoomsProvider.updateChatRooms();
   }
 
