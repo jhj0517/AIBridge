@@ -7,12 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter/services.dart';
 
-import '../widgets/widgets.dart';
-import '../utils/utils.dart';
-import '../models/models.dart';
-import '../constants/constants.dart';
-import '../providers/providers.dart';
-import 'views.dart';
+import '../../widgets/widgets.dart';
+import '../../utils/utils.dart';
+import '../../models/models.dart';
+import '../../constants/constants.dart';
+import '../../providers/providers.dart';
+import '../views.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key, required this.arguments}) : super(key: key);
