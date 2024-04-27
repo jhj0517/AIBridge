@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'package:aibridge/views/common/appbars/normal_app_bar.dart';
-import 'package:aibridge/views/chat/widgets/chat_input.dart';
-import 'package:aibridge/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +9,6 @@ import 'package:flutter/services.dart';
 import '../../widgets/widgets.dart';
 import '../../utils/utils.dart';
 import '../../models/models.dart';
-import '../../constants/constants.dart';
 import '../../providers/providers.dart';
 import '../views.dart';
 import 'package:aibridge/views/chat/widgets/messages/user/user_message.dart';
@@ -19,6 +16,9 @@ import 'package:aibridge/views/chat/widgets/messages/user/user_message_delete_mo
 import 'package:aibridge/views/chat/widgets/messages/character/character_message.dart';
 import 'package:aibridge/views/chat/widgets/messages/character/character_message_delete_mdoe.dart';
 import 'package:aibridge/views/chat/widgets/messages/character/character_message_loading.dart';
+import 'package:aibridge/views/chat/widgets/input_bars/edit_bar.dart';
+import 'package:aibridge/views/chat/widgets/input_bars/delete_bar.dart';
+import 'package:aibridge/views/chat/widgets/input_bars/chat_input_field.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key, required this.arguments}) : super(key: key);
