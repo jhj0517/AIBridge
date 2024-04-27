@@ -14,6 +14,8 @@ import '../../models/models.dart';
 import '../../constants/constants.dart';
 import '../../providers/providers.dart';
 import '../views.dart';
+import 'package:aibridge/views/chat/widgets/messages/user/user_message.dart';
+import 'package:aibridge/views/chat/widgets/messages/user/user_message_delete_mode.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key, required this.arguments}) : super(key: key);
