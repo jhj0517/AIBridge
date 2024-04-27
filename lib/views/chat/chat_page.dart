@@ -18,6 +18,7 @@ import 'package:aibridge/views/chat/widgets/messages/user/user_message.dart';
 import 'package:aibridge/views/chat/widgets/messages/user/user_message_delete_mode.dart';
 import 'package:aibridge/views/chat/widgets/messages/character/character_message.dart';
 import 'package:aibridge/views/chat/widgets/messages/character/character_message_delete_mdoe.dart';
+import 'package:aibridge/views/chat/widgets/messages/character/character_message_loading.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key, required this.arguments}) : super(key: key);
