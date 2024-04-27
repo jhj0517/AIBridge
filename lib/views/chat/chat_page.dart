@@ -59,7 +59,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   final FocusNode _editUserChatFocusNode = FocusNode();
 
   // Providers
-  late ThemeProvider themeProvider;
   late ChatProvider chatProvider;
   late CharactersProvider charactersProvider;
   late ChatRoomsProvider chatRoomsProvider;
@@ -70,7 +69,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   @override
   void initState() {
     super.initState();
-    themeProvider = context.read<ThemeProvider>();
     chatProvider = context.read<ChatProvider>();
     charactersProvider = context.read<CharactersProvider>();
     chatRoomsProvider = context.read<ChatRoomsProvider>();
@@ -82,7 +80,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
   @override
   Widget build(BuildContext context) {
-    themeProvider = context.watch<ThemeProvider>();
     charactersProvider = context.watch<CharactersProvider>();
     return Selector<ChatRoomsProvider, ChatRoomSetting>(
       selector: (_, provider) => provider.chatRoomSetting!,
