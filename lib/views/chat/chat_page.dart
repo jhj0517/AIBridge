@@ -243,7 +243,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         editChatFocusNode: _editCharacterChatFocusNode,
         mode: ChatPageMode.chatMode,
         settings: settings,
-        themeProvider: themeProvider,
         charactersProvider: charactersProvider,
       );
     }
@@ -257,7 +256,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
             messagesToDeleteNotifier: _messagesToDeleteNotifier,
             chatTextEditingController: _chatTextEditingController,
             editChatFocusNode: _editUserChatFocusNode,
-            themeProvider: themeProvider
         );
       }
       return UserMessage(
@@ -267,7 +265,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
           chatTextEditingController: _chatTextEditingController,
           editChatFocusNode: _editUserChatFocusNode,
           dialogCallback: () => _openChatDialog(content),
-          themeProvider: themeProvider
       );
     }
 
@@ -280,7 +277,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
             messagesToDeleteNotifier: _messagesToDeleteNotifier,
             chatTextEditingController: _chatTextEditingController,
             editChatFocusNode: _editUserChatFocusNode,
-            themeProvider: themeProvider,
             charactersProvider: charactersProvider,
         );
       }
@@ -302,7 +298,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
               )
             )
           },
-          themeProvider: themeProvider,
           charactersProvider: charactersProvider,
       );
     }

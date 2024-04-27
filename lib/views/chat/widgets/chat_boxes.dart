@@ -10,165 +10,8 @@ import '../../../providers/providers.dart';
 import '../../../constants/constants.dart';
 import '../../../utils/utils.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
+import 'package:aibridge/views/chat/widgets/messages/base/base_message.dart';
 
-
-abstract class BaseMessage extends StatelessWidget {
-  final ChatMessage chatMessage;
-  final ChatRoomSetting settings;
-  final ChatPageMode mode;
-  final TextEditingController chatTextEditingController;
-  final FocusNode editChatFocusNode;
-  final Future<void> Function()? dialogCallback;
-  final CharactersProvider? charactersProvider;
-  final ThemeProvider themeProvider;
-
-  const BaseMessage({
-    super.key,
-    required this.chatMessage,
-    required this.settings,
-    required this.mode,
-    required this.chatTextEditingController,
-    required this.editChatFocusNode,
-    required this.themeProvider,
-    this.dialogCallback,
-    this.charactersProvider,
-  });
-
-  Widget buildMessageContent(BuildContext context) {
-    if (chatMessage.imageUrl.isNotEmpty && mode == ChatPageMode.deleteMode) {
-      return Image.network(
-        chatMessage.imageUrl,
-        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-          if (loadingProgress == null) return child; // Image is fully loaded
-          return Center(
-            child: CircularProgressIndicator(
-              color: Colors.white,
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                  : null,
-            ),
-          );
-        },
-      );
-    }
-
-    if (chatMessage.imageUrl.isNotEmpty) {
-      return GestureDetector(
-          onTap:() {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FullPhotoPage(
-                  arguments: FullPhotoPageArguments(
-                      title: chatMessage.imageUrl,
-                      imageUrl: chatMessage.imageUrl
-                  ),
-                ),
-              ),
-            );
-          },
-          child: Image.network(
-            chatMessage.imageUrl,
-            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-              if (loadingProgress == null) return child; // Image is fully loaded
-              return Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                      : null,
-                ),
-              );
-            },
-          )
-      );
-    }
-
-    if (chatMessage.isEditable) {
-      return TextField(
-        focusNode: editChatFocusNode,
-        textInputAction: TextInputAction.newline,
-        cursorColor: Colors.white,
-        maxLines: null,
-        autofocus: true,
-        controller: chatTextEditingController,
-        style: TextStyle(
-          fontSize: chatMessage.chatMessageType == ChatMessageType.characterMessage
-              ? settings.characterFontSize // default 16
-              : settings.userFontSize, // default 16
-          color: chatMessage.chatMessageType == ChatMessageType.characterMessage
-              ? settings.characterFontColor // default Colors.black
-              : settings.userFontColor, // default Colors.white
-        ),
-      );
-    }
-
-    if (settings.isRenderMarkdown) {
-      return MarkdownBody(
-        data: ChatParser.parseMarkDown(chatMessage.content),
-        styleSheet: ChatParser.markdownStyleSheet(chatMessage.chatMessageType, settings),
-      );
-    }
-
-    return RichText(
-      text: TextSpan(
-        children:
-        ChatParser.parseMessageContent(chatMessage.content, chatMessage.chatMessageType),
-        style: TextStyle(
-          fontSize: chatMessage.chatMessageType == ChatMessageType.characterMessage
-              ? settings.characterFontSize // default 16
-              : settings.userFontSize, // default 16
-          color: chatMessage.chatMessageType == ChatMessageType.characterMessage
-              ? settings.characterFontColor
-              : settings.userFontColor,
-        ),
-      ),
-    );
-  }
-
-  Widget buildMessageCheckbox(bool isChecked) {
-    return IgnorePointer(
-      child: Theme(
-        data: ThemeData(
-          unselectedWidgetColor: themeProvider.attrs.fontColor,
-        ),
-        child: Checkbox(
-          shape: const CircleBorder(),
-          value: isChecked,
-          onChanged: (bool? newValue) {},
-        ),
-      ),
-    );
-  }
-
-  Widget buildTimestamp(BuildContext context) {
-    return Text(
-      Utilities.timestampIntoHourFormat(chatMessage.timestamp),
-      style: const TextStyle(
-        fontSize: 10.0,
-        color: Colors.grey,
-      ),
-    );
-  }
-
-  Widget buildCharacterName(BuildContext context){
-    return Text(
-      charactersProvider!.currentCharacter.characterName,
-      style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16.0,
-          color: themeProvider.attrs.fontColor
-      ),
-    );
-  }
-
-  bool isMessageToDelete(List<ChatMessage> messagesToDelete, ChatMessage messageEntry) {
-    return messagesToDelete.any((chatMessage) => chatMessage == messageEntry);
-  }
-
-  @override
-  Widget build(BuildContext context);
-}
 
 class UserMessage extends BaseMessage {
 
@@ -180,7 +23,6 @@ class UserMessage extends BaseMessage {
     required super.chatTextEditingController,
     required super.editChatFocusNode,
     required super.dialogCallback,
-    required super.themeProvider
   });
 
   @override
@@ -239,7 +81,6 @@ class UserMessageDeleteMode extends BaseMessage {
     required super.mode,
     required super.chatTextEditingController,
     required super.editChatFocusNode,
-    required super.themeProvider
   });
 
   @override
@@ -257,7 +98,7 @@ class UserMessageDeleteMode extends BaseMessage {
                   top: 0.0,
                   bottom: 0.0,
                   child: buildMessageCheckbox(
-                      isMessageToDelete(messagesToDelete, chatMessage)
+                      context, isMessageToDelete(messagesToDelete, chatMessage)
                   ),
                 ),
                 Align(
@@ -325,7 +166,6 @@ class CharacterMessage extends BaseMessage {
     required super.chatTextEditingController,
     required super.editChatFocusNode,
     required super.dialogCallback,
-    required super.themeProvider,
     required super.charactersProvider,
     required this.profileCallback
   });
@@ -406,7 +246,6 @@ class CharacterMessageDeleteMode extends BaseMessage {
     required super.mode,
     required super.chatTextEditingController,
     required super.editChatFocusNode,
-    required super.themeProvider,
     required super.charactersProvider,
   });
 
@@ -430,7 +269,7 @@ class CharacterMessageDeleteMode extends BaseMessage {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildMessageCheckbox(
-                      isMessageToDelete(messagesToDelete, chatMessage)
+                      context, isMessageToDelete(messagesToDelete, chatMessage)
                   ),
                   Expanded(
                     child: Row(
@@ -503,7 +342,6 @@ class CharacterMessageLoading extends BaseMessage{
     required super.mode,
     required super.chatTextEditingController,
     required super.editChatFocusNode,
-    required super.themeProvider,
     required super.charactersProvider,
   });
 
