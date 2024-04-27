@@ -62,7 +62,22 @@ class CharacterMessageDeleteMode extends BaseMessage {
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
-                                        _buildChatBox(context),
+                                        Flexible(
+                                          child: Material(
+                                            color: Colors.transparent,
+                                            child: Ink(
+                                                decoration: BoxDecoration(
+                                                  color: settings.characterChatBoxBackgroundColor,
+                                                  borderRadius: BorderRadius.circular(12.0),
+                                                ),
+                                                child: Container(
+                                                  padding:
+                                                  const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                                                  child: buildMessageContent(context),
+                                                )
+                                            ),
+                                          ),
+                                        ),
                                         const SizedBox(width: 4.0),
                                         buildTimestamp(context),
                                         const SizedBox(width:35.0)
@@ -81,25 +96,6 @@ class CharacterMessageDeleteMode extends BaseMessage {
           ),
           const SizedBox(height: 8),
         ]
-    );
-  }
-
-  Widget _buildChatBox(BuildContext context){
-    return Flexible(
-      child: Material(
-        color: Colors.transparent,
-        child: Ink(
-            decoration: BoxDecoration(
-              color: settings.characterChatBoxBackgroundColor,
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: Container(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-              child: buildMessageContent(context),
-            )
-        ),
-      ),
     );
   }
 }
