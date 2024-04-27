@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:aibridge/views/chat/widgets/chat_list/chat_list.dart';
+import 'package:aibridge/views/chat/widgets/chat_menu/menu_item.dart';
 import 'package:aibridge/views/common/appbars/normal_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -11,14 +13,11 @@ import '../../utils/utils.dart';
 import '../../models/models.dart';
 import '../../providers/providers.dart';
 import '../views.dart';
-import 'package:aibridge/views/chat/widgets/messages/user/user_message.dart';
-import 'package:aibridge/views/chat/widgets/messages/user/user_message_delete_mode.dart';
-import 'package:aibridge/views/chat/widgets/messages/character/character_message.dart';
-import 'package:aibridge/views/chat/widgets/messages/character/character_message_delete_mdoe.dart';
-import 'package:aibridge/views/chat/widgets/messages/character/character_message_loading.dart';
 import 'package:aibridge/views/chat/widgets/input_bars/edit_bar.dart';
 import 'package:aibridge/views/chat/widgets/input_bars/delete_bar.dart';
 import 'package:aibridge/views/chat/widgets/input_bars/chat_input_field.dart';
+
+import 'widgets/chat_menu/chat_menu.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key, required this.arguments}) : super(key: key);
@@ -55,8 +54,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
   // FocusNodes
   final FocusNode _inputFocusNode = FocusNode();
-  final FocusNode _editCharacterChatFocusNode = FocusNode();
-  final FocusNode _editUserChatFocusNode = FocusNode();
+  final FocusNode _editChatFocusNode = FocusNode();
 
   // Providers
   late ChatProvider chatProvider;
@@ -80,12 +78,11 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
   @override
   Widget build(BuildContext context) {
-    charactersProvider = context.watch<CharactersProvider>();
     return Selector<ChatRoomsProvider, ChatRoomSetting>(
       selector: (_, provider) => provider.chatRoomSetting!,
       builder: (context, settings, _) {
         return PopScope(
-          onPopInvoked: (didPop) => _onBackPress,
+          onPopInvoked: (didPop) => {},
           child: Scaffold(
               resizeToAvoidBottomInset: true,
               appBar: NormalAppBar(
@@ -102,33 +99,19 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                       children: <Widget>[
                         //List of messages
                         Expanded(
-                            child: Container(
-                              color: settings.chatRoomBackgroundColor,
-                              child: Consumer<ChatProvider>(
-                                builder: (context, chatProvider, _) { // reverse solution: //solution from https://stackoverflow.com/questions/70577942/flutter-resizetoavoidbottominset-true-not-working-with-expanded-listview
-                                  final chatMessages = chatProvider.chatMessages;
-                                  return Align(
-                                        alignment: Alignment.topCenter,
-                                        child: ListView.builder(
-                                          shrinkWrap: true,
-                                          reverse: true,
-                                          cacheExtent: _isLoading? double.maxFinite: null, // without this, scrollChatToBottom() at first does not work
-                                          padding: const EdgeInsets.only(top: 10),
-                                          controller: _chatScrollController,
-                                          itemCount: chatMessages.length + 1,
-                                          itemBuilder: (context, index) => _buildItem(
-                                              index,
-                                              chatMessages.reversed.toList(),
-                                              chatProvider.requestState,
-                                              settings
-                                          ),
-                                        ),
-                                      );
-                                },
-                              ),
+                            child: ChatList(
+                              list: chatProvider.chatMessages,
+                              character: charactersProvider.currentCharacter,
+                              isLoading: _isLoading,
+                              mode: mode,
+                              chatScrollController: _chatScrollController,
+                              chatTextEditingController: _chatTextEditingController,
+                              editChatFocusNode: _editChatFocusNode,
+                              messagesToDeleteNotifier: _messagesToDeleteNotifier,
+                              dialogCallback: (message) => _openChatDialog(message),
+                              settings: settings
                             )
                         ),
-                        //Input content
                         if (mode == ChatPageMode.editMode) ...[
                           EditBar(onPressed: () => _onEditChat()),
                         ] else if (mode == ChatPageMode.deleteMode) ...[
@@ -145,7 +128,33 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                           _isInputMenuVisible
                           ? ChatMenu(
                             menuHeight: chatProvider.getKeyboardHeight(context),
-                            menuItems: getChatMenus(),
+                            items: [
+                              MenuItem(
+                                label: Intl.message("editProfile"),
+                                icon: Icons.edit,
+                                onTap: () {
+                                  _navigateTo(CharacterCreationPage(
+                                    arguments: CharacterCreationPageArguments(
+                                        character: charactersProvider.currentCharacter
+                                    ),
+                                  ));
+                                },
+                              ),
+                              MenuItem(
+                                icon: Icons.settings,
+                                label: Intl.message("chatRoomSetting"),
+                                onTap: () {
+                                  _navigateTo(const ChatRoomSettingPage());
+                                },
+                              ),
+                              MenuItem(
+                                icon: Icons.image,
+                                label: Intl.message("image"),
+                                onTap: () {
+                                  _openPasteDialog();
+                                },
+                              )
+                            ],
                           )
                           : const SizedBox.shrink(),
                         ],
@@ -173,8 +182,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     _chatScrollController.dispose();
     //dispose focus node
     _inputFocusNode.dispose();
-    _editCharacterChatFocusNode.dispose();
-    _editUserChatFocusNode.dispose();
+    _editChatFocusNode.dispose();
     // Dispose ValueNotifiers
     _messagesToDeleteNotifier.dispose();
     chatProvider.removeListener(_onNetworkStateChanged);
@@ -225,95 +233,13 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     }
   }
 
-  Widget _buildItem(
-      int index,
-      List<ChatMessage> chatMessages,
-      RequestState requestState,
-      ChatRoomSetting settings
-  ){
-    /*
-    * NOTE : Last item should be a placeholder for the typing indicator.
-    * Since the list view is reversed, there is a placeholder for index 0. (index 0 is the last item, since the list view is reversed)
-    * */
-    final items = [ChatMessage.placeHolder(), ...chatMessages];
-    final content = items[index];
-
-    if (index == 0 && requestState == RequestState.loading) {
-      return CharacterMessageLoading(
-        chatMessage: content,
-        chatTextEditingController: _chatTextEditingController,
-        editChatFocusNode: _editCharacterChatFocusNode,
-        mode: ChatPageMode.chatMode,
-        settings: settings,
-        charactersProvider: charactersProvider,
-      );
-    }
-
-    if (content.chatMessageType == ChatMessageType.userMessage) {
-      if(mode==ChatPageMode.deleteMode){
-        return UserMessageDeleteMode(
-            chatMessage: content,
-            settings: settings,
-            mode: mode,
-            messagesToDeleteNotifier: _messagesToDeleteNotifier,
-            chatTextEditingController: _chatTextEditingController,
-            editChatFocusNode: _editUserChatFocusNode,
-        );
-      }
-      return UserMessage(
-          chatMessage: content,
-          settings: settings,
-          mode: mode,
-          chatTextEditingController: _chatTextEditingController,
-          editChatFocusNode: _editUserChatFocusNode,
-          dialogCallback: () => _openChatDialog(content),
-      );
-    }
-
-    if (content.chatMessageType == ChatMessageType.characterMessage){
-      if(mode==ChatPageMode.deleteMode){
-        return CharacterMessageDeleteMode(
-            chatMessage: content,
-            settings: settings,
-            mode: mode,
-            messagesToDeleteNotifier: _messagesToDeleteNotifier,
-            chatTextEditingController: _chatTextEditingController,
-            editChatFocusNode: _editUserChatFocusNode,
-            charactersProvider: charactersProvider,
-        );
-      }
-
-      return CharacterMessage(
-          chatMessage: content,
-          settings: settings,
-          mode: mode,
-          chatTextEditingController: _chatTextEditingController,
-          editChatFocusNode: _editUserChatFocusNode,
-          dialogCallback: () => _openChatDialog(content),
-          profileCallback: () async => {
-            _navigateTo(
-              CharacterProfilePage(
-                arguments: CharacterProfilePageArguments(
-                  characterId: charactersProvider.currentCharacter.id!,
-                  fromChatPage: true
-                )
-              )
-            )
-          },
-          charactersProvider: charactersProvider,
-      );
-    }
-    return const SizedBox.shrink();
-  }
-
   Future<bool> _onBackPress() async {
     switch(mode){
       case ChatPageMode.deleteMode:
         _messagesToDeleteNotifier.value = [];
         break;
       case ChatPageMode.editMode:
-        _editCharacterChatFocusNode.unfocus();
-        _editUserChatFocusNode.unfocus();
+        _editChatFocusNode.unfocus();
         chatProvider.updateOneChatMessage(_messageToEdit.copyWith(isEditable: false));
         _messageToEdit = ChatMessage.placeHolder();
         _chatTextEditingController.text = "";
@@ -428,7 +354,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         chatProvider.setRequestState(RequestState.initialized);
         _navigateTo(const MainNavigationPage(initialIndex: 0));
         break;
-      case null: // when dialog is dismissed by tab somewhere else
+      case null:
         chatProvider.setRequestState(RequestState.initialized);
     }
   }
@@ -470,35 +396,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
       mode = ChatPageMode.chatMode;
       _chatTextEditingController.text = "";
     });
-  }
-
-  List<ChatMenuItem> getChatMenus(){
-    return [
-      ChatMenuItem(
-        icon: Icons.edit,
-        label: Intl.message("editProfile"),
-        onPressed: () => {
-          _navigateTo(CharacterCreationPage(
-            arguments: CharacterCreationPageArguments(
-                character: charactersProvider.currentCharacter
-            ),
-          ))
-      }),
-      ChatMenuItem(
-        icon: Icons.settings,
-        label: Intl.message("chatRoomSetting"),
-        onPressed: () => {
-          _navigateTo(const ChatRoomSettingPage())
-      }),
-      ChatMenuItem(
-        icon: Icons.image,
-        label: Intl.message("image"),
-        onPressed: () => {
-          if (context.mounted){
-            _openPasteDialog()
-          }
-      })
-    ];
   }
 
   void _navigateTo(StatefulWidget page){
