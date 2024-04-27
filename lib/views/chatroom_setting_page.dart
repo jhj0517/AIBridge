@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
@@ -19,7 +18,6 @@ class ChatRoomSettingPage extends StatefulWidget {
 
 class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
 
-  late ThemeProvider themeProvider;
   bool _isLoading = true;
   late ChatRoomsProvider chatRoomsProvider;
   ChatRoomSetting? currentSettings;
@@ -27,7 +25,6 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
   @override
   void initState() {
     super.initState();
-    themeProvider = context.read<ThemeProvider>();
     chatRoomsProvider = context.read<ChatRoomsProvider>();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _init();
@@ -44,7 +41,6 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
@@ -102,7 +98,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
                 ElevatedButton(
                   onPressed: _resetToDefaults,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: themeProvider.attrs.fontColor,
+                    backgroundColor: Theme.of(context).textTheme.bodyMedium!.color,
                   ),
                   child: Text(
                     Intl.message("resetToDefaults"),
