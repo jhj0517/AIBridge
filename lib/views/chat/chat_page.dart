@@ -82,7 +82,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
       selector: (_, provider) => provider.chatRoomSetting!,
       builder: (context, settings, _) {
         return PopScope(
-          onPopInvoked: (didPop) => {},
+          onPopInvoked: (didPop) => _onBackPress,
           child: Scaffold(
               resizeToAvoidBottomInset: true,
               appBar: NormalAppBar(
