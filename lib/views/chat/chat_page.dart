@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:aibridge/widgets/chat_input.dart';
+import 'package:aibridge/views/common/appbars/normal_app_bar.dart';
+import 'package:aibridge/views/chat/widgets/chat_input.dart';
 import 'package:aibridge/widgets/dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -85,22 +86,11 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
           onPopInvoked: (didPop) => _onBackPress,
           child: Scaffold(
               resizeToAvoidBottomInset: true,
-              appBar: AppBar(
-                title: Text(
-                  mode == ChatPageMode.editMode ? Intl.message("editChatOption") :
-                  mode == ChatPageMode.deleteMode ? Intl.message("deleteOption") :
-                  charactersProvider.currentCharacter.characterName,
-                  style: const TextStyle(color: ColorConstants.appbarTextColor),
-                ),
-                backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-                centerTitle: false,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new),
-                  color: Colors.white,
-                  onPressed: () async {
-                    await _onBackPress();
-                  },
-                ),
+              appBar: NormalAppBar(
+                title: mode == ChatPageMode.editMode ? Intl.message("editChatOption") :
+                mode == ChatPageMode.deleteMode ? Intl.message("deleteOption") :
+                charactersProvider.currentCharacter.characterName,
+                enableBackButton: true
               ),
               body: Stack(
                 children: [

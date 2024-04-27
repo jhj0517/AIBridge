@@ -4,11 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-import '../models/models.dart';
-import '../views/views.dart';
-import '../providers/providers.dart';
-import '../constants/constants.dart';
-import '../utils/utils.dart';
+import '../../../models/models.dart';
+import '../../views.dart';
+import '../../../providers/providers.dart';
+import '../../../constants/constants.dart';
+import '../../../utils/utils.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
 
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../constants/color_constants.dart';
+import '../../../constants/color_constants.dart';
 
 class ChatInputField extends StatelessWidget {
   final TextEditingController controller;
