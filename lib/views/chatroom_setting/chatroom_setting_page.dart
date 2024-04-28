@@ -1,13 +1,14 @@
+import 'package:aibridge/views/chatroom_setting/widgets/appbars/chatroom_setting_app_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
-import '../providers/providers.dart';
-import '../models/chatroom_settings.dart';
-import 'common/base/loading_view.dart';
-import '../constants/color_constants.dart';
+import '../../providers/providers.dart';
+import '../../models/chatroom_settings.dart';
+import '../common/base/loading_view.dart';
+import '../../constants/color_constants.dart';
 
 class ChatRoomSettingPage extends StatefulWidget {
   const ChatRoomSettingPage({Key? key}) : super(key: key);
@@ -34,7 +35,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
   Future<void> _init() async {
     await chatRoomsProvider.readChatRoomSetting(Theme.of(context).colorScheme.background);
     setState(() {
-      currentSettings = ChatRoomSetting.copy(chatRoomsProvider.chatRoomSetting!);
+      currentSettings = chatRoomsProvider.chatRoomSetting!;
       _isLoading = false;
     });
   }
@@ -43,27 +44,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-          title: Text(
-            Intl.message("chatRoomSetting"),
-            style: const TextStyle(
-              color: ColorConstants.appbarTextColor,
-              fontWeight: FontWeight.bold
-            ),
-          ),
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new),
-            color: Colors.white,
-            onPressed: () async {
-              Navigator.pop(context);
-            },
-          ),
-          centerTitle: false,
-          actions: [
-            _buildDoneButton(),
-          ]
-      ),
+      appBar: ChatRoomSettingAppBar(currentSettings: currentSettings!),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -271,20 +252,10 @@ class ColorSetting extends StatefulWidget {
 }
 
 class ColorSettingState extends State<ColorSetting> {
-  late Color characterFontColor;
-  late Color userFontColor;
-  late Color characterChatBoxBackgroundColor;
-  late Color userChatBoxBackgroundColor;
-  late Color chatRoomBackgroundColor;
 
   @override
   void initState() {
     super.initState();
-    characterFontColor = widget.currentSetting.characterFontColor;
-    userFontColor = widget.currentSetting.userFontColor;
-    characterChatBoxBackgroundColor = widget.currentSetting.characterChatBoxBackgroundColor;
-    userChatBoxBackgroundColor = widget.currentSetting.userChatBoxBackgroundColor;
-    chatRoomBackgroundColor = widget.currentSetting.chatRoomBackgroundColor;
   }
 
   @override
