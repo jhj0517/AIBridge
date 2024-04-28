@@ -61,9 +61,9 @@ class ChatRoomsProvider extends ChangeNotifier{
   }
 
   Future<void> readChatRoomSetting(
-    Color themeBackgroundColor,
+    BuildContext context,
   ) async{
-    final setting = await chatRoomsRepository.getChatRoomSetting(themeBackgroundColor);
+    final setting = await chatRoomsRepository.getChatRoomSetting(context);
     _chatRoomSetting = setting;
     notifyListeners();
   }

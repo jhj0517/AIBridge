@@ -71,7 +71,7 @@ class ChatRoomSetting{
   }
 
   factory ChatRoomSetting.defaultChatRoomSetting(
-      Color themeBackgroundColor,
+      BuildContext context,
   ) {
     return ChatRoomSetting(
       isRenderMarkdown: true,
@@ -81,7 +81,7 @@ class ChatRoomSetting{
       userFontColor: Colors.white,
       characterChatBoxBackgroundColor: ColorConstants.defaultCharacterChatBoxColor,
       userChatBoxBackgroundColor: ColorConstants.defaultUserChatBoxColor,
-      chatRoomBackgroundColor: themeBackgroundColor,
+      chatRoomBackgroundColor: Theme.of(context).colorScheme.background,
     );
   }
 }

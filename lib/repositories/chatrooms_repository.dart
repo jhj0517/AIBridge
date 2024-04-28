@@ -42,14 +42,14 @@ class ChatRoomRepository {
   }
 
   Future<ChatRoomSetting> getChatRoomSetting(
-    Color themeBackgroundColor
+    BuildContext context
   ) async {
     String? settingString = prefs.getString(SharedPreferenceConstants.settingChatRoomJson);
     if (settingString != null) {
       Map<String, dynamic> json = jsonDecode(settingString);
       return ChatRoomSetting.fromJson(json);
     }
-    return ChatRoomSetting.defaultChatRoomSetting(themeBackgroundColor);
+    return ChatRoomSetting.defaultChatRoomSetting(context);
   }
 
 }
