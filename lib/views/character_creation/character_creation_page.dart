@@ -16,7 +16,7 @@ import '../../constants/constants.dart';
 import '../../models/models.dart';
 import '../../providers/providers.dart';
 import '../../utils/utils.dart';
-import '../common/character/character_creation_background.dart';
+import '../common/character/character_background.dart';
 import 'widgets/prompts/prompt_box.dart';
 import 'widgets/prompts/palm_prompt_box.dart';
 import 'widgets/prompts/name_enter_box.dart';
