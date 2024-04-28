@@ -31,35 +31,45 @@ class ColorSettingState extends State<ColorSetting> {
           title: Intl.message("characterFontColor"),
           currentColor: widget.currentSetting.characterFontColor,
           onColorChanged: (selectedColor) {
-            widget.currentSetting.setCharacterFontColor = selectedColor;
+            setState(() {
+              widget.currentSetting.setCharacterFontColor = selectedColor;
+            });
           }
         ),
         ColorSettingTile(
             title: Intl.message("userFontColor"),
             currentColor: widget.currentSetting.userFontColor,
             onColorChanged: (selectedColor) {
-              widget.currentSetting.setUserFontColor = selectedColor;
+              setState(() {
+                widget.currentSetting.setUserFontColor = selectedColor;
+              });
             }
         ),
         ColorSettingTile(
             title: Intl.message("characterChatBoxBackgroundColor"),
             currentColor: widget.currentSetting.characterChatBoxBackgroundColor,
             onColorChanged: (selectedColor) {
-              widget.currentSetting.setCharacterChatBoxBackgroundColor = selectedColor;
+              setState(() {
+                widget.currentSetting.setCharacterChatBoxBackgroundColor = selectedColor;
+              });
             }
         ),
         ColorSettingTile(
             title: Intl.message("userChatBoxBackgroundColor"),
             currentColor: widget.currentSetting.userChatBoxBackgroundColor,
             onColorChanged: (selectedColor) {
-              widget.currentSetting.userChatBoxBackgroundColor = selectedColor;
+              setState(() {
+                widget.currentSetting.userChatBoxBackgroundColor = selectedColor;
+              });
             }
         ),
         ColorSettingTile(
             title: Intl.message("chatroomBackgroundColor"),
             currentColor: widget.currentSetting.chatRoomBackgroundColor,
             onColorChanged: (selectedColor) {
-              widget.currentSetting.setChatRoomBackgroundColor = selectedColor;
+              setState(() {
+                widget.currentSetting.setChatRoomBackgroundColor = selectedColor;
+              });
             }
         ),
       ],

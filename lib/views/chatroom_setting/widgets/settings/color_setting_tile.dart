@@ -18,12 +18,10 @@ class ColorSettingTile extends StatefulWidget {
 }
 
 class ColorSettingTileState extends State<ColorSettingTile> {
-  late Color currentColor;
 
   @override
   void initState() {
     super.initState();
-    currentColor = widget.currentColor;
   }
 
   @override
@@ -43,7 +41,7 @@ class ColorSettingTileState extends State<ColorSettingTile> {
         child: Center(
           child: Icon(
             Icons.circle,
-            color: currentColor,
+            color: widget.currentColor,
             size: 22,
           ),
         ),
@@ -60,12 +58,10 @@ class ColorSettingTileState extends State<ColorSettingTile> {
           title: Text(widget.title),
           content: SingleChildScrollView(
             child: ColorPicker(
-              pickerColor: currentColor,
+              pickerColor: widget.currentColor,
               onColorChanged: (color) {
-                setState(() {
-                  currentColor = color;
-                  widget.onColorChanged(color);
-                });
+                setState(() {});
+                widget.onColorChanged.call(color);
               },
               labelTypes: const [],
               pickerAreaHeightPercent: 0.8,
