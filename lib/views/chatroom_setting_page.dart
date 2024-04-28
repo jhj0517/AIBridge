@@ -6,7 +6,7 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import '../providers/providers.dart';
 import '../models/chatroom_settings.dart';
-import '../widgets/loading_view.dart';
+import 'common/base/loading_view.dart';
 import '../constants/color_constants.dart';
 
 class ChatRoomSettingPage extends StatefulWidget {
