@@ -44,89 +44,94 @@ class CharacterProfileState extends State<CharacterProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        CharacterBackground(backgroundImageBLOB: charactersProvider.currentCharacter.backgroundPhotoBLOB),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: const NormalAppBar(title: "", enableBackButton: true),
-          body: SafeArea(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ProfilePicture(
-                      width: 100,
-                      height: 100,
-                      imageBLOBData: charactersProvider.currentCharacter.photoBLOB,
-                      onPickImage: () => _navigateTo(
-                        FullPhotoPage(
-                          arguments: FullPhotoPageArguments(
-                              title: charactersProvider.currentCharacter.characterName,
-                              photoBLOB: charactersProvider.currentCharacter.photoBLOB
+    return Selector<CharactersProvider, Character>(
+      selector: (_, characterProvider) => characterProvider.currentCharacter,
+      builder: (context, currentCharacter, _) {
+        return Stack(
+          children: [
+            CharacterBackground(backgroundImageBLOB: charactersProvider.currentCharacter.backgroundPhotoBLOB),
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: const NormalAppBar(title: "", enableBackButton: true),
+              body: SafeArea(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ProfilePicture(
+                            width: 100,
+                            height: 100,
+                            imageBLOBData: charactersProvider.currentCharacter.photoBLOB,
+                            onPickImage: () => _navigateTo(
+                                FullPhotoPage(
+                                  arguments: FullPhotoPageArguments(
+                                      title: charactersProvider.currentCharacter.characterName,
+                                      photoBLOB: charactersProvider.currentCharacter.photoBLOB
+                                  ),
+                                )
+                            )
+                        ),
+                        // Name
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            charactersProvider.currentCharacter.characterName,
+                            style: const TextStyle(fontSize: 22, color: Colors.white),
                           ),
-                        )
-                      )
-                    ),
-                    // Name
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        charactersProvider.currentCharacter.characterName,
-                        style: const TextStyle(fontSize: 22, color: Colors.white),
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    const Divider(
-                      color: Colors.white30,
-                      thickness: 1,
-                      endIndent: 20,
-                      indent: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(1.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          BottomButton(
-                            label: Intl.message('chatOption'),
-                            iconData: Icons.chat,
-                            onTap: () async {
-                              await _onChat();
-                            },
+                        ),
+                        const SizedBox(height: 5),
+                        const Divider(
+                          color: Colors.white30,
+                          thickness: 1,
+                          endIndent: 20,
+                          indent: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(1.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              BottomButton(
+                                label: Intl.message('chatOption'),
+                                iconData: Icons.chat,
+                                onTap: () async {
+                                  await _onChat();
+                                },
+                              ),
+                              const SizedBox(width: 20),
+                              BottomButton(
+                                  label: Intl.message('editProfile'),
+                                  iconData: Icons.edit,
+                                  onTap: () async {
+                                    _onEditProfile();
+                                  }
+                              ),
+                              const SizedBox(width: 20),
+                              BottomButton(
+                                label: Intl.message('export'),
+                                iconData: Icons.file_upload_outlined,
+                                onTap: () async {
+                                  await _onExportCharacter();
+                                },
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 20),
-                          BottomButton(
-                            label: Intl.message('editProfile'),
-                            iconData: Icons.edit,
-                            onTap: () async {
-                              _onEditProfile();
-                            }
-                          ),
-                          const SizedBox(width: 20),
-                          BottomButton(
-                            label: Intl.message('export'),
-                            iconData: Icons.file_upload_outlined,
-                            onTap: () async {
-                              await _onExportCharacter();
-                            },
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-        Positioned(
-          child: _isLoading ? const LoadingView() : const SizedBox.shrink(),
-        )
-      ],
+            Positioned(
+              child: _isLoading ? const LoadingView() : const SizedBox.shrink(),
+            )
+          ],
+        );
+      },
     );
   }
 
