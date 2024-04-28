@@ -1,3 +1,4 @@
+import 'package:aibridge/constants/color_constants.dart';
 import 'package:aibridge/models/chatroom_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -18,8 +19,8 @@ class ChatRoomSettingAppBar extends StatelessWidget implements PreferredSizeWidg
     return AppBar(
         title: Text(
           Intl.message("chatRoomSetting"),
-          style: TextStyle(
-              color: Theme.of(context).textTheme.bodyLarge!.color,
+          style: const TextStyle(
+              color: ColorConstants.appbarTextColor,
               fontWeight: FontWeight.bold
           ),
         ),

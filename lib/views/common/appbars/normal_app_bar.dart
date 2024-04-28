@@ -1,3 +1,4 @@
+import 'package:aibridge/constants/constants.dart';
 import 'package:flutter/material.dart';
 
 class NormalAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -15,8 +16,8 @@ class NormalAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(
         title,
-        style: TextStyle(
-          color: Theme.of(context).textTheme.bodyLarge!.color,
+        style: const TextStyle(
+          color: ColorConstants.appbarTextColor,
         ),
       ),
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
