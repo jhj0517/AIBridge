@@ -194,7 +194,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
   Future<void> _init() async {
     final backgroundColor = Theme.of(context).colorScheme.background;
-    await chatRoomsProvider.readChatRoomSetting(backgroundColor);
+    await chatRoomsProvider.readChatRoomSetting(context);
     await charactersProvider.updateCurrentCharacter(widget.arguments.characterId);
     await chatRoomsProvider.updateCurrentChatRoom(widget.arguments.characterId);
 
