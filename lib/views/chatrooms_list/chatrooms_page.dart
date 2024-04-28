@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-import '../utils/utils.dart';
-import '../models/models.dart';
-import 'chat/chat_page.dart';
-import '../providers/providers.dart';
-import '../constants/constants.dart';
-import '../widgets/dialogs.dart';
+import '../../utils/utils.dart';
+import '../../models/models.dart';
+import '../chat/chat_page.dart';
+import '../../providers/providers.dart';
+import '../../constants/constants.dart';
+import '../../widgets/dialogs.dart';
 
 class ChatRoomsPage extends StatefulWidget {
   const ChatRoomsPage({Key? key}) : super(key: key);
