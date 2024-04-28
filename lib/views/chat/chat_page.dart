@@ -79,99 +79,96 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
   @override
   Widget build(BuildContext context) {
-    return Selector<ChatRoomsProvider, ChatRoomSetting>(
-      selector: (_, provider) => provider.chatRoomSetting!,
-      builder: (context, settings, _) {
-        return PopScope(
-          onPopInvoked: (didPop) => _onBackPress,
-          child: Scaffold(
-              resizeToAvoidBottomInset: true,
-              appBar: NormalAppBar(
-                title: mode == ChatPageMode.editMode ? Intl.message("editChatOption") :
-                mode == ChatPageMode.deleteMode ? Intl.message("deleteOption") :
-                charactersProvider.currentCharacter.characterName,
-                enableBackButton: true
-              ),
-              body: Stack(
-                children: [
-                  Positioned(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Expanded(
-                            child: ChatList(
-                              list: chatProvider.chatMessages,
-                              character: charactersProvider.currentCharacter,
-                              isLoading: _isLoading,
-                              mode: mode,
-                              chatScrollController: _chatScrollController,
-                              chatTextEditingController: _chatTextEditingController,
-                              editChatFocusNode: _editChatFocusNode,
-                              messagesToDeleteNotifier: _messagesToDeleteNotifier,
-                              dialogCallback: (message) => _openChatDialog(message),
-                              settings: settings
-                            )
-                        ),
-                        CharacterMessageLoading(
-                          character: charactersProvider.currentCharacter,
-                        ),
-                        if (mode == ChatPageMode.editMode) ...[
-                          EditBar(onPressed: () => _onEditChat()),
-                        ] else if (mode == ChatPageMode.deleteMode) ...[
-                          DeleteBar(onPressed: () => _onDeleteChat()),
-                        ] else ...[
-                          ChatInputField(
-                            controller: _inputTextEditingController,
-                            focusNode: _inputFocusNode,
-                            isSendEnabled: _isSendEnabled,
-                            isMenuVisible: _isInputMenuVisible,
-                            onMenuOpen: () => _onMenuOpen(),
-                            onSendChat: () => _onSubmitInput(),
-                          ),
-                          _isInputMenuVisible
-                          ? ChatMenu(
-                            menuHeight: chatProvider.getKeyboardHeight(context),
-                            items: [
-                              MenuItem(
-                                label: Intl.message("editProfile"),
-                                icon: Icons.edit,
-                                onTap: () {
-                                  _navigateTo(CharacterCreationPage(
-                                    arguments: CharacterCreationPageArguments(
-                                        character: charactersProvider.currentCharacter
-                                    ),
-                                  ));
-                                },
-                              ),
-                              MenuItem(
-                                icon: Icons.settings,
-                                label: Intl.message("chatRoomSetting"),
-                                onTap: () {
-                                  _navigateTo(const ChatRoomSettingPage());
-                                },
-                              ),
-                              MenuItem(
-                                icon: Icons.image,
-                                label: Intl.message("image"),
-                                onTap: () {
-                                  _openPasteDialog();
-                                },
-                              )
-                            ],
-                          )
-                          : const SizedBox.shrink(),
-                        ],
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                      child: _isLoading ? const LoadingView() : const SizedBox.shrink()
-                  ),
-                ],
-              )
+    final currentCharacter = context.select((CharactersProvider provider) => provider.currentCharacter);
+    final settings = context.select((ChatRoomsProvider provider) => provider.chatRoomSetting);
+    return PopScope(
+      onPopInvoked: (didPop) => _onBackPress,
+      child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          appBar: NormalAppBar(
+              title: mode == ChatPageMode.editMode ? Intl.message("editChatOption") :
+              mode == ChatPageMode.deleteMode ? Intl.message("deleteOption") :
+              currentCharacter.characterName,
+              enableBackButton: true
           ),
-        );
-      },
+          body: Stack(
+            children: [
+              Positioned(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Expanded(
+                        child: ChatList(
+                            list: chatProvider.chatMessages,
+                            character: charactersProvider.currentCharacter,
+                            isLoading: _isLoading,
+                            mode: mode,
+                            chatScrollController: _chatScrollController,
+                            chatTextEditingController: _chatTextEditingController,
+                            editChatFocusNode: _editChatFocusNode,
+                            messagesToDeleteNotifier: _messagesToDeleteNotifier,
+                            dialogCallback: (message) => _openChatDialog(message),
+                            settings: settings!
+                        )
+                    ),
+                    CharacterMessageLoading(
+                      character: charactersProvider.currentCharacter,
+                    ),
+                    if (mode == ChatPageMode.editMode) ...[
+                      EditBar(onPressed: () => _onEditChat()),
+                    ] else if (mode == ChatPageMode.deleteMode) ...[
+                      DeleteBar(onPressed: () => _onDeleteChat()),
+                    ] else ...[
+                      ChatInputField(
+                        controller: _inputTextEditingController,
+                        focusNode: _inputFocusNode,
+                        isSendEnabled: _isSendEnabled,
+                        isMenuVisible: _isInputMenuVisible,
+                        onMenuOpen: () => _onMenuOpen(),
+                        onSendChat: () => _onSubmitInput(),
+                      ),
+                      _isInputMenuVisible
+                          ? ChatMenu(
+                        menuHeight: chatProvider.getKeyboardHeight(context),
+                        items: [
+                          MenuItem(
+                            label: Intl.message("editProfile"),
+                            icon: Icons.edit,
+                            onTap: () {
+                              _navigateTo(CharacterCreationPage(
+                                arguments: CharacterCreationPageArguments(
+                                    character: charactersProvider.currentCharacter
+                                ),
+                              ));
+                            },
+                          ),
+                          MenuItem(
+                            icon: Icons.settings,
+                            label: Intl.message("chatRoomSetting"),
+                            onTap: () {
+                              _navigateTo(const ChatRoomSettingPage());
+                            },
+                          ),
+                          MenuItem(
+                            icon: Icons.image,
+                            label: Intl.message("image"),
+                            onTap: () {
+                              _openPasteDialog();
+                            },
+                          )
+                        ],
+                      )
+                          : const SizedBox.shrink(),
+                    ],
+                  ],
+                ),
+              ),
+              Positioned(
+                  child: _isLoading ? const LoadingView() : const SizedBox.shrink()
+              ),
+            ],
+          )
+      ),
     );
   }
 
