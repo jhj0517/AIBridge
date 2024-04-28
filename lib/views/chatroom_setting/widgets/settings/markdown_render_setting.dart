@@ -13,12 +13,10 @@ class MarkdownRenderSetting extends StatefulWidget {
 }
 
 class MarkdownRenderSettingState extends State<MarkdownRenderSetting> {
-  late bool isRenderMarkdown;
 
   @override
   void initState() {
     super.initState();
-    isRenderMarkdown = widget.currentSetting.isRenderMarkdown;
   }
 
   @override
@@ -27,9 +25,8 @@ class MarkdownRenderSettingState extends State<MarkdownRenderSetting> {
       title: Text(Intl.message("enableMarkdownRendering")),
       value: widget.currentSetting.isRenderMarkdown,
       onChanged: (bool value) {
-        setState(() {
-          widget.currentSetting.setIsRenderMarkdown = value;
-        });
+        widget.currentSetting.setIsRenderMarkdown = value;
+        setState(() {});
       },
       activeColor: Colors.indigo,
     );

@@ -13,14 +13,10 @@ class FontSizeSetting extends StatefulWidget {
 }
 
 class FontSizeSettingState extends State<FontSizeSetting> {
-  late double characterFontSize;
-  late double userFontSize;
 
   @override
   void initState() {
     super.initState();
-    characterFontSize = widget.currentSetting.characterFontSize;
-    userFontSize = widget.currentSetting.userFontSize;
   }
 
   @override

@@ -1,6 +1,5 @@
 import 'package:aibridge/views/chatroom_setting/widgets/settings/color_setting_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:intl/intl.dart';
 
 import 'package:aibridge/models/chatroom_settings.dart'
@@ -33,7 +32,6 @@ class ColorSettingState extends State<ColorSetting> {
           currentColor: widget.currentSetting.characterFontColor,
           onColorChanged: (selectedColor) {
             widget.currentSetting.setCharacterFontColor = selectedColor;
-            setState(() {});
           }
         ),
         ColorSettingTile(
@@ -41,7 +39,6 @@ class ColorSettingState extends State<ColorSetting> {
             currentColor: widget.currentSetting.userFontColor,
             onColorChanged: (selectedColor) {
               widget.currentSetting.setUserFontColor = selectedColor;
-              setState(() {});
             }
         ),
         ColorSettingTile(
@@ -49,7 +46,6 @@ class ColorSettingState extends State<ColorSetting> {
             currentColor: widget.currentSetting.characterChatBoxBackgroundColor,
             onColorChanged: (selectedColor) {
               widget.currentSetting.setCharacterChatBoxBackgroundColor = selectedColor;
-              setState(() {});
             }
         ),
         ColorSettingTile(
@@ -57,7 +53,6 @@ class ColorSettingState extends State<ColorSetting> {
             currentColor: widget.currentSetting.userChatBoxBackgroundColor,
             onColorChanged: (selectedColor) {
               widget.currentSetting.userChatBoxBackgroundColor = selectedColor;
-              setState(() {});
             }
         ),
         ColorSettingTile(
@@ -65,7 +60,6 @@ class ColorSettingState extends State<ColorSetting> {
             currentColor: widget.currentSetting.chatRoomBackgroundColor,
             onColorChanged: (selectedColor) {
               widget.currentSetting.setChatRoomBackgroundColor = selectedColor;
-              setState(() {});
             }
         ),
       ],
