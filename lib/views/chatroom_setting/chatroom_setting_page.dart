@@ -35,7 +35,7 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
   Future<void> _init() async {
     await chatRoomsProvider.readChatRoomSetting(Theme.of(context).colorScheme.background);
     setState(() {
-      currentSettings = chatRoomsProvider.chatRoomSetting!;
+      currentSettings = ChatRoomSetting.copy(chatRoomsProvider.chatRoomSetting!);
       _isLoading = false;
     });
   }
@@ -97,28 +97,6 @@ class ChatRoomSettingPageState extends State<ChatRoomSettingPage> {
             child: _isLoading ? const LoadingView() : const SizedBox.shrink(),
           )
         ],
-      ),
-    );
-  }
-
-  Widget _buildDoneButton() {
-    return TextButton(
-      onPressed: () async {
-        chatRoomsProvider.saveChatRoomSetting(currentSettings!);
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
-      },
-      style: TextButton.styleFrom(
-        foregroundColor: Colors.white,
-      ),
-      child: Text(
-        Intl.message("done"),
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
       ),
     );
   }
