@@ -9,4 +9,4 @@ export 'full_photo/full_photo_page.dart';
 export 'chat/chat_page.dart';
 export 'chatroom_setting/chatroom_setting_page.dart';
 export 'usage_policy_page.dart';
-export 'splash_page.dart';
+export 'splash/splash_page.dart';

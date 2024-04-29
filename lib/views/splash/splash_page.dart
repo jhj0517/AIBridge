@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:tiktoken/tiktoken.dart' as tiktokenizer;
 import 'package:intl/intl.dart';
 
-import '../providers/providers.dart';
-import '../localdb/localdb.dart';
-import '../constants/constants.dart';
-import 'main_navigation/main_navigation_page.dart';
+import '../../providers/providers.dart';
+import '../../localdb/localdb.dart';
+import '../../constants/constants.dart';
+import '../main_navigation/main_navigation_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
@@ -31,7 +31,8 @@ class SplashPageState extends State<SplashPage> {
       await _initData();
       if(context.mounted){
         await sqFliteHelper.insertDefaultCharacters("");
-        Navigator.of(context).pushReplacement(
+        Navigator.pushReplacement(
+          context,
           MaterialPageRoute(builder: (context) => const MainNavigationPage()),
         );
       }
