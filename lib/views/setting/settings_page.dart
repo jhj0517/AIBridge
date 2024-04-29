@@ -116,12 +116,10 @@ class SettingsPageState extends State<SettingsPage> {
                   label: Intl.message('usagePolicy'),
                   icon: Icons.gavel_sharp,
                   onTap: () async {
-                    if (context.mounted) {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const UsagePolicyPage(),
-                          )
-                      );
+                    if(Intl.getCurrentLocale()=="ko"){
+                      Utilities.launchURL(AppConstants.usagePolicyKO);
+                    } else {
+                      Utilities.launchURL(AppConstants.usagePolicyEN);
                     }
                   }
                 ),
