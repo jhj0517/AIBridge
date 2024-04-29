@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../views/views.dart';
-import '../utils/utilities.dart';
-import '../providers/theme_provider.dart';
+import '../views.dart';
+import '../../utils/utilities.dart';
+import '../../providers/theme_provider.dart';
 
 class MainNavigationPage extends StatefulWidget {
   final int initialIndex;
@@ -12,10 +12,10 @@ class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({Key? key, this.initialIndex=0}) : super(key: key);
 
   @override
-  _MainNavigationState createState() => _MainNavigationState();
+  MainNavigationState createState() => MainNavigationState();
 }
 
-class _MainNavigationState extends State<MainNavigationPage> {
+class MainNavigationState extends State<MainNavigationPage> {
   late ThemeProvider themeProvider;
   int _currentIndex = 0;
 
@@ -42,7 +42,6 @@ class _MainNavigationState extends State<MainNavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: IndexedStack( //this will call onBackPress() from FriendsPage() in every page
