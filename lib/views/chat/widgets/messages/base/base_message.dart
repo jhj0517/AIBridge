@@ -3,8 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 import 'package:aibridge/models/models.dart';
 import 'package:aibridge/views/chat/chat_page.dart';
-import 'package:aibridge/views/full_photo_page.dart';
-import 'package:aibridge/providers/characters_provider.dart';
+import 'package:aibridge/views/full_photo/full_photo_page.dart';
 import 'package:aibridge/utils/utils.dart';
 
 abstract class BaseMessage extends StatelessWidget {

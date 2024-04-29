@@ -1,10 +1,8 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
-import '../models/sqflite/character.dart';
-import '../constants/color_constants.dart';
+import '../../constants/color_constants.dart';
 
 class FullPhotoPage extends StatelessWidget {
   final FullPhotoPageArguments arguments;
