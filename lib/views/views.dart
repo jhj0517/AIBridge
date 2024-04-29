@@ -1,6 +1,6 @@
 export 'main_navigation/main_navigation_page.dart';
 export 'key_management/key_management_page.dart';
-export 'settings_page.dart';
+export 'setting/settings_page.dart';
 export 'characters_list/characters_list_page.dart';
 export 'chatrooms_list/chatrooms_page.dart';
 export 'character_creation/character_creation_page.dart';

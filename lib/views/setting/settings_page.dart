@@ -4,11 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 
-import '../constants/constants.dart';
-import '../views/views.dart';
-import '../utils/utilities.dart';
-import '../widgets/widgets.dart';
-import '../providers/providers.dart';
+import '../../constants/constants.dart';
+import '../views.dart';
+import '../../utils/utilities.dart';
+import '../../widgets/widgets.dart';
+import '../../providers/providers.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -35,7 +35,6 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
