@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/services.dart';
 
-import '../constants/constants.dart';
-import '../providers/providers.dart';
-import '../models/models.dart';
-import '../widgets/dialogs.dart';
+import '../../constants/constants.dart';
+import '../../providers/providers.dart';
+import '../../models/models.dart';
+import '../../widgets/dialogs.dart';
+import 'widget/key_row.dart';
 
 class KeyManagementPage extends StatefulWidget {
   const KeyManagementPage({Key? key}) : super(key: key);
@@ -31,7 +31,6 @@ class KeyManagementPageState extends State<KeyManagementPage> {
 
   @override
   Widget build(BuildContext context) {
-    themeProvider = context.watch<ThemeProvider>();
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
@@ -50,16 +49,20 @@ class KeyManagementPageState extends State<KeyManagementPage> {
         padding: const EdgeInsets.only(bottom: 16),
         child: Column(
           children: [
-            _buildSelectableRow(
-                Intl.message("chatGPTKey"),
-                themeProvider.attrs.gptLogoPath,
-                () => _openKeyDialog(Intl.message("chatGPTKey"), ServiceType.openAI)
+            KeyRow(
+              title: Intl.message("chatGPTKey"),
+              imagePath: themeProvider.attrs.gptLogoPath,
+              onTap: () async {
+                await _openKeyDialog(Intl.message("chatGPTKey"), ServiceType.openAI);
+              }
             ),
-            _buildSelectableRow(
-              Intl.message("paLMKey"),
-              PathConstants.paLMImage,
-              () => _openKeyDialog(Intl.message("paLMKey"), ServiceType.paLM)
-            )
+            KeyRow(
+                title: Intl.message("paLMKey"),
+                imagePath: PathConstants.paLMImage,
+                onTap: () async {
+                  await _openKeyDialog(Intl.message("paLMKey"), ServiceType.paLM);
+                }
+            ),
           ],
         ),
       ),
@@ -70,44 +73,6 @@ class KeyManagementPageState extends State<KeyManagementPage> {
   void dispose() {
     _textFieldControllerKey.dispose();
     super.dispose();
-  }
-
-  Widget _buildSelectableRow(String text, String imagePath, Future<void> Function() onTap) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-            child: Row(
-              children: [
-                const SizedBox(width: 10),
-                Image.asset(
-                  imagePath,
-                  width: 24,
-                  height: 24,
-                  fit: BoxFit.contain,
-                ),
-                const SizedBox(width: 20),
-                Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                    color: themeProvider.attrs.fontColor
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Divider(
-          height: 0.1,
-          thickness: 0.3,
-          color: Theme.of(context).dividerColor,
-        ),
-      ],
-    );
   }
 
   Future<void> _openKeyDialog(String title, ServiceType serviceType) async {
