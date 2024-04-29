@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:aibridge/views/character_creation/widgets/prompts/palm_prompts.dart';
-import 'package:aibridge/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +17,6 @@ import '../../providers/providers.dart';
 import '../../utils/utils.dart';
 import '../common/character/character_background.dart';
 import 'widgets/prompts/prompt_box.dart';
-import 'widgets/prompts/palm_prompt_box.dart';
 import 'widgets/prompts/name_enter_box.dart';
 import 'widgets/prompts/open_ai_prompts.dart';
 import 'widgets/bottom_buttons/import_character_button.dart';
