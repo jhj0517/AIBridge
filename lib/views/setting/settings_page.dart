@@ -1,3 +1,6 @@
+import 'package:aibridge/views/common/appbars/normal_app_bar.dart';
+import 'package:aibridge/views/setting/widget/profile_section.dart';
+import 'package:aibridge/views/setting/widget/setting_row.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +12,6 @@ import '../views.dart';
 import '../../utils/utilities.dart';
 import '../../widgets/widgets.dart';
 import '../../providers/providers.dart';
-import 'package:aibridge/views/common/character/profile_picture.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -37,23 +39,7 @@ class SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              Intl.message('settingsPageTitle'),
-              style: const  TextStyle(
-                color: ColorConstants.appbarTextColor,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-      ),
+      appBar: NormalAppBar(title: Intl.message('settingsPageTitle')),
       body: Stack(
         children: <Widget>[
           SingleChildScrollView(
@@ -62,54 +48,82 @@ class SettingsPageState extends State<SettingsPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 const SizedBox(height: 10),
-                _buildProfileSection(),
+                const ProfileSection(),
                 const SizedBox(height: 10),
                 Divider(
                   height: 0.1,
                   thickness: 0.2,
                   color: Theme.of(context).dividerColor,
                 ),
-                _buildRow(Intl.message('signIn'), Icons.person, () async {
-                  final social = await showDialog(
-                    context: context,
-                    builder: (context) => const SignInDialog()
-                  );
-                  await authProvider.handleSocialSignIn(social);
-                }),
-                _buildRow(Intl.message('backupData'), Icons.backup, () async {
-                  await gDriveProvider.upload();
-                }),
-                _buildRow(Intl.message('loadData'), Icons.cloud_download_outlined, () async {
-                  await gDriveProvider.download();
-                }),
-                _buildRow(themeProvider.attrs.toggleThemeName, themeProvider.attrs.toggleThemeIcon, (){
-                  themeProvider.toggleTheme();
-                }),
-                _buildRow(Intl.message('chatRoomSetting'), Icons.settings, () async {
-                  if (context.mounted) {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const ChatRoomSettingPage(),
-                        )
+                SettingRow(
+                  label: Intl.message('signIn'),
+                  icon: Icons.person,
+                  onTap: () async {
+                    final social = await showDialog(
+                        context: context,
+                        builder: (context) => const SignInDialog()
                     );
+                    await authProvider.handleSocialSignIn(social);
                   }
-                }),
-                _buildRow(Intl.message('privacyPolicy'), Icons.lock, () async {
-                  if(Intl.getCurrentLocale()=="ko"){
-                    Utilities.launchURL(AppConstants.privacyPolicyKO);
-                  } else {
-                    Utilities.launchURL(AppConstants.privacyPolicyEN);
+                ),
+                SettingRow(
+                  label: Intl.message('backupData'),
+                  icon: Icons.backup,
+                  onTap: () async {
+                    await gDriveProvider.upload();
                   }
-                }),
-                _buildRow(Intl.message('usagePolicy'), Icons.gavel_sharp, (){
-                  if (context.mounted) {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const UsagePolicyPage(),
-                        )
-                    );
+                ),
+                SettingRow(
+                  label: Intl.message('loadData'),
+                  icon: Icons.cloud_download_outlined,
+                  onTap: () async {
+                    await gDriveProvider.download();
                   }
-                }),
+                ),
+                SettingRow(
+                  label: themeProvider.attrs.toggleThemeName,
+                  icon: themeProvider.attrs.toggleThemeIcon,
+                  onTap: () async {
+                    themeProvider.toggleTheme();
+                  }
+                ),
+                SettingRow(
+                  label: Intl.message('chatRoomSetting'),
+                  icon: Icons.settings,
+                  onTap: () async {
+                    if (context.mounted) {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const ChatRoomSettingPage(),
+                          )
+                      );
+                    }
+                  }
+                ),
+                SettingRow(
+                  label: Intl.message('privacyPolicy'),
+                  icon: Icons.lock,
+                  onTap: () async {
+                    if(Intl.getCurrentLocale()=="ko"){
+                      Utilities.launchURL(AppConstants.privacyPolicyKO);
+                    } else {
+                      Utilities.launchURL(AppConstants.privacyPolicyEN);
+                    }
+                  }
+                ),
+                SettingRow(
+                  label: Intl.message('usagePolicy'),
+                  icon: Icons.gavel_sharp,
+                  onTap: () async {
+                    if (context.mounted) {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const UsagePolicyPage(),
+                          )
+                      );
+                    }
+                  }
+                ),
               ],
             ),
           ),
@@ -128,104 +142,6 @@ class SettingsPageState extends State<SettingsPage> {
 
   void _init() {
     // Initialize something
-  }
-
-  Widget _buildProfileSection() {
-    return Consumer<SocialAuthProvider>(
-      builder: (context, authProvider, child) {
-        final AuthStatus status = authProvider.status;
-        final User? user = authProvider.currentUser;
-
-        if (status == AuthStatus.authenticating){
-          return const CircularProgressIndicator(
-            color: Colors.purple,
-          );
-        }
-
-        if (user == null){
-          return const SizedBox.shrink();
-        }
-
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(width: 30),
-            ProfilePicture(
-              width: 50,
-              height: 50,
-              photoURL: user.photoURL!,
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Container(
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      user.displayName!,
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      user.email!,
-                      style: const TextStyle(fontSize: 13, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildRow(String text, Object iconOrImagePath, VoidCallback onTap) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-            child: Row(
-              children: [
-                const SizedBox(width: 10),
-                // Check if the object is IconData or String
-                if (iconOrImagePath is IconData)
-                  Icon(
-                    iconOrImagePath,
-                    size: 24,
-                    color: themeProvider.attrs.fontColor,
-                  )
-                else if (iconOrImagePath is String)
-                  Image.asset(
-                    iconOrImagePath,
-                    width: 24,
-                    height: 24,
-                    fit: BoxFit.cover,
-                  ),
-                const SizedBox(width: 20),
-                Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                    color: themeProvider.attrs.fontColor
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Divider(
-          height: 0.1,
-          thickness: 0.2,
-          color: Theme.of(context).dividerColor,
-        ),
-      ],
-    );
   }
 
   Widget _buildProgressBar(){
