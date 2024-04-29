@@ -1,4 +1,5 @@
 import 'package:aibridge/views/common/appbars/normal_app_bar.dart';
+import 'package:aibridge/views/setting/widget/backup_progress_bar.dart';
 import 'package:aibridge/views/setting/widget/profile_section.dart';
 import 'package:aibridge/views/setting/widget/setting_row.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -127,8 +128,8 @@ class SettingsPageState extends State<SettingsPage> {
               ],
             ),
           ),
-          Positioned(
-            child: _buildProgressBar()
+          const Positioned(
+            child: BackUpProgressBar()
           )
         ],
       ),
@@ -142,34 +143,6 @@ class SettingsPageState extends State<SettingsPage> {
 
   void _init() {
     // Initialize something
-  }
-
-  Widget _buildProgressBar(){
-    return Consumer<GDriveProvider>(
-      builder: (context, gDriveProvider, child) {
-        final GDriveStatus status = gDriveProvider.status;
-
-        Widget content;
-
-        switch (status){
-          case GDriveStatus.initialized:
-          case GDriveStatus.isOnTask:
-            content = const CircularProgressIndicator(color: Colors.purple);
-          case GDriveStatus.downloadComplete:
-            Future.delayed(const Duration(milliseconds: 1000), () {
-              Phoenix.rebirth(context);
-            });
-            content = const Icon(Icons.check, color: Colors.green, size: 60);
-          default:
-            return const SizedBox.shrink();
-        }
-
-        return Container(
-          color: Colors.black.withOpacity(0.5),
-          child: Center(child: content),
-        );
-      },
-    );
   }
 
 }
