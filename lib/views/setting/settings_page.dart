@@ -2,16 +2,14 @@ import 'package:aibridge/views/common/appbars/normal_app_bar.dart';
 import 'package:aibridge/views/setting/widget/backup_progress_bar.dart';
 import 'package:aibridge/views/setting/widget/profile_section.dart';
 import 'package:aibridge/views/setting/widget/setting_row.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import '../../constants/constants.dart';
+import '../common/dialogs/sign_in/sign_in_dialog.dart';
 import '../views.dart';
 import '../../utils/utilities.dart';
-import '../../widgets/widgets.dart';
 import '../../providers/providers.dart';
 
 class SettingsPage extends StatefulWidget {

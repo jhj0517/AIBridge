@@ -1,6 +1,5 @@
 import 'package:aibridge/views/chatrooms_list/widget/chatrooms_list.dart';
 import 'package:aibridge/views/common/appbars/normal_app_bar.dart';
-import 'package:aibridge/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +7,9 @@ import 'package:intl/intl.dart';
 import '../../models/models.dart';
 import '../../providers/providers.dart';
 import '../../constants/constants.dart';
-import '../../widgets/dialogs.dart';
+import '../common/dialogs/base/base_dialog.dart';
+import '../common/dialogs/character/chat_room_option.dart';
+import '../common/dialogs/character/warning_dialog.dart';
 
 class ChatRoomsPage extends StatefulWidget {
   const ChatRoomsPage({Key? key}) : super(key: key);

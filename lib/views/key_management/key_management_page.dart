@@ -6,7 +6,8 @@ import 'package:intl/intl.dart';
 import '../../constants/constants.dart';
 import '../../providers/providers.dart';
 import '../../models/models.dart';
-import '../../widgets/dialogs.dart';
+import '../common/dialogs/base/base_dialog.dart';
+import '../common/dialogs/export/text_paster.dart';
 import 'widget/key_row.dart';
 
 class KeyManagementPage extends StatefulWidget {
