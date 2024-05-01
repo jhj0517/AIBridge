@@ -47,7 +47,6 @@ class ChatProvider extends ChangeNotifier {
   Future<void> insertChatMessage(ChatMessage chatMessage) async {
     await chatRepository.insertChatMessage(chatMessage);
     if(charactersProvider.currentCharacter.id == chatMessage.characterId){
-      //update only in case user is in current chatroom
       updateChatMessages(chatMessage.roomId);
     }
     updateChatRoom();
@@ -81,60 +80,48 @@ class ChatProvider extends ChangeNotifier {
       List<ChatMessage> chatMessages,
       String roomId,
       Character character
-      ) async {
-    if(keyProvider.openAPIKey==null || keyProvider.openAPIKey!.isEmpty){
+  ) async {
+    if(keyProvider.isKeyValid(ServiceType.openAI)){
       setRequestState(RequestState.invalidOpenAIAPIKey);
-    } else {
-      setRequestState(RequestState.loading);
-      try{
-        final answerStream = await OpenAINetwork.requestChatStream(
-            keyProvider.openAPIKey!,
-            openAIParams,
-            chatMessages,
-            character
-        );
+      return;
+    }
+    setRequestState(RequestState.loading);
 
-        String answerTemp = "";
-        final firstMessage = ChatMessage.firstMessage(roomId, character.id!, answerTemp);
-        answerStream.handleError((error) {
-          debugPrint("stream error : $error");
-          if (error.statusCode == 401){
-            setRequestState(RequestState.invalidOpenAIAPIKey);
-          } else {
-            showToastMessage('${error.message}');
-            setRequestState(RequestState.done);
-          }
-        }).listen((event) async {
-          if (event.choices.first.delta.role == OpenAIChatMessageRole.assistant) {
-            // deal with first index of the event
-          } else if (event.choices.first.finishReason==null && event.choices.first.delta.role==null && event.choices.first.delta.content != null) {
-            // during stream in answering
-            setRequestState(RequestState.answering);
-            answerTemp += event.choices.first.delta.content![0].text!;
-            ChatMessage answerMessage = ChatMessage(
-              id: firstMessage.id!,
-              roomId: firstMessage.roomId,
-              characterId: firstMessage.characterId,
-              chatMessageType: firstMessage.chatMessageType,
-              timestamp: firstMessage.timestamp,
-              role: OpenAIChatMessageRole.assistant.name,
-              content: answerTemp,
-            );
-            updateStreamChatMessage(answerMessage);
-          } else if (event.choices.first.finishReason != null) {
-            // deal with done
-          }
-        }, onDone: () async {
-          updateChatRoom();
-          setRequestState(RequestState.done);
-        });
-      } catch (e, stacktrace){
-        debugPrint("Error during Stream: $e");
-        debugPrint("Stack Trace: $stacktrace");
-        showToastMessage('$e');
+    final answerStream = await OpenAINetwork.requestChatStream(
+        keyProvider.openAPIKey!,
+        openAIParams,
+        chatMessages,
+        character
+    );
+
+    String answerTemp = "";
+    final firstMessage = ChatMessage.firstMessage(roomId, character.id!, answerTemp);
+
+    answerStream.handleError((error) {
+      debugPrint("Error during Stream: $error");
+      if (error.statusCode == 401){
+        setRequestState(RequestState.invalidOpenAIAPIKey);
+      } else {
+        showToastMessage('${error.message}');
         setRequestState(RequestState.done);
       }
-    }
+    }).listen((event) async {
+      setRequestState(RequestState.answering);
+      answerTemp += event.choices.first.delta.content![0].text!;
+      ChatMessage answerMessage = ChatMessage(
+        id: firstMessage.id!,
+        roomId: firstMessage.roomId,
+        characterId: firstMessage.characterId,
+        chatMessageType: firstMessage.chatMessageType,
+        timestamp: firstMessage.timestamp,
+        role: OpenAIChatMessageRole.assistant.name,
+        content: answerTemp,
+      );
+      updateStreamChatMessage(answerMessage);
+    }, onDone: () async {
+      updateChatRoom();
+      setRequestState(RequestState.done);
+    });
   }
 
   Future<void> paLMChatCompletion(
@@ -142,49 +129,50 @@ class ChatProvider extends ChangeNotifier {
       List<ChatMessage> chatMessages,
       String roomId,
       Character character
-      ) async {
-    if (keyProvider.paLMAPIKey == null || keyProvider.paLMAPIKey!.isEmpty){
+  ) async {
+    if (keyProvider.isKeyValid(ServiceType.paLM)){
       setRequestState(RequestState.invalidPaLMAPIKey);
-    } else {
-      try{
-        setRequestState(RequestState.loading);
-        final response = await PaLM.requestChat(
-            keyProvider.paLMAPIKey!,
-            paLMParams,
-            chatMessages,
-            character
-        );
-        response.fold(
-            success: (value) async {
-              if (value.candidates!=null){
-                final answer = ChatMessage(
-                    roomId: roomId,
-                    characterId: character.id!,
-                    chatMessageType: ChatMessageType.characterMessage,
-                    timestamp: Utilities.getTimestamp(),
-                    role: OpenAIChatMessageRole.assistant.name,
-                    content: value.candidates!.first.content
-                );
-                await insertChatMessage(answer);
-                updateChatRoom();
-                setRequestState(RequestState.done);
-              } else if (value.candidates== null && value.filters != null){
-                debugPrint("error : $value");
-                showToastMessage("Content filtered due to: \"${value.filters!.first.reason.name}\"");
-                setRequestState(RequestState.done);
-              }
-            },
-            error: (value){
-              debugPrint("error : $value");
+      return;
+    }
+
+    try{
+      setRequestState(RequestState.loading);
+      final response = await PaLM.requestChat(
+          keyProvider.paLMAPIKey!,
+          paLMParams,
+          chatMessages,
+          character
+      );
+      response.fold(
+          success: (value) async {
+            if (value.candidates!=null){
+              final answer = ChatMessage(
+                  roomId: roomId,
+                  characterId: character.id!,
+                  chatMessageType: ChatMessageType.characterMessage,
+                  timestamp: Utilities.getTimestamp(),
+                  role: OpenAIChatMessageRole.assistant.name,
+                  content: value.candidates!.first.content
+              );
+              await insertChatMessage(answer);
+              updateChatRoom();
               setRequestState(RequestState.done);
-              showToastMessage(value.errorMessage);
+            } else if (value.candidates== null && value.filters != null){
+              debugPrint("error : $value");
+              showToastMessage("Content filtered due to: \"${value.filters!.first.reason.name}\"");
+              setRequestState(RequestState.done);
             }
-        );
-      } catch (e){
-        debugPrint("Error during Stream: $e");
-        showToastMessage('$e');
-        setRequestState(RequestState.done);
-      }
+          },
+          error: (value){
+            debugPrint("error : $value");
+            setRequestState(RequestState.done);
+            showToastMessage(value.errorMessage);
+          }
+      );
+    } catch (e){
+      debugPrint("Error during Stream: $e");
+      showToastMessage('$e');
+      setRequestState(RequestState.done);
     }
   }
 
