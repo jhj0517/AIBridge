@@ -27,8 +27,7 @@ class ChatProvider extends ChangeNotifier {
 
   List<ChatMessage> _chatMessages = [];
   List<ChatMessage> get chatMessages => _chatMessages;
-  Result<ChatMessage>? _answer;
-  Result<ChatMessage>? get answer => _answer;
+
   RequestState requestState = RequestState.done;
 
   ChatProvider({required this.chatRepository,
@@ -81,7 +80,7 @@ class ChatProvider extends ChangeNotifier {
       String roomId,
       Character character
   ) async {
-    if(keyProvider.isKeyValid(ServiceType.openAI)){
+    if(!keyProvider.isKeyValid(ServiceType.openAI)){
       setRequestState(RequestState.invalidOpenAIAPIKey);
       return;
     }
@@ -94,31 +93,27 @@ class ChatProvider extends ChangeNotifier {
         character
     );
 
-    String answerTemp = "";
-    final firstMessage = ChatMessage.firstMessage(roomId, character.id!, answerTemp);
-
+    final message = ChatMessage.firstMessage(roomId, character.id!, "");
+    String answer = "";
     answerStream.handleError((error) {
       debugPrint("Error during Stream: $error");
-      if (error.statusCode == 401){
-        setRequestState(RequestState.invalidOpenAIAPIKey);
-      } else {
-        showToastMessage('${error.message}');
-        setRequestState(RequestState.done);
+      switch (error.statusCode){
+        case 401:
+          setRequestState(RequestState.invalidOpenAIAPIKey);
+        default:
+          showToastMessage('${error.message}');
+          setRequestState(RequestState.done);
       }
     }).listen((event) async {
+      answer += event.choices.first.delta.content![0].text!;
       setRequestState(RequestState.answering);
-      answerTemp += event.choices.first.delta.content![0].text!;
-      ChatMessage answerMessage = ChatMessage(
-        id: firstMessage.id!,
-        roomId: firstMessage.roomId,
-        characterId: firstMessage.characterId,
-        chatMessageType: firstMessage.chatMessageType,
-        timestamp: firstMessage.timestamp,
-        role: OpenAIChatMessageRole.assistant.name,
-        content: answerTemp,
+      updateStreamChatMessage(
+        message.copyWith(
+          content: answer
+        )
       );
-      updateStreamChatMessage(answerMessage);
-    }, onDone: () async {
+    },
+    onDone: () async {
       updateChatRoom();
       setRequestState(RequestState.done);
     });
@@ -130,7 +125,7 @@ class ChatProvider extends ChangeNotifier {
       String roomId,
       Character character
   ) async {
-    if (keyProvider.isKeyValid(ServiceType.paLM)){
+    if (!keyProvider.isKeyValid(ServiceType.paLM)){
       setRequestState(RequestState.invalidPaLMAPIKey);
       return;
     }
