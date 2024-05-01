@@ -71,9 +71,6 @@ class ChatProvider extends ChangeNotifier {
     updateChatMessages(roomId);
   }
 
-  /*
-  Services
-  */
   Future<void> openAIStreamCompletion(
       OpenAIService openAIParams,
       List<ChatMessage> chatMessages,
@@ -95,6 +92,7 @@ class ChatProvider extends ChangeNotifier {
 
     final message = ChatMessage.firstMessage(roomId, character.id!, "");
     String answer = "";
+
     answerStream.handleError((error) {
       debugPrint("Error during Stream: $error");
       switch (error.statusCode){
@@ -104,7 +102,8 @@ class ChatProvider extends ChangeNotifier {
           showToastMessage('${error.message}');
           setRequestState(RequestState.done);
       }
-    }).listen((event) async {
+    })
+    .listen((event) async {
       answer += event.choices.first.delta.content![0].text!;
       setRequestState(RequestState.answering);
       updateStreamChatMessage(
@@ -130,45 +129,40 @@ class ChatProvider extends ChangeNotifier {
       return;
     }
 
-    try{
-      setRequestState(RequestState.loading);
-      final response = await PaLM.requestChat(
-          keyProvider.paLMAPIKey!,
-          paLMParams,
-          chatMessages,
-          character
-      );
-      response.fold(
-          success: (value) async {
-            if (value.candidates!=null){
-              final answer = ChatMessage(
-                  roomId: roomId,
-                  characterId: character.id!,
-                  chatMessageType: ChatMessageType.characterMessage,
-                  timestamp: Utilities.getTimestamp(),
-                  role: OpenAIChatMessageRole.assistant.name,
-                  content: value.candidates!.first.content
-              );
-              await insertChatMessage(answer);
-              updateChatRoom();
-              setRequestState(RequestState.done);
-            } else if (value.candidates== null && value.filters != null){
-              debugPrint("error : $value");
-              showToastMessage("Content filtered due to: \"${value.filters!.first.reason.name}\"");
-              setRequestState(RequestState.done);
-            }
-          },
-          error: (value){
-            debugPrint("error : $value");
+    setRequestState(RequestState.loading);
+    final response = await PaLM.requestChat(
+        keyProvider.paLMAPIKey!,
+        paLMParams,
+        chatMessages,
+        character
+    );
+
+    response.fold(
+        success: (value) async {
+          if (value.candidates!=null){
+            final answer = ChatMessage(
+                roomId: roomId,
+                characterId: character.id!,
+                chatMessageType: ChatMessageType.characterMessage,
+                timestamp: Utilities.getTimestamp(),
+                role: OpenAIChatMessageRole.assistant.name,
+                content: value.candidates!.first.content
+            );
+            insertChatMessage(answer);
+            updateChatRoom();
             setRequestState(RequestState.done);
-            showToastMessage(value.errorMessage);
+          } else if (value.candidates== null && value.filters != null){
+            debugPrint("error : $value");
+            showToastMessage("Content filtered due to: \"${value.filters!.first.reason.name}\"");
+            setRequestState(RequestState.done);
           }
-      );
-    } catch (e){
-      debugPrint("Error during Stream: $e");
-      showToastMessage('$e');
-      setRequestState(RequestState.done);
-    }
+        },
+        error: (value){
+          debugPrint("error : $value");
+          setRequestState(RequestState.done);
+          showToastMessage(value.errorMessage);
+        }
+    );
   }
 
   void setRequestState(RequestState state){
