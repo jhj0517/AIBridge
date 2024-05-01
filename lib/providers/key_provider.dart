@@ -1,3 +1,4 @@
+import 'package:aibridge/models/services/i_service.dart';
 import 'package:flutter/material.dart';
 
 import '../repositories/key_repository.dart';
@@ -24,6 +25,15 @@ class KeyProvider extends ChangeNotifier {
   Future<void> saveKey(String key,String value) async {
     await keyRepository.writeValue(key, value);
     initKeys();
+  }
+
+  bool isKeyValid(ServiceType type){
+    switch (type){
+      case ServiceType.openAI:
+        return openAPIKey != null && openAPIKey!.isNotEmpty;
+      case ServiceType.paLM:
+        return paLMAPIKey != null && paLMAPIKey!.isNotEmpty;
+    }
   }
 
 }
