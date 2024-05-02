@@ -48,9 +48,6 @@ abstract class ThemeAttributes {
   ThemeModes get mode;
   ThemeData get themeData;
   Color get fontColor;
-  Color get navigationBackgroundColor;
-  Color get selectedNavigationItemColor;
-  Color get unSelectedNavigationItemColor;
   String get toggleThemeName;
   IconData get toggleThemeIcon;
   String get gptLogoPath;
@@ -74,16 +71,15 @@ class LightThemeAttributes implements ThemeAttributes {
     ),
     textTheme: const TextTheme().copyWith().apply(
       bodyColor: const Color(0xFF000000)
-    )
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData().copyWith(
+      selectedItemColor: const Color(0xff000000),
+      unselectedItemColor: const Color(0xff808080),
+      backgroundColor: const Color(0xffffffff)
+    ),
   );
   @override
   Color get fontColor => const Color(0xFF000000);
-  @override
-  Color get navigationBackgroundColor => const Color(0xffffffff);
-  @override
-  Color get selectedNavigationItemColor => const Color(0xff000000);
-  @override
-  Color get unSelectedNavigationItemColor => const  Color(0xff808080);
   @override
   String get toggleThemeName => Intl.message("darkTheme");
   @override
@@ -108,16 +104,15 @@ class DarkThemeAttributes implements ThemeAttributes {
       appBarTheme: const AppBarTheme().copyWith(),
       textTheme: const TextTheme().copyWith().apply(
           bodyColor: const Color(0xFFFFFFFF)
-      )
+      ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData().copyWith(
+      selectedItemColor: const Color(0xffffffff),
+      unselectedItemColor: const Color(0xa9a2a2a2),
+      backgroundColor: const Color(0xff090909)
+    ),
   );
   @override
   Color get fontColor => const Color(0xFFFFFFFF);
-  @override
-  Color get navigationBackgroundColor => const Color(0xff090909);
-  @override
-  Color get selectedNavigationItemColor => const Color(0xffffffff);
-  @override
-  Color get unSelectedNavigationItemColor => const  Color(0xa9a2a2a2);
   @override
   String get toggleThemeName => Intl.message("lightTheme");
   @override

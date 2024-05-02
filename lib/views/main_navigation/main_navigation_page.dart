@@ -9,7 +9,10 @@ import '../../providers/theme_provider.dart';
 class MainNavigationPage extends StatefulWidget {
   final int initialIndex;
 
-  const MainNavigationPage({Key? key, this.initialIndex=0}) : super(key: key);
+  const MainNavigationPage({
+    super.key,
+    this.initialIndex=0
+  });
 
   @override
   MainNavigationState createState() => MainNavigationState();
@@ -52,26 +55,22 @@ class MainNavigationState extends State<MainNavigationPage> {
         backgroundColor: Theme.of(context).colorScheme.background,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        selectedItemColor: themeProvider.attrs.selectedNavigationItemColor,
-        unselectedItemColor: themeProvider.attrs.unSelectedNavigationItemColor,
+        selectedItemColor: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
+        unselectedItemColor: Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
         items: [
           BottomNavigationBarItem(
-            backgroundColor: themeProvider.attrs.navigationBackgroundColor,
             icon: const Icon(Icons.key),
             label: Intl.message("keyPageTitle"),
           ),
           BottomNavigationBarItem(
-            backgroundColor: themeProvider.attrs.navigationBackgroundColor,
             icon: const Icon(Icons.group),
             label: Intl.message("charactersPageTitle"),
           ),
           BottomNavigationBarItem(
-            backgroundColor: themeProvider.attrs.navigationBackgroundColor,
             icon: const Icon(Icons.chat_bubble),
             label: Intl.message("chatRoomsPageTitle"),
           ),
           BottomNavigationBarItem(
-            backgroundColor: themeProvider.attrs.navigationBackgroundColor,
             icon: const Icon(Icons.more_horiz),
             label: Intl.message("settingsPageTitle"),
           ),
