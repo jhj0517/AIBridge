@@ -17,20 +17,20 @@ class SplashPage extends StatefulWidget {
 
 class SplashPageState extends State<SplashPage> {
 
-  late SQFliteHelper sqFliteHelper;
+  late CharactersProvider charactersProvider;
   late KeyProvider keyProvider;
   ValueNotifier<String> loadingProgress = ValueNotifier("");
 
   @override
   void initState() {
-    sqFliteHelper = context.read<SQFliteHelper>();
+    charactersProvider = context.read<CharactersProvider>();
     keyProvider = context.read<KeyProvider>();
 
     Future.delayed(const Duration(seconds: 1), () async {
       // just delay for showing this slash page
       await _initData();
       if(context.mounted){
-        await sqFliteHelper.insertDefaultCharacters("");
+        await charactersProvider.insertDefaultCharacters();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainNavigationPage()),
