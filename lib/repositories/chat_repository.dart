@@ -17,23 +17,15 @@ class ChatRepository {
 
   Future<void> insertChatMessage(ChatMessage chatMessage) => dao.insertChatMessage(chatMessage);
 
-  Future<void> deleteOneChatMessage(String id) => dao.delete
+  Future<void> deleteOneChatMessage(String id) => dao.deleteOneChatMessage(id);
 
-  Future<void> deleteChatMessages(List<ChatMessage> messagesToDelete) async{
-    await sqfliteHelper.deleteChatMessages(messagesToDelete);
-  }
+  Future<void> deleteChatMessages(List<ChatMessage> messagesToDelete) => dao.deleteChatMessages(messagesToDelete);
 
-  Future<void> updateOneChatMessage(ChatMessage chatMessage) async{
-    await sqfliteHelper.updateOneChatMessage(chatMessage);
-  }
+  Future<void> updateOneChatMessage(ChatMessage chatMessage) => dao.updateOneChatMessage(chatMessage);
 
-  Future<void> updateStreamChatMessage(ChatMessage chatMessage) async{
-    await sqfliteHelper.updateStreamChatMessage(chatMessage);
-  }
+  Future<void> updateStreamChatMessage(ChatMessage chatMessage) => dao.updateStreamChatMessage(chatMessage);
 
-  Future<ChatMessage?> queryLastChatMessage(String roomId) async{
-    return await sqfliteHelper.getLastChatMessage(roomId);
-  }
+  Future<ChatMessage?> queryLastChatMessage(String roomId) => dao.getLastChatMessage(roomId);
 
   Future<void> setKeyboardHeight(double keyboardHeight) async{
     await prefs.setDouble(SharedPreferenceConstants.keyKeybaordHeight, keyboardHeight);
