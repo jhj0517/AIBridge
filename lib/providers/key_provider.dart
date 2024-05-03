@@ -1,4 +1,4 @@
-import 'package:aibridge/models/services/i_service.dart';
+import 'package:aibridge/models/services/platform.dart';
 import 'package:flutter/material.dart';
 
 import '../repositories/key_repository.dart';
@@ -27,11 +27,11 @@ class KeyProvider extends ChangeNotifier {
     initKeys();
   }
 
-  bool isKeyValid(ServiceType type){
+  bool isKeyValid(AIPlatformType type){
     switch (type){
-      case ServiceType.openAI:
+      case AIPlatformType.openAI:
         return openAPIKey != null && openAPIKey!.isNotEmpty;
-      case ServiceType.paLM:
+      case AIPlatformType.paLM:
         return paLMAPIKey != null && paLMAPIKey!.isNotEmpty;
     }
   }

@@ -20,7 +20,7 @@ class DefaultCharacterManager{
         characterName: Intl.message("defaultCharacterName"),
         userName: userName,
         firstMessage: Intl.message("defaultCharacterFirstMessage"),
-        service: OpenAIService(
+        service: OpenAIPlatform(
           characterId: defaultCharacterId,
           modelName: ModelConstants.chatGPT3dot5,
           temperature: 1,

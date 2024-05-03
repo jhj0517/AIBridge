@@ -72,12 +72,12 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> openAIStreamCompletion(
-      OpenAIService openAIParams,
+      OpenAIPlatform openAIParams,
       List<ChatMessage> chatMessages,
       String roomId,
       Character character
   ) async {
-    if(!keyProvider.isKeyValid(ServiceType.openAI)){
+    if(!keyProvider.isKeyValid(AIPlatformType.openAI)){
       setRequestState(RequestState.invalidOpenAIAPIKey);
       return;
     }
@@ -119,12 +119,12 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> paLMChatCompletion(
-      PaLMService paLMParams,
+      PaLMPlatform paLMParams,
       List<ChatMessage> chatMessages,
       String roomId,
       Character character
   ) async {
-    if (!keyProvider.isKeyValid(ServiceType.paLM)){
+    if (!keyProvider.isKeyValid(AIPlatformType.paLM)){
       setRequestState(RequestState.invalidPaLMAPIKey);
       return;
     }

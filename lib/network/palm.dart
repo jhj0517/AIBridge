@@ -32,7 +32,7 @@ class PaLM{
 
   static Future<Result<PaLMResponse>> requestChat(
       String apiKey,
-      PaLMService paLMParams,
+      PaLMPlatform paLMParams,
       List<ChatMessage> chatMessages,
       Character character
     ) async {
@@ -88,7 +88,7 @@ class PaLM{
   }
 
   static PaLMPrompt embedOtherPrompts(
-      PaLMService paLMParams,
+      PaLMPlatform paLMParams,
       List<PaLMMessage> chatMessages,
       Character character
       ) {

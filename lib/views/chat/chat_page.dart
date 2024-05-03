@@ -294,8 +294,8 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
   Future<void> _handleSendChatEvent(Character character) async {
     switch(character.service.serviceType){
-      case ServiceType.openAI:
-        final service = character.service as OpenAIService;
+      case AIPlatformType.openAI:
+        final service = character.service as OpenAIPlatform;
         await chatProvider.openAIStreamCompletion(
           service,
           chatProvider.chatMessages,
@@ -303,8 +303,8 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
           character,
         );
 
-      case ServiceType.paLM:
-        final service = character.service as PaLMService;
+      case AIPlatformType.paLM:
+        final service = character.service as PaLMPlatform;
         await chatProvider.paLMChatCompletion(
           service,
           chatProvider.chatMessages,

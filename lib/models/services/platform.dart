@@ -1,13 +1,13 @@
-enum ServiceType {
+enum AIPlatformType {
   openAI,
   paLM
 }
 
-abstract class IService {
-  final ServiceType serviceType;
+abstract class AIPlatform {
+  final AIPlatformType serviceType;
   final String characterId;
 
-  IService({
+  AIPlatform({
     required this.serviceType,
     required this.characterId,
   });

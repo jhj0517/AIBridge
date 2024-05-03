@@ -83,7 +83,7 @@ class SQFliteHelper {
       databasePath,
       version: _databaseVersion,
       onConfigure: (db) async {
-        await db.execute('PRAGMA foreign_keys = ON'); // Enable DELETE CASCADE
+        await db.execute('PRAGMA foreign_keys = ON');
       },
       onCreate: _onCreate,
     );

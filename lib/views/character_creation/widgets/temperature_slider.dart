@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:aibridge/models/models.dart';
 
 class TemperatureSlider extends StatefulWidget {
-  final ServiceType serviceType;
+  final AIPlatformType serviceType;
   final double? initialTemperature;
   final Function(double) onTemperatureChange;
 
@@ -68,13 +68,13 @@ class TemperatureSliderState extends State<TemperatureSlider> {
 
   double _validateValue(double value){
     switch(widget.serviceType){
-      case ServiceType.openAI:
-        if (value>OpenAIService.maxTemperature){
-          _currentTemperature = OpenAIService.defaultTemperature;
+      case AIPlatformType.openAI:
+        if (value>OpenAIPlatform.maxTemperature){
+          _currentTemperature = OpenAIPlatform.defaultTemperature;
         }
-      case ServiceType.paLM:
-        if (value>PaLMService.maxTemperature){
-          _currentTemperature = PaLMService.defaultTemperature;
+      case AIPlatformType.paLM:
+        if (value>PaLMPlatform.maxTemperature){
+          _currentTemperature = PaLMPlatform.defaultTemperature;
         }
     }
     return _currentTemperature;
@@ -87,19 +87,19 @@ class TemperatureSliderState extends State<TemperatureSlider> {
     }
 
     switch(widget.serviceType){
-      case ServiceType.openAI:
-        _currentTemperature = OpenAIService.defaultTemperature;
-      case ServiceType.paLM:
-        _currentTemperature = PaLMService.defaultTemperature;
+      case AIPlatformType.openAI:
+        _currentTemperature = OpenAIPlatform.defaultTemperature;
+      case AIPlatformType.paLM:
+        _currentTemperature = PaLMPlatform.defaultTemperature;
     }
   }
 
   double _initMax(){
     switch(widget.serviceType){
-      case ServiceType.openAI:
-        return OpenAIService.maxTemperature;
-      case ServiceType.paLM:
-        return PaLMService.maxTemperature;
+      case AIPlatformType.openAI:
+        return OpenAIPlatform.maxTemperature;
+      case AIPlatformType.paLM:
+        return PaLMPlatform.maxTemperature;
     }
   }
 }

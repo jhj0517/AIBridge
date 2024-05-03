@@ -1,9 +1,9 @@
-import 'i_service.dart';
+import 'platform.dart';
 import '../../localdb/localdb.dart';
 import '../../constants/model_constants.dart';
 import '../sqflite/chat_message.dart';
 
-class PaLMService implements IService {
+class PaLMPlatform implements AIPlatform {
   static const paLMModels = [ModelConstants.paLMBison];
   static const paLMModelNameMapping = {
     ModelConstants.paLMBison : ModelConstants.paLMBisonId
@@ -12,7 +12,7 @@ class PaLMService implements IService {
   static const double maxTemperature = 1;
 
   @override
-  final ServiceType serviceType = ServiceType.paLM;
+  final AIPlatformType serviceType = AIPlatformType.paLM;
   @override
   final String characterId;
 
@@ -27,7 +27,7 @@ class PaLMService implements IService {
   final double? topP;
   final int? topK;
 
-  PaLMService({
+  PaLMPlatform({
     this.id,
     required this.characterId,
     required this.modelName,
@@ -55,8 +55,8 @@ class PaLMService implements IService {
     };
   }
 
-  factory PaLMService.fromMap(Map<String, dynamic> map) {
-    return PaLMService(
+  factory PaLMPlatform.fromMap(Map<String, dynamic> map) {
+    return PaLMPlatform(
       id: map[SQFliteHelper.paLMColumnId] as int?,
       characterId: map[SQFliteHelper.paLMColumnCharacterId] as String,
       modelName: map[SQFliteHelper.paLMColumnModelName] as String,

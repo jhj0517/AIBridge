@@ -14,7 +14,7 @@ class Character {
   final String characterName;
   final String userName;
   final String firstMessage;
-  final IService service;
+  final AIPlatform service;
 
   Character({
     this.id,
@@ -40,8 +40,8 @@ class Character {
   }
 
   Map<String, dynamic>? toV2Card(){
-    if(service.serviceType == ServiceType.openAI){
-      final _service = service as OpenAIService;
+    if(service.serviceType == AIPlatformType.openAI){
+      final _service = service as OpenAIPlatform;
       return V2(
           name: characterName,
           description: _service.systemPrompts.first,
@@ -68,7 +68,7 @@ class Character {
         characterName: v2Card.name,
         firstMessage: v2Card.firstMes,
         userName: "",
-        service: OpenAIService(
+        service: OpenAIPlatform(
           characterId: _id,
           modelName: ModelConstants.chatGPT4,
           systemPrompts: [v2Card.description],
@@ -78,15 +78,15 @@ class Character {
   }
 
   factory Character.fromMap(Map<String, dynamic> map) {
-    IService service;
+    AIPlatform service;
     Map<String, dynamic> serviceMap = json.decode(map[SQFliteHelper.charactersColumnService] as String); // Decode the JSON
-    ServiceType type = ServiceType.values[serviceMap['service_type'] as int];
+    AIPlatformType type = AIPlatformType.values[serviceMap['service_type'] as int];
     switch (type) {
-      case ServiceType.openAI:
-        service = OpenAIService.fromMap(serviceMap);
+      case AIPlatformType.openAI:
+        service = OpenAIPlatform.fromMap(serviceMap);
         break;
-      case ServiceType.paLM:
-        service = PaLMService.fromMap(serviceMap);
+      case AIPlatformType.paLM:
+        service = PaLMPlatform.fromMap(serviceMap);
         break;
       default:
         throw Exception('Unknown service type: $type');
@@ -111,7 +111,7 @@ class Character {
       characterName: "",
       userName: "",
       firstMessage: "",
-      service: OpenAIService(
+      service: OpenAIPlatform(
         characterId: uuid,
         modelName: ModelConstants.chatGPT3dot5,
         temperature: 1,

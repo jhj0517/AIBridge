@@ -18,7 +18,7 @@ class OpenAINetwork{
 
   static Future<Stream<OpenAIStreamChatCompletionModel>> requestChatStream(
       String key,
-      OpenAIService openAIParams,
+      OpenAIPlatform openAIParams,
       List<ChatMessage> chatMessages,
       Character character
     ) async {
@@ -76,7 +76,7 @@ class OpenAINetwork{
 
   static List<OpenAIChatCompletionChoiceMessageModel> embedSystemPrompts(
       List<OpenAIChatCompletionChoiceMessageModel> chatMessages,
-      OpenAIService openAIParams,
+      OpenAIPlatform openAIParams,
       Character character
   ){
     /*

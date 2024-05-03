@@ -55,7 +55,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
   Uint8List? _selectedProfileImageBLOB;
   Uint8List? _selectedBackgroundImageBLOB;
 
-  final List<String> models= [...OpenAIService.openAIModels, ...PaLMService.paLMModels];
+  final List<String> models= [...OpenAIPlatform.openAIModels, ...PaLMPlatform.paLMModels];
   late String? _selectedModel;
 
   @override
@@ -126,12 +126,12 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                           ),
                           const SizedBox(height: 20),
                           // Different UI by Service
-                          if (OpenAIService.openAIModels.contains(_selectedModel)) ...[
+                          if (OpenAIPlatform.openAIModels.contains(_selectedModel)) ...[
                             OpenAIPrompts(
                               systemPromptsController: _textFieldControllersSystemPrompts,
                             ),
                             const SizedBox(height: 15),
-                          ] else if (PaLMService.paLMModels.contains(_selectedModel)) ... [
+                          ] else if (PaLMPlatform.paLMModels.contains(_selectedModel)) ... [
                             PaLMPrompts(
                               contextController: _textFieldControllerPaLMContext,
                               exampleInputController: _textFieldControllerPaLMExampleInput,
@@ -213,11 +213,11 @@ class CharacterCreationState extends State<CharacterCreationPage> {
   void _init() {
     final service = widget.arguments.character.service;
     switch (service.serviceType) {
-      case ServiceType.openAI:
-        _handleOpenAIService(service as OpenAIService);
+      case AIPlatformType.openAI:
+        _handleOpenAIService(service as OpenAIPlatform);
         break;
-      case ServiceType.paLM:
-        _handlePaLMService(service as PaLMService);
+      case AIPlatformType.paLM:
+        _handlePaLMService(service as PaLMPlatform);
         break;
       default:
         throw Exception('Unknown service type: $service.serviceType');
@@ -238,7 +238,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     });
   }
 
-  void _handleOpenAIService(OpenAIService service) {
+  void _handleOpenAIService(OpenAIPlatform service) {
     if (service.systemPrompts.isNotEmpty) {
       _textFieldControllersSystemPrompts.clear();
       for (final systemPrompt in service.systemPrompts) {
@@ -251,7 +251,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     });
   }
 
-  void _handlePaLMService(PaLMService service) {
+  void _handlePaLMService(PaLMPlatform service) {
     _textFieldControllerPaLMContext = TextEditingController(text: service.context ?? "");
     setState(() {
       _selectedModel = service.modelName;
@@ -318,8 +318,8 @@ class CharacterCreationState extends State<CharacterCreationPage> {
       _textFieldControllerYourName.text = character.userName;
       _textFieldControllerFirstMessage.text = character.firstMessage;
 
-      if (character.service.serviceType == ServiceType.openAI) {
-        final openAIService = character.service as OpenAIService;
+      if (character.service.serviceType == AIPlatformType.openAI) {
+        final openAIService = character.service as OpenAIPlatform;
         _selectedModel = openAIService.modelName;
 
         _textFieldControllersSystemPrompts.clear();
@@ -369,30 +369,30 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     }
   }
 
-  ServiceType _getServiceType(String modelName){
-    if (OpenAIService.openAIModels.contains(modelName)){
-      return ServiceType.openAI;
+  AIPlatformType _getServiceType(String modelName){
+    if (OpenAIPlatform.openAIModels.contains(modelName)){
+      return AIPlatformType.openAI;
     }
-    if (PaLMService.paLMModels.contains(modelName)){
-      return ServiceType.paLM;
+    if (PaLMPlatform.paLMModels.contains(modelName)){
+      return AIPlatformType.paLM;
     }
     else { throw Exception("No supported service"); }
   }
 
-  IService _getServiceData(){
-    if (OpenAIService.openAIModels.contains(_selectedModel)){
+  AIPlatform _getServiceData(){
+    if (OpenAIPlatform.openAIModels.contains(_selectedModel)){
       List<String> _systemPrompts = [];
       for (final (index, controller) in _textFieldControllersSystemPrompts.indexed) {
         _systemPrompts.add(controller.text);
       }
-      return OpenAIService(
+      return OpenAIPlatform(
           characterId: widget.arguments.character.id!,
           modelName: _selectedModel!,
           temperature: _currentTemperature,
           systemPrompts: _systemPrompts,
       );
-    } else if (PaLMService.paLMModels.contains(_selectedModel)){
-      return PaLMService(
+    } else if (PaLMPlatform.paLMModels.contains(_selectedModel)){
+      return PaLMPlatform(
           characterId: widget.arguments.character.id!,
           modelName: _selectedModel!,
           context: _textFieldControllerPaLMContext.text,

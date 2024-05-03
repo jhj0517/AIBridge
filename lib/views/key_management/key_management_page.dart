@@ -54,14 +54,14 @@ class KeyManagementPageState extends State<KeyManagementPage> {
               title: Intl.message("chatGPTKey"),
               imagePath: themeProvider.attrs.gptLogoPath,
               onTap: () async {
-                await _openKeyDialog(Intl.message("chatGPTKey"), ServiceType.openAI);
+                await _openKeyDialog(Intl.message("chatGPTKey"), AIPlatformType.openAI);
               }
             ),
             KeyRow(
                 title: Intl.message("paLMKey"),
                 imagePath: PathConstants.paLMImage,
                 onTap: () async {
-                  await _openKeyDialog(Intl.message("paLMKey"), ServiceType.paLM);
+                  await _openKeyDialog(Intl.message("paLMKey"), AIPlatformType.paLM);
                 }
             ),
           ],
@@ -76,7 +76,7 @@ class KeyManagementPageState extends State<KeyManagementPage> {
     super.dispose();
   }
 
-  Future<void> _openKeyDialog(String title, ServiceType serviceType) async {
+  Future<void> _openKeyDialog(String title, AIPlatformType serviceType) async {
     _setTextByService(serviceType);
     final dialogResult = await showDialog(
       context: context,
@@ -101,22 +101,22 @@ class KeyManagementPageState extends State<KeyManagementPage> {
     }
   }
 
-  void _setTextByService(ServiceType serviceType){
+  void _setTextByService(AIPlatformType serviceType){
     switch (serviceType){
-      case ServiceType.openAI:
+      case AIPlatformType.openAI:
         _textFieldControllerKey.text = keyProvider.openAPIKey != null ? keyProvider.openAPIKey! : "";
         break;
-      case ServiceType.paLM:
+      case AIPlatformType.paLM:
         _textFieldControllerKey.text = keyProvider.paLMAPIKey != null ? keyProvider.paLMAPIKey! : "";
         break;
     }
   }
 
-  String _storageKeyByService(ServiceType serviceType){
+  String _storageKeyByService(AIPlatformType serviceType){
     switch (serviceType) {
-      case ServiceType.openAI:
+      case AIPlatformType.openAI:
         return SecureStorageConstants.openAI;
-      case ServiceType.paLM:
+      case AIPlatformType.paLM:
         return SecureStorageConstants.paLM;
     }
   }

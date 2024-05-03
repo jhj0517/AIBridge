@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import '../../localdb/localdb.dart';
 import '../../constants/model_constants.dart';
-import 'i_service.dart';
+import 'platform.dart';
 
-class OpenAIService implements IService {
+class OpenAIPlatform implements AIPlatform {
 
   static const openAIModels = [ModelConstants.chatGPT3dot5, ModelConstants.chatGPT4, ModelConstants.chatGPT4Vision];
   static const openAIModelNameMapping = {
@@ -16,7 +16,7 @@ class OpenAIService implements IService {
   static const double maxTemperature = 2;
 
   @override
-  final ServiceType serviceType = ServiceType.openAI;
+  final AIPlatformType serviceType = AIPlatformType.openAI;
   @override
   final String characterId;
 
@@ -26,7 +26,7 @@ class OpenAIService implements IService {
   final double temperature;
   final List<String> systemPrompts;
 
-  OpenAIService({
+  OpenAIPlatform({
     this.id,
     required this.characterId,
     required this.modelName,
@@ -46,8 +46,8 @@ class OpenAIService implements IService {
     };
   }
 
-  factory OpenAIService.fromMap(Map<String, dynamic> map) {
-    return OpenAIService(
+  factory OpenAIPlatform.fromMap(Map<String, dynamic> map) {
+    return OpenAIPlatform(
       id: map[SQFliteHelper.openAIColumnId] as int?,
       characterId: map[SQFliteHelper.openAIColumnCharacterId] as String,
       modelName: map[SQFliteHelper.openAIColumnModelName] as String,

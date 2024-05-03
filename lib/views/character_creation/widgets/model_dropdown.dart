@@ -57,9 +57,9 @@ class ModelsDropdownState extends State<ModelsDropdown> {
 
   DropdownMenuItem<String> _buildDropdownOption(String optionName) {
     String imagePath = "";
-    if (OpenAIService.openAIModels.contains(optionName)) {
+    if (OpenAIPlatform.openAIModels.contains(optionName)) {
       imagePath = PathConstants.chatGPTImage;
-    } else if (PaLMService.paLMModels.contains(optionName)) {
+    } else if (PaLMPlatform.paLMModels.contains(optionName)) {
       imagePath = PathConstants.paLMImage;
     }
     return DropdownMenuItem<String>(
