@@ -1,4 +1,4 @@
-import 'package:aibridge/models/services/platform.dart';
+import 'package:aibridge/models/platforms/platform.dart';
 import 'package:flutter/material.dart';
 
 import '../repositories/key_repository.dart';

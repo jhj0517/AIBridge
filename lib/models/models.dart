@@ -1,9 +1,9 @@
 export 'sqflite/chat_room.dart';
 export 'sqflite/chat_message.dart';
 export 'sqflite/character.dart';
-export 'services/platform.dart';
-export 'services/result_wrapper.dart';
-export 'services/openai_platform.dart';
-export 'services/palm_platform.dart';
+export 'platforms/platform.dart';
+export 'platforms/result_wrapper.dart';
+export 'platforms/openai_platform.dart';
+export 'platforms/palm_platform.dart';
 export 'chatroom_settings.dart';
 export 'share/v2.dart';
