@@ -111,4 +111,13 @@ class ChatMessageDao {
     await batch.commit(noResult: true);
   }
 
+  Future<void> deleteOneChatMessage(String id) async {
+    final db = await localDB.database;
+    await db.delete(
+      SQFliteHelper.chatMessageTable,
+      where: '${SQFliteHelper.chatMessageColumnId} = ?',
+      whereArgs: [id],
+    );
+  }
+
 }
