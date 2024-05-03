@@ -1,6 +1,6 @@
-import '../../../models/sqflite/character.dart';
-import '../../../models/sqflite/chat_room.dart';
-import '../../sqflite_helper.dart';
+import '../../models/sqflite/character.dart';
+import '../../models/sqflite/chat_room.dart';
+import '../sqflite_helper.dart';
 
 class ChatRoomDao {
 
