@@ -3,27 +3,21 @@ import '../models/models.dart';
 
 class CharactersRepository {
 
-  final SQFliteHelper sqfliteHelper;
+  final CharacterDao characterDao;
+  final ChatMessageDao chatMessageDao;
 
-  CharactersRepository({required this.sqfliteHelper});
+  CharactersRepository({
+    required this.characterDao,
+    required this.chatMessageDao,
+  });
 
-  Future<List<Character>> getCharacters() async{
-    return sqfliteHelper.getCharacters();
-  }
+  Future<List<Character>> getCharacters() => characterDao.getCharacters();
 
-  Future<Character> getOneCharacter(String characterId) async {
-    return sqfliteHelper.getOneCharacter(characterId);
-  }
+  Future<Character> getOneCharacter(String characterId) => characterDao.getOneCharacter(characterId);
 
-  Future<void> insertOrUpdateCharacter(Character character) async{
-    await sqfliteHelper.insertOrUpdateCharacter(character);
-  }
+  Future<void> insertOrUpdateCharacter(Character character) => characterDao.insertOrUpdateCharacter(character);
 
-  Future<void> insertFirstMessage(Character character, ChatMessage firstMessage) async{
-    await sqfliteHelper.insertFirstMessage(character, firstMessage);
-  }
+  Future<void> insertFirstMessage(Character character, ChatMessage firstMessage) => chatMessageDao.insertFirstMessage(character, firstMessage);
 
-  Future<void> deleteCharacter(String characterId) async{
-    await sqfliteHelper.deleteCharacter(characterId);
-  }
+  Future<void> deleteCharacter(String characterId) => characterDao.deleteCharacter(characterId);
 }
