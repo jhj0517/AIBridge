@@ -13,8 +13,12 @@ final class LocalDBModule extends BaseModule {
     // SharedPreference
     locator.registerLazySingletonAsync<SharedPreferences>(() async => SharedPreferences.getInstance());
     await locator.isReady<SharedPreferences>();
-    // SQLite
+    // SQLite Database
     locator.registerLazySingleton<SQFliteHelper>(() => SQFliteHelper(prefs: locator.get<SharedPreferences>()));
+    // SQLite Daos
+    locator.registerLazySingleton<CharacterDao>(() => CharacterDao(localDB: locator<SQFliteHelper>()));
+    locator.registerLazySingleton<ChatMessageDao>(() => ChatMessageDao(localDB: locator<SQFliteHelper>()));
+    locator.registerLazySingleton<ChatRoomDao>(() => ChatRoomDao(localDB: locator<SQFliteHelper>()));
     // Secure Storage
     locator.registerLazySingleton<FlutterSecureStorage>(() => const FlutterSecureStorage());
     // DotEnv
