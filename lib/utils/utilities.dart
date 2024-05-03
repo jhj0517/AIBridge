@@ -35,7 +35,7 @@ class Utilities {
   }
 
 
-  static String timestampIntoHourFormat(int timestamp) {
+  static String hourFormat(int timestamp) {
     if(timestamp==-1){
       return "";
     } else {

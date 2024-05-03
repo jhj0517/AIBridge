@@ -79,7 +79,7 @@ class ChatRoomItem extends StatelessWidget {
                             Text(
                               chatRoom!.lastMessageTimestamp==null
                                   ? ""
-                                  : Utilities.timestampIntoHourFormat(chatRoom!.lastMessageTimestamp!),
+                                  : Utilities.hourFormat(chatRoom!.lastMessageTimestamp!),
                               style: const TextStyle(
                                 color: ColorConstants.greyColor,
                                 fontSize: 11,

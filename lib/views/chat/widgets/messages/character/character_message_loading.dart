@@ -76,7 +76,7 @@ class CharacterMessageLoading extends StatelessWidget{
                             ),
                             const SizedBox(width: 4.0),
                             Text(
-                              Utilities.timestampIntoHourFormat(DateTime.now().millisecondsSinceEpoch),
+                              Utilities.hourFormat(DateTime.now().millisecondsSinceEpoch),
                               style: const TextStyle(
                                 fontSize: 10.0,
                                 color: Colors.grey,

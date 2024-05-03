@@ -135,7 +135,7 @@ abstract class BaseMessage extends StatelessWidget {
 
   Widget buildTimestamp(BuildContext context) {
     return Text(
-      Utilities.timestampIntoHourFormat(chatMessage.timestamp),
+      Utilities.hourFormat(chatMessage.timestamp),
       style: const TextStyle(
         fontSize: 10.0,
         color: Colors.grey,
