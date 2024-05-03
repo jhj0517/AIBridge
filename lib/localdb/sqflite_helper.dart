@@ -63,11 +63,10 @@ class SQFliteHelper {
   static const paLMColumnExampleInput = 'example_input';
   static const paLMColumnExampleOutput = 'example_output';
 
-  Database? _database;
-
   final SharedPreferences prefs;
   SQFliteHelper({required this.prefs});
 
+  Database? _database;
   Future<Database> get database async {
     if (_database != null) {
       return _database!;
