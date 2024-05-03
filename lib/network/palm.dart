@@ -1,12 +1,11 @@
 import 'dart:convert';
+import 'package:aibridge/utils/chat_parser.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:tiktoken/tiktoken.dart' as tiktokenizer;
 import 'package:dio/dio.dart';
 
 import '../constants/constants.dart';
 import '../models/models.dart';
-import '../utils/utilities.dart';
 
 const paLMMaximumInputToken = {
   ModelConstants.paLMBisonId: 4096,
@@ -93,17 +92,17 @@ class PaLM{
       Character character
       ) {
     return PaLMPrompt(
-        context: paLMParams.context.isNotEmpty ? Utilities.formattingPrompt(paLMParams.context, character) : null,
+        context: paLMParams.context.isNotEmpty ? ChatParser.parsePrompt(paLMParams.context, character) : null,
         examples: paLMParams.exampleInput.isNotEmpty && paLMParams.exampleOutput.isNotEmpty
         ? [
             PaLMExample(
               input: PaLMMessage(
                   author: PaLMMessageRole.user,
-                  content: Utilities.formattingPrompt(paLMParams.exampleInput, character)
+                  content: ChatParser.parsePrompt(paLMParams.exampleInput, character)
               ),
               output: PaLMMessage(
                   author: PaLMMessageRole.assistant,
-                  content: Utilities.formattingPrompt(paLMParams.exampleOutput, character)
+                  content: ChatParser.parsePrompt(paLMParams.exampleOutput, character)
               ),
             )
           ]

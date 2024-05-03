@@ -1,10 +1,10 @@
+import 'package:aibridge/utils/chat_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:tiktoken/tiktoken.dart' as tiktokenizer;
 
 import '../models/models.dart';
 import '../constants/model_constants.dart';
-import '../utils/utilities.dart';
 
 const openAIOutputTokenSafetyMargin = 800;
 
@@ -94,7 +94,7 @@ class OpenAINetwork{
         OpenAIChatCompletionChoiceMessageModel(
           content: [
             OpenAIChatCompletionChoiceMessageContentItemModel.text(
-              Utilities.formattingPrompt(systemPrompt, character)
+              ChatParser.parsePrompt(systemPrompt, character)
             )
           ],
           role: OpenAIChatMessageRole.system

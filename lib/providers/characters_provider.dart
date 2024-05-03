@@ -1,8 +1,8 @@
+import 'package:aibridge/utils/chat_parser.dart';
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
 import '../repositories/characters_repository.dart';
-import '../utils/utilities.dart';
 
 class CharactersProvider extends ChangeNotifier {
 
@@ -39,7 +39,7 @@ class CharactersProvider extends ChangeNotifier {
   }
 
   Future<void> insertFirstMessage(Character character, ChatMessage firstMessage) async{
-    final message = firstMessage.copyWith(content: Utilities.formattingPrompt(firstMessage.content, character));
+    final message = firstMessage.copyWith(content: ChatParser.parsePrompt(firstMessage.content, character));
     await charactersRepository.insertFirstMessage(character, message);
     updateCharacters();
   }

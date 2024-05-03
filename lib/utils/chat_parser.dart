@@ -2,10 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../models/chatroom_settings.dart';
+import '../models/sqflite/character.dart';
 import '../models/sqflite/chat_message.dart';
 import '../constants/color_constants.dart';
 
 class ChatParser {
+
+  static String parsePrompt(String chat, Character character){
+    return chat
+        .replaceAll('<user>', character.userName)
+        .replaceAll('<User>', character.userName)
+        .replaceAll('{{user}}', character.userName)
+        .replaceAll('{{User}}', character.userName)
+        .replaceAll('<char>', character.characterName)
+        .replaceAll('<Char>', character.characterName)
+        .replaceAll('{{char}}', character.characterName)
+        .replaceAll('{{Char}}', character.characterName);
+  }
 
   static List<TextSpan> parseMessageContent(String content, ChatMessageType? type) {
     /*

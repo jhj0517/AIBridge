@@ -44,16 +44,4 @@ class Utilities {
       return dateFormat.format(dateTime);
     }
   }
-
-  static String formattingPrompt(String chat, Character character){
-    return chat
-        .replaceAll('<user>', character.userName)
-        .replaceAll('<User>', character.userName)
-        .replaceAll('{{user}}', character.userName)
-        .replaceAll('{{User}}', character.userName)
-        .replaceAll('<char>', character.characterName)
-        .replaceAll('<Char>', character.characterName)
-        .replaceAll('{{char}}', character.characterName)
-        .replaceAll('{{Char}}', character.characterName);
-  }
 }
