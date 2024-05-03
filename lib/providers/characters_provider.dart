@@ -30,18 +30,23 @@ class CharactersProvider extends ChangeNotifier {
 
   Future<void> insertOrUpdateCharacter(Character character) async{
     await charactersRepository.insertOrUpdateCharacter(character);
-    await updateCharacters();
+    updateCharacters();
+  }
+
+  Future<void> insertDefaultCharacters({String userName=""}) async{
+    await charactersRepository.insertDefaultCharacters(userName: userName);
+    updateCharacters();
   }
 
   Future<void> insertFirstMessage(Character character, ChatMessage firstMessage) async{
-    final _firstMessage = firstMessage.copyWith(content: Utilities.formattingPrompt(firstMessage.content, character));
-    await charactersRepository.insertFirstMessage(character, _firstMessage);
-    await updateCharacters();
+    final message = firstMessage.copyWith(content: Utilities.formattingPrompt(firstMessage.content, character));
+    await charactersRepository.insertFirstMessage(character, message);
+    updateCharacters();
   }
 
   Future<void> deleteCharacter(String characterId) async{
     await charactersRepository.deleteCharacter(characterId);
-    await updateCharacters();
+    updateCharacters();
   }
 
 }

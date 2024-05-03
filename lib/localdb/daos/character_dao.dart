@@ -47,7 +47,7 @@ class CharacterDao {
     }
   }
 
-  Future<void> insertDefaultCharacters(String userName) async {
+  Future<void> insertDefaultCharacters({String userName=""}) async {
     final db = await localDB.database;
     final count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM ${SQFliteHelper.charactersTable}'));
     bool defaultsInserted = localDB.prefs.getBool(SharedPreferenceConstants.defaultInserted) ?? false;
