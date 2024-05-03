@@ -73,6 +73,16 @@ class ChatMessageDao {
     }
   }
 
+  Future<void> updateOneChatMessage(ChatMessage chatMessage) async {
+    final db = await localDB.database;
+    await db.update(
+      SQFliteHelper.chatMessageTable,
+      chatMessage.toMap(),
+      where: '${SQFliteHelper.chatMessageColumnId} = ?',
+      whereArgs: [chatMessage.id],
+    );
+  }
+
   Future<void> updateStreamChatMessage(ChatMessage chatMessage) async {
     final db = await localDB.database;
 
