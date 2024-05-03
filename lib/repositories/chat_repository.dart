@@ -6,21 +6,18 @@ import '../constants/constants.dart';
 
 class ChatRepository {
   final SharedPreferences prefs;
-  final SQFliteHelper sqfliteHelper;
+  final ChatMessageDao dao;
 
-  ChatRepository({required this.prefs,required this.sqfliteHelper});
+  ChatRepository({
+    required this.prefs,
+    required this.dao
+  });
 
-  Future<List<ChatMessage>> getChatMessages(String roomId) async{
-    return sqfliteHelper.getChatMessages(roomId);
-  }
+  Future<List<ChatMessage>> getChatMessages(String roomId) => dao.getChatMessages(roomId);
 
-  Future<void> insertChatMessage(ChatMessage chatMessage) async{
-    await sqfliteHelper.insertChatMessage(chatMessage);
-  }
+  Future<void> insertChatMessage(ChatMessage chatMessage) => dao.insertChatMessage(chatMessage);
 
-  Future<void> deleteOneChatMessage(String id) async{
-    await sqfliteHelper.deleteOneChatMessage(id);
-  }
+  Future<void> deleteOneChatMessage(String id) => dao.delete
 
   Future<void> deleteChatMessages(List<ChatMessage> messagesToDelete) async{
     await sqfliteHelper.deleteChatMessages(messagesToDelete);
