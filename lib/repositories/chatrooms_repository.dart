@@ -3,38 +3,31 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import '../models/models.dart';
-import '../localdb/sqflite_helper.dart';
+import '../localdb/localdb.dart';
 import '../constants/sharedpreference_constants.dart';
 
 class ChatRoomRepository {
-  ChatRoomRepository({required this.sqfliteHelper, required this.prefs});
+  ChatRoomRepository({
+    required this.chatRoomDao,
+    required this.chatMessageDao,
+    required this.prefs
+  });
 
-  final SQFliteHelper sqfliteHelper;
+  final ChatRoomDao chatRoomDao;
+  final ChatMessageDao chatMessageDao;
   final SharedPreferences prefs;
 
-  Future<List<ChatRoom>> getChatRooms() async{
-    return sqfliteHelper.getChatRooms();
-  }
+  Future<List<ChatRoom>> getChatRooms() => chatRoomDao.getChatRooms();
 
-  Future<ChatMessage?> getLastChat(String roomId) async{
-    return sqfliteHelper.getLastChatMessage(roomId);
-  }
+  Future<ChatMessage?> getLastChat(String roomId) => chatMessageDao.getLastChatMessage(roomId);
 
-  Future<ChatRoom> getOneChatroom(String characterId) async {
-    return sqfliteHelper.getOneChatRoom(characterId);
-  }
+  Future<ChatRoom> getOneChatroom(String characterId) => chatRoomDao.getOneChatRoom(characterId);
 
-  Future<void> insertChatRoom(Character character) async{
-    await sqfliteHelper.insertChatRoom(character);
-  }
+  Future<void> insertChatRoom(Character character) => chatRoomDao.insertChatRoom(character);
 
-  Future<void> updateOneChatRoom(ChatRoom chatRoom) async{
-    await sqfliteHelper.updateChatRoom(chatRoom);
-  }
+  Future<void> updateOneChatRoom(ChatRoom chatRoom) => chatRoomDao.updateChatRoom(chatRoom);
 
-  Future<void> deleteChatRoom(String chatRoomId) async{
-    await sqfliteHelper.deleteChatRoom(chatRoomId);
-  }
+  Future<void> deleteChatRoom(String chatRoomId) => deleteChatRoom(chatRoomId);
 
   Future<void> saveChatRoomSetting(ChatRoomSetting setting) async {
     String settingString = jsonEncode(setting.toJson());
