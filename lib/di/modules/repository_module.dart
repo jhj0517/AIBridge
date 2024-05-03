@@ -11,12 +11,19 @@ final class RepositoryModule extends BaseModule {
   @override
   Future<void> register() async {
     locator.registerFactory(() => CharactersRepository(
-      characterDao: locator.get<CharacterDao>(),
+      characterDao: locator<CharacterDao>(),
       chatMessageDao: locator<ChatMessageDao>()
     ));
-    locator.registerFactory(() => ChatRepository(prefs: locator.get<SharedPreferences>(), sqfliteHelper: locator.get<SQFliteHelper>()));
-    locator.registerFactory(() => ChatRoomRepository(prefs: locator.get<SharedPreferences>(), sqfliteHelper: locator.get<SQFliteHelper>()));
-    locator.registerFactory(() => KeyRepository(secureStorage: locator.get<FlutterSecureStorage>()));
+    locator.registerFactory(() => ChatRepository(
+      prefs: locator<SharedPreferences>(),
+      dao: locator<ChatMessageDao>()
+    ));
+    locator.registerFactory(() => ChatRoomRepository(
+      prefs: locator<SharedPreferences>(),
+      chatRoomDao: locator<ChatRoomDao>(),
+      chatMessageDao: locator<ChatMessageDao>()
+    ));
+    locator.registerFactory(() => KeyRepository(secureStorage: locator<FlutterSecureStorage>()));
   }
 
 }
