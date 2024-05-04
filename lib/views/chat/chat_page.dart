@@ -12,7 +12,7 @@ import 'package:flutter/services.dart';
 import '../../utils/utils.dart';
 import '../../models/models.dart';
 import '../../providers/providers.dart';
-import '../common/base/loading_view.dart';
+import '../common/loading/loading_view.dart';
 import '../common/dialogs/base/base_dialog.dart';
 import '../common/dialogs/character/chat_option.dart';
 import '../common/dialogs/character/warning_dialog.dart';

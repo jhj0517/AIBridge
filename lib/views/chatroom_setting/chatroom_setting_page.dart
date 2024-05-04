@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/providers.dart';
 import '../../models/chatroom_settings.dart';
-import '../common/base/loading_view.dart';
+import '../common/loading/loading_view.dart';
 import 'widgets/settings/font_size_setting.dart';
 import 'widgets/appbars/chatroom_setting_app_bar.dart';
 import 'widgets/settings/markdown_render_setting.dart';

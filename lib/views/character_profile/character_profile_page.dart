@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 import '../../providers/providers.dart';
-import '../common/base/loading_view.dart';
+import '../common/loading/loading_view.dart';
 import '../views.dart';
 import '../../models/models.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
