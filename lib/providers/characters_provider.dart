@@ -15,10 +15,10 @@ class CharactersProvider extends ChangeNotifier {
   Character get currentCharacter => _currentCharacter;
 
   CharactersProvider({required this.charactersRepository}) {
-    updateCharacters();
+    getCharacters();
   }
 
-  Future<void> updateCharacters() async{
+  Future<void> getCharacters() async{
     _characters = await charactersRepository.getCharacters();
     notifyListeners();
   }
@@ -30,23 +30,23 @@ class CharactersProvider extends ChangeNotifier {
 
   Future<void> insertOrUpdateCharacter(Character character) async{
     await charactersRepository.insertOrUpdateCharacter(character);
-    updateCharacters();
+    getCharacters();
   }
 
   Future<void> insertDefaultCharacters({String userName=""}) async{
     await charactersRepository.insertDefaultCharacters(userName: userName);
-    updateCharacters();
+    getCharacters();
   }
 
   Future<void> insertFirstMessage(Character character, ChatMessage firstMessage) async{
     final message = firstMessage.copyWith(content: ChatParser.parsePrompt(firstMessage.content, character));
     await charactersRepository.insertFirstMessage(character, message);
-    updateCharacters();
+    getCharacters();
   }
 
   Future<void> deleteCharacter(String characterId) async{
     await charactersRepository.deleteCharacter(characterId);
-    updateCharacters();
+    getCharacters();
   }
 
 }

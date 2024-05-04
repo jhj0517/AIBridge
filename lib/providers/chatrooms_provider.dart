@@ -16,11 +16,13 @@ class ChatRoomsProvider extends ChangeNotifier{
   ChatRoomSetting? _chatRoomSetting;
   ChatRoomSetting? get chatRoomSetting => _chatRoomSetting;
 
-  ChatRoomsProvider({required this.chatRoomsRepository}) {
-    updateChatRooms();
+  ChatRoomsProvider({
+    required this.chatRoomsRepository
+  }) {
+    getChatRooms();
   }
 
-  Future<void> updateChatRooms() async{
+  Future<void> getChatRooms() async{
     _chatRooms = await chatRoomsRepository.getChatRooms();
     if(chatRooms.isNotEmpty){
       for(var room in _chatRooms){
@@ -36,7 +38,7 @@ class ChatRoomsProvider extends ChangeNotifier{
 
   Future<void> updateOneChatRoom(ChatRoom chatRoom) async{
     await chatRoomsRepository.updateOneChatRoom(chatRoom);
-    await updateChatRooms();
+    await getChatRooms();
   }
 
   Future<void> updateCurrentChatRoom(String characterId) async{
@@ -46,12 +48,12 @@ class ChatRoomsProvider extends ChangeNotifier{
 
   Future<void> insertChatRoom(Character character) async{
     await chatRoomsRepository.insertChatRoom(character);
-    await updateChatRooms();
+    await getChatRooms();
   }
 
   Future<void> deleteChatRoom(String chatRoomId) async{
     await chatRoomsRepository.deleteChatRoom(chatRoomId);
-    await updateChatRooms();
+    await getChatRooms();
   }
 
   Future<void> saveChatRoomSetting(ChatRoomSetting setting) async{

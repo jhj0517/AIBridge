@@ -362,7 +362,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     if(widget.arguments.character.id != null){
       await characterProvider.updateCurrentCharacter(widget.arguments.character.id!);
     }
-    await chatRoomsProvider.updateChatRooms();
+    await chatRoomsProvider.getChatRooms();
 
     if (mounted) {
       Navigator.of(context).pop();

@@ -153,7 +153,7 @@ class CharactersListPageState extends State<CharactersListPage> {
         break;
       case DialogResult.yes:
         await charactersProvider.deleteCharacter(characterId);
-        await chatRoomsProvider.updateChatRooms();
+        await chatRoomsProvider.getChatRooms();
     }
   }
 

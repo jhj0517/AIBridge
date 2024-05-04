@@ -38,7 +38,7 @@ class ChatProvider extends ChangeNotifier {
     //Initialize something
   }
 
-  Future<void> updateChatMessages(String roomId) async {
+  Future<void> getChatMessages(String roomId) async {
     _chatMessages = await chatRepository.getChatMessages(roomId);
     notifyListeners();
   }
@@ -46,29 +46,29 @@ class ChatProvider extends ChangeNotifier {
   Future<void> insertChatMessage(ChatMessage chatMessage) async {
     await chatRepository.insertChatMessage(chatMessage);
     if(charactersProvider.currentCharacter.id == chatMessage.characterId){
-      updateChatMessages(chatMessage.roomId);
+      getChatMessages(chatMessage.roomId);
     }
-    updateChatRoom();
+    chatRoomsProvider.getChatRooms();
   }
 
   Future<void> updateOneChatMessage(ChatMessage chatMessage) async {
     await chatRepository.updateOneChatMessage(chatMessage);
-    updateChatMessages(chatMessage.roomId);
+    getChatMessages(chatMessage.roomId);
   }
 
   Future<void> updateStreamChatMessage(ChatMessage chatMessage) async {
     await chatRepository.updateStreamChatMessage(chatMessage);
-    updateChatMessages(chatMessage.roomId);
+    getChatMessages(chatMessage.roomId);
   }
 
   Future<void> deleteOneChatMessage(String id,String roomId) async {
     await chatRepository.deleteOneChatMessage(id);
-   updateChatMessages(roomId);
+   getChatMessages(roomId);
   }
 
   Future<void> deleteChatMessages(List<ChatMessage> messagesToDelete, String roomId) async {
     await chatRepository.deleteChatMessages(messagesToDelete);
-    updateChatMessages(roomId);
+    getChatMessages(roomId);
   }
 
   Future<void> openAIStreamCompletion(
@@ -113,7 +113,7 @@ class ChatProvider extends ChangeNotifier {
       );
     },
     onDone: () async {
-      updateChatRoom();
+      chatRoomsProvider.getChatRooms();
       setRequestState(RequestState.done);
     });
   }
@@ -149,7 +149,7 @@ class ChatProvider extends ChangeNotifier {
                 content: value.candidates!.first.content
             );
             insertChatMessage(answer);
-            updateChatRoom();
+            chatRoomsProvider.getChatRooms();
             setRequestState(RequestState.done);
           } else if (value.candidates== null && value.filters != null){
             debugPrint("error : $value");
@@ -179,10 +179,6 @@ class ChatProvider extends ChangeNotifier {
         textColor: Colors.white,
         fontSize: 16.0
     );
-  }
-
-  Future<void> updateChatRoom() async{
-    await chatRoomsProvider.updateChatRooms();
   }
 
   Future<void> setKeyboardHeight(double keyboardHeight) async{

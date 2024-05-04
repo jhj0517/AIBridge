@@ -169,7 +169,7 @@ class CharacterProfileState extends State<CharacterProfilePage> {
     } else {
       await chatRoomsProvider.insertChatRoom(charactersProvider.currentCharacter);
     }
-    chatRoomsProvider.updateChatRooms();
+    chatRoomsProvider.getChatRooms();
 
     if (mounted) {
       if(widget.arguments.fromChatPage == true){

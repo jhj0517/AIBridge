@@ -199,7 +199,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     await charactersProvider.updateCurrentCharacter(widget.arguments.characterId);
     await chatRoomsProvider.updateCurrentChatRoom(widget.arguments.characterId);
 
-    await chatProvider.updateChatMessages(chatRoomsProvider.currentChatRoom.id!);
+    await chatProvider.getChatMessages(chatRoomsProvider.currentChatRoom.id!);
 
     chatProvider.setRequestState(RequestState.initialized);
     chatProvider.addListener(_onNetworkStateChanged);
@@ -380,7 +380,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
 
   Future<void> _onDeleteChat() async {
     await chatProvider.deleteChatMessages(_messagesToDeleteNotifier.value, chatRoomsProvider.currentChatRoom.id!);
-    await chatRoomsProvider.updateChatRooms();
+    await chatRoomsProvider.getChatRooms();
     setState(() {
       mode=ChatPageMode.chatMode;
       _messagesToDeleteNotifier.value = [];
@@ -394,7 +394,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
     );
 
     await chatProvider.updateOneChatMessage(editedChatMessage);
-    await chatRoomsProvider.updateChatRooms();
+    await chatRoomsProvider.getChatRooms();
     setState(() {
       _messageToEdit = ChatMessage.placeHolder();
       mode = ChatPageMode.chatMode;
