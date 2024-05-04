@@ -22,26 +22,23 @@ class Utilities {
   }
 
   static launchURL(String url) async {
-    launchUrl(Uri.parse(url)).onError(
-          (error, stackTrace) {
-        debugPrint("Url is not valid!");
-        return false;
-      },
-    );
+    launchUrl(Uri.parse(url))
+    .onError((error, stackTrace) {
+      debugPrint("Url is not valid!");
+      return false;
+    });
   }
 
   static int getTimestamp() {
     return DateTime.now().millisecondsSinceEpoch;
   }
 
-
   static String hourFormat(int timestamp) {
     if(timestamp==-1){
       return "";
-    } else {
-      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-      DateFormat dateFormat = DateFormat('a h:mm');
-      return dateFormat.format(dateTime);
     }
+    DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    DateFormat dateFormat = DateFormat('a h:mm');
+    return dateFormat.format(dateTime);
   }
 }

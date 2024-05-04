@@ -25,7 +25,7 @@ class MainNavigationState extends State<MainNavigationPage> {
   final List<Widget> _pages = [
     const KeyManagementPage(),
     const CharactersListPage(),
-    const ChatRoomsPage(),
+    const ChatRoomsListPage(),
     const SettingsPage(),
   ];
 

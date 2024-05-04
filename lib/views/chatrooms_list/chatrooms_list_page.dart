@@ -11,14 +11,14 @@ import '../common/dialogs/base/base_dialog.dart';
 import '../common/dialogs/character/chat_room_option.dart';
 import '../common/dialogs/character/warning_dialog.dart';
 
-class ChatRoomsPage extends StatefulWidget {
-  const ChatRoomsPage({Key? key}) : super(key: key);
+class ChatRoomsListPage extends StatefulWidget {
+  const ChatRoomsListPage({Key? key}) : super(key: key);
 
   @override
   ChatRoomsState createState() => ChatRoomsState();
 }
 
-class ChatRoomsState extends State<ChatRoomsPage> {
+class ChatRoomsState extends State<ChatRoomsListPage> {
 
   late ChatRoomsProvider chatRoomsProvider;
   late ThemeProvider themeProvider;
