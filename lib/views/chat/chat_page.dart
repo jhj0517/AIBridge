@@ -132,7 +132,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                         onSendChat: () => _onSubmitInput(),
                       ),
                       _isInputMenuVisible
-                          ? ChatMenu(
+                      ? ChatMenu(
                         menuHeight: chatProvider.getKeyboardHeight(context),
                         items: [
                           MenuItem(
@@ -162,7 +162,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                           )
                         ],
                       )
-                          : const SizedBox.shrink(),
+                      : const SizedBox.shrink(),
                     ],
                   ],
                 ),
