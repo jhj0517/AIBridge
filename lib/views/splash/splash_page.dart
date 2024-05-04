@@ -29,8 +29,7 @@ class SplashPageState extends State<SplashPage> {
     Future.delayed(const Duration(seconds: 1), () async {
       // just delay for showing this slash page
       await _initData();
-      if(context.mounted){
-        await charactersProvider.insertDefaultCharacters();
+      if(mounted){
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainNavigationPage()),
@@ -45,6 +44,8 @@ class SplashPageState extends State<SplashPage> {
     await keyProvider.initKeys();
     loadingProgress.value = Intl.message("InitializingTokenizer");
     _initTokenizer();
+    loadingProgress.value = Intl.message("insertingDefaultCharacter");
+    await charactersProvider.insertDefaultCharacters();
   }
 
   void _initTokenizer() async {
