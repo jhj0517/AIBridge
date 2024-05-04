@@ -114,5 +114,6 @@
   "appleSignIn": "Apple 로그인",
   "backupData": "데이터 백업",
   "loadData": "데이터 로드",
-  "notSupportedImage": "지원되는 형식이 아닙니다."
+  "notSupportedImage": "지원되는 형식이 아닙니다.",
+  "insertingDefaultCharacter": "기본 캐릭터 삽입 중.."
 }

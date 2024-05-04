@@ -108,6 +108,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "This feature is supported for GPT-4 Vision only."),
         "image": MessageLookupByLibrary.simpleMessage("Image"),
         "import": MessageLookupByLibrary.simpleMessage("Import"),
+        "insertingDefaultCharacter": MessageLookupByLibrary.simpleMessage(
+            "Inserting Default Characters..."),
         "isSaved": MessageLookupByLibrary.simpleMessage(" is saved."),
         "keyPageTitle":
             MessageLookupByLibrary.simpleMessage("API Key Management"),

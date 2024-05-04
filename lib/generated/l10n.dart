@@ -1199,6 +1199,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Inserting Default Characters...`
+  String get insertingDefaultCharacter {
+    return Intl.message(
+      'Inserting Default Characters...',
+      name: 'insertingDefaultCharacter',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

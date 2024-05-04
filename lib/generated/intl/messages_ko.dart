@@ -95,6 +95,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "이 기능은 현재 GPT-4 Vision 에서만 지원됩니다."),
         "image": MessageLookupByLibrary.simpleMessage("이미지"),
         "import": MessageLookupByLibrary.simpleMessage("임포트"),
+        "insertingDefaultCharacter":
+            MessageLookupByLibrary.simpleMessage("기본 캐릭터 삽입 중.."),
         "isSaved": MessageLookupByLibrary.simpleMessage(" 가 저장되었습니다."),
         "keyPageTitle": MessageLookupByLibrary.simpleMessage("API 키 관리"),
         "lightTheme": MessageLookupByLibrary.simpleMessage("라이트 테마"),

@@ -113,5 +113,6 @@
   "appleSignIn": "Sign in with Apple",
   "backupData": "Backup Data",
   "loadData": "Load Data",
-  "notSupportedImage": "Not supported format."
+  "notSupportedImage": "Not supported format.",
+  "insertingDefaultCharacter": "Inserting Default Characters..."
 }
