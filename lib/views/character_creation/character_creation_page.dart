@@ -364,7 +364,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     }
     await chatRoomsProvider.updateChatRooms();
 
-    if (context.mounted) {
+    if (mounted) {
       Navigator.of(context).pop();
     }
   }

@@ -90,7 +90,7 @@ class SettingsPageState extends State<SettingsPage> {
                   label: Intl.message('chatRoomSetting'),
                   icon: Icons.settings,
                   onTap: () async {
-                    if (context.mounted) {
+                    if (mounted) {
                       Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => const ChatRoomSettingPage(),

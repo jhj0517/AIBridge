@@ -403,7 +403,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   }
 
   void _navigateTo(StatefulWidget page){
-    if (context.mounted) {
+    if (mounted) {
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => page,

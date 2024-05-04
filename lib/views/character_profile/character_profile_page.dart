@@ -171,7 +171,7 @@ class CharacterProfileState extends State<CharacterProfilePage> {
     }
     chatRoomsProvider.updateChatRooms();
 
-    if (context.mounted) {
+    if (mounted) {
       if(widget.arguments.fromChatPage == true){
         Navigator.pop(context);
       } else {
