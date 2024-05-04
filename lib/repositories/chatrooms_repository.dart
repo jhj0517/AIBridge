@@ -27,7 +27,7 @@ class ChatRoomRepository {
 
   Future<void> updateOneChatRoom(ChatRoom chatRoom) => chatRoomDao.updateChatRoom(chatRoom);
 
-  Future<void> deleteChatRoom(String chatRoomId) => deleteChatRoom(chatRoomId);
+  Future<void> deleteChatRoom(String chatRoomId) => chatRoomDao.deleteChatRoom(chatRoomId);
 
   Future<void> saveChatRoomSetting(ChatRoomSetting setting) async {
     String settingString = jsonEncode(setting.toJson());
