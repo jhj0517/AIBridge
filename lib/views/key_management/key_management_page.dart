@@ -76,8 +76,8 @@ class KeyManagementPageState extends State<KeyManagementPage> {
     super.dispose();
   }
 
-  Future<void> _openKeyDialog(String title, AIPlatformType serviceType) async {
-    _setTextByService(serviceType);
+  Future<void> _openKeyDialog(String title, AIPlatformType platform) async {
+    _setTextByService(platform);
     final dialogResult = await showDialog(
       context: context,
       builder: (context) => TextPaster(
@@ -93,7 +93,7 @@ class KeyManagementPageState extends State<KeyManagementPage> {
     switch(dialogResult){
       case DialogResult.yes:
         await keyProvider.saveKey(
-          _storageKeyByService(serviceType),
+          platform,
           _textFieldControllerKey.text
         );
 
@@ -101,23 +101,14 @@ class KeyManagementPageState extends State<KeyManagementPage> {
     }
   }
 
-  void _setTextByService(AIPlatformType serviceType){
-    switch (serviceType){
+  void _setTextByService(AIPlatformType platform){
+    switch (platform){
       case AIPlatformType.openAI:
-        _textFieldControllerKey.text = keyProvider.openAPIKey != null ? keyProvider.openAPIKey! : "";
+        _textFieldControllerKey.text = keyProvider.openAPIKey ?? "";
         break;
       case AIPlatformType.paLM:
-        _textFieldControllerKey.text = keyProvider.paLMAPIKey != null ? keyProvider.paLMAPIKey! : "";
+        _textFieldControllerKey.text = keyProvider.paLMAPIKey ?? "";
         break;
-    }
-  }
-
-  String _storageKeyByService(AIPlatformType serviceType){
-    switch (serviceType) {
-      case AIPlatformType.openAI:
-        return SecureStorageConstants.openAI;
-      case AIPlatformType.paLM:
-        return SecureStorageConstants.paLM;
     }
   }
 

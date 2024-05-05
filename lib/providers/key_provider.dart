@@ -1,3 +1,4 @@
+import 'package:aibridge/models/models.dart';
 import 'package:aibridge/models/platforms/platform.dart';
 import 'package:flutter/material.dart';
 
@@ -22,13 +23,20 @@ class KeyProvider extends ChangeNotifier {
     _paLMAPIKey = await keyRepository.readValue(SecureStorageConstants.paLM);
   }
 
-  Future<void> saveKey(String key,String value) async {
+  Future<void> saveKey(AIPlatformType platform, String value) async {
+    var key = "";
+    switch (platform){
+      case AIPlatformType.openAI:
+        key = SecureStorageConstants.openAI;
+      case AIPlatformType.paLM:
+        key = SecureStorageConstants.paLM;
+    }
     await keyRepository.writeValue(key, value);
     initKeys();
   }
 
-  bool isKeyValid(AIPlatformType type){
-    switch (type){
+  bool isKeyValid(AIPlatformType platform){
+    switch (platform){
       case AIPlatformType.openAI:
         return openAPIKey != null && openAPIKey!.isNotEmpty;
       case AIPlatformType.paLM:
