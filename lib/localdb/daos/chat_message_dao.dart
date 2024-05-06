@@ -45,7 +45,7 @@ class ChatMessageDao {
     );
   }
 
-  Future<void> updateChatMessage(ChatMessage chatMessage) async {
+  Future<void> upsertChatMessage(ChatMessage chatMessage) async {
     final db = await localDB.database;
     final result = await db.update(
       SQFliteHelper.chatMessageTable,
@@ -54,6 +54,16 @@ class ChatMessageDao {
       whereArgs: [chatMessage.id],
     );
     if (result==0) await insertChatMessage(chatMessage);
+  }
+
+  Future<void> updateChatMessage(ChatMessage chatMessage) async {
+    final db = await localDB.database;
+    await db.update(
+      SQFliteHelper.chatMessageTable,
+      chatMessage.toMap(),
+      where: '${SQFliteHelper.chatMessageColumnId} = ?',
+      whereArgs: [chatMessage.id],
+    );
   }
 
   Future<void> deleteChatMessages(List<ChatMessage> messagesToDelete) async {

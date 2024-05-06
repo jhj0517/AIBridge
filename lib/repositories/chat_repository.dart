@@ -23,6 +23,8 @@ class ChatRepository {
 
   Future<void> updateChatMessage(ChatMessage chatMessage) => dao.updateChatMessage(chatMessage);
 
+  Future<void> upsertChatMessage(ChatMessage chatMessage) => dao.upsertChatMessage(chatMessage);
+
   Future<ChatMessage?> queryLastChatMessage(String roomId) => dao.getLastChatMessage(roomId);
 
   Future<void> setKeyboardHeight(double keyboardHeight) async{
