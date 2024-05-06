@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/models.dart';
 import '../localdb/localdb.dart';
@@ -23,7 +24,23 @@ class ChatRoomRepository {
 
   Future<ChatRoom> getOneChatroom(String characterId) => chatRoomDao.getOneChatRoom(characterId);
 
-  Future<void> insertChatRoom(Character character) => chatRoomDao.insertChatRoom(character);
+  Future<void> insertChatRoom(Character character) async {
+    final roomId = const Uuid().v4();
+    final chatRoom = ChatRoom(
+      id: roomId,
+      characterId: character.id!,
+      userName: character.userName,
+      characterName: character.characterName,
+      photoBLOB: character.photoBLOB,
+    );
+    final firstMessage = ChatMessage.firstMessage(
+      roomId,
+      character.id!,
+      character.firstMessage
+    );
+    await chatRoomDao.insertChatRoom(chatRoom);
+    await chatMessageDao.insertChatMessage(firstMessage);
+  }
 
   Future<void> updateOneChatRoom(ChatRoom chatRoom) => chatRoomDao.updateChatRoom(chatRoom);
 

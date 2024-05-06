@@ -1,4 +1,5 @@
-import '../../models/sqflite/character.dart';
+import 'package:sqflite/sqflite.dart';
+
 import '../../models/sqflite/chat_room.dart';
 import '../sqflite_helper.dart';
 
@@ -14,9 +15,7 @@ class ChatRoomDao {
     final db = await localDB.database;
     final maps = await db.query(SQFliteHelper.chatRoomTable);
 
-    return List.generate(maps.length, (i) {
-      return ChatRoom.fromMap(maps[i]);
-    });
+    return maps.map((json) => ChatRoom.fromMap(json)).toList();
   }
 
   Future<ChatRoom> getOneChatRoom(String characterId) async {
@@ -30,22 +29,13 @@ class ChatRoomDao {
     return ChatRoom.fromMap(maps.first);
   }
 
-  Future<void> insertChatRoom(Character character) async {
+  Future<void> insertChatRoom(ChatRoom chatRoom) async {
     final db = await localDB.database;
-    final List<Map<String, dynamic>> existingChatroom = await db.query(
+    await db.insert(
       SQFliteHelper.chatRoomTable,
-      where: '${SQFliteHelper.chatRoomColumnCharacterId} = ?',
-      whereArgs: [character.id],
+      chatRoom.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.ignore
     );
-    if(existingChatroom.isEmpty){
-      ChatRoom chatRoom = ChatRoom(
-        characterId: character.id!,
-        userName: character.userName,
-        characterName: character.characterName,
-        photoBLOB: character.photoBLOB,
-      );
-      await db.insert(SQFliteHelper.chatRoomTable, chatRoom.toMap());
-    }
   }
 
   Future<void> updateChatRoom(ChatRoom chatRoom) async {

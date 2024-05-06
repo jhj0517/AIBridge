@@ -19,7 +19,5 @@ class CharactersRepository {
 
   Future<void> insertDefaultCharacters({String userName=""}) => characterDao.insertDefaultCharacters(userName: userName);
 
-  Future<void> insertFirstMessage(Character character, ChatMessage firstMessage) => chatMessageDao.insertFirstMessage(character, firstMessage);
-
   Future<void> deleteCharacter(String characterId) => characterDao.deleteCharacter(characterId);
 }

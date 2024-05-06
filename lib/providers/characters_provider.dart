@@ -38,12 +38,6 @@ class CharactersProvider extends ChangeNotifier {
     getCharacters();
   }
 
-  Future<void> insertFirstMessage(Character character, ChatMessage firstMessage) async{
-    final message = firstMessage.copyWith(content: ChatParser.parsePrompt(firstMessage.content, character));
-    await charactersRepository.insertFirstMessage(character, message);
-    getCharacters();
-  }
-
   Future<void> deleteCharacter(String characterId) async{
     await charactersRepository.deleteCharacter(characterId);
     getCharacters();
