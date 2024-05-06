@@ -51,7 +51,7 @@ class ChatProvider extends ChangeNotifier {
     chatRoomsProvider.getChatRooms();
   }
 
-  Future<void> updateOneChatMessage(ChatMessage chatMessage) async {
+  Future<void> updateChatMessage(ChatMessage chatMessage) async {
     await chatRepository.updateChatMessage(chatMessage);
     getChatMessages(chatMessage.roomId);
   }
@@ -101,7 +101,7 @@ class ChatProvider extends ChangeNotifier {
     .listen((event) async {
       answer += event.choices.first.delta.content?[0].text ?? "";
       setRequestState(RequestState.answering);
-      updateOneChatMessage(
+      updateChatMessage(
         message.copyWith(
           content: answer
         )

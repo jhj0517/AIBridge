@@ -243,7 +243,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         break;
       case ChatPageMode.editMode:
         _editChatFocusNode.unfocus();
-        chatProvider.updateOneChatMessage(_messageToEdit.copyWith(isEditable: false));
+        chatProvider.updateChatMessage(_messageToEdit.copyWith(isEditable: false));
         _messageToEdit = ChatMessage.placeHolder();
         _chatTextEditingController.text = "";
         break;
@@ -391,7 +391,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
       isEditable: false
     );
 
-    await chatProvider.updateOneChatMessage(editedChatMessage);
+    await chatProvider.updateChatMessage(editedChatMessage);
     await chatRoomsProvider.getChatRooms();
     setState(() {
       _messageToEdit = ChatMessage.placeHolder();
