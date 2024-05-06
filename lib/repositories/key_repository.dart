@@ -2,7 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class KeyRepository {
 
-  KeyRepository({required this.secureStorage}){}
+  KeyRepository({required this.secureStorage});
 
   final FlutterSecureStorage secureStorage;
 
