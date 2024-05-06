@@ -24,7 +24,7 @@ class ChatRoomRepository {
 
   Future<ChatRoom> getOneChatroom(String characterId) => chatRoomDao.getOneChatRoom(characterId);
 
-  Future<void> insertChatRoom(Character character) async {
+  Future<void> createChatRoom(Character character) async {
     final roomId = const Uuid().v4();
     final chatRoom = ChatRoom(
       id: roomId,

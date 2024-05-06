@@ -46,8 +46,8 @@ class ChatRoomsProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> insertChatRoom(Character character) async{
-    await chatRoomsRepository.insertChatRoom(character);
+  Future<void> createChatRoom(Character character) async{
+    await chatRoomsRepository.createChatRoom(character);
     await getChatRooms();
   }
 
