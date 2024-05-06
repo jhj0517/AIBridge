@@ -52,7 +52,7 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> updateOneChatMessage(ChatMessage chatMessage) async {
-    await chatRepository.updateOneChatMessage(chatMessage);
+    await chatRepository.updateChatMessage(chatMessage);
     getChatMessages(chatMessage.roomId);
   }
 
