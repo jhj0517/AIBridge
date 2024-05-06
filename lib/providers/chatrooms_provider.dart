@@ -42,7 +42,7 @@ class ChatRoomsProvider extends ChangeNotifier{
   }
 
   Future<void> updateCurrentChatRoom(String characterId) async{
-    _currentChatRoom = await chatRoomsRepository.getOneChatroom(characterId);
+    _currentChatRoom = (await chatRoomsRepository.getOneChatroom(characterId))!;
     notifyListeners();
   }
 

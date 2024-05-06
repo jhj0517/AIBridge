@@ -11,7 +11,6 @@ import 'package:intl/intl.dart';
 import '../../providers/providers.dart';
 import '../common/loading/loading_view.dart';
 import '../views.dart';
-import '../../models/models.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
 
 class CharacterProfilePage extends StatefulWidget {
@@ -162,6 +161,8 @@ class CharacterProfileState extends State<CharacterProfilePage> {
   }
 
   Future<void> _onChat() async {
+    await chatRoomsProvider.createChatRoom(charactersProvider.currentCharacter);
+
     if (mounted) {
       if(widget.arguments.fromChatPage == true){
         Navigator.pop(context);

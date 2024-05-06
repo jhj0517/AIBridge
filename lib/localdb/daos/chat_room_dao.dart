@@ -18,14 +18,14 @@ class ChatRoomDao {
     return maps.map((json) => ChatRoom.fromMap(json)).toList();
   }
 
-  Future<ChatRoom> getOneChatRoom(String characterId) async {
+  Future<ChatRoom?> getOneChatRoom(String characterId) async {
     final db = await localDB.database;
     final maps = await db.query(
       SQFliteHelper.chatRoomTable,
       where: '${SQFliteHelper.chatRoomColumnCharacterId} = ?',
       whereArgs: [characterId],
     );
-
+    if (maps.isEmpty) return null;
     return ChatRoom.fromMap(maps.first);
   }
 
@@ -40,12 +40,13 @@ class ChatRoomDao {
 
   Future<void> updateChatRoom(ChatRoom chatRoom) async {
     final db = await localDB.database;
-    await db.update(
+    final result = await db.update(
       SQFliteHelper.chatRoomTable,
       chatRoom.toMap(),
       where: '${SQFliteHelper.chatRoomColumnId} = ?',
       whereArgs: [chatRoom.id],
     );
+    if (result==0) await insertChatRoom(chatRoom);
   }
 
   Future<void> deleteChatRoom(String id) async {

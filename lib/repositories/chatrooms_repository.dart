@@ -22,23 +22,27 @@ class ChatRoomRepository {
 
   Future<ChatMessage?> getLastChat(String roomId) => chatMessageDao.getLastChatMessage(roomId);
 
-  Future<ChatRoom> getOneChatroom(String characterId) => chatRoomDao.getOneChatRoom(characterId);
+  Future<ChatRoom?> getOneChatroom(String characterId) => chatRoomDao.getOneChatRoom(characterId);
 
   Future<void> createChatRoom(Character character) async {
+    final existingChatRoom = (await chatRoomDao.getOneChatRoom(character.id!));
+    final roomId = existingChatRoom==null ? const Uuid().v4() : existingChatRoom.id!;
     final chatRoom = ChatRoom(
-      id: const Uuid().v4(),
+      id: roomId,
       characterId: character.id!,
       userName: character.userName,
       characterName: character.characterName,
       photoBLOB: character.photoBLOB,
     );
+    await chatRoomDao.updateChatRoom(chatRoom);
+
     final firstMessage = ChatMessage.firstMessage(
-      chatRoom.id!,
-      character.id!,
-      character.firstMessage
+        chatRoom.id!,
+        character.id!,
+        character.firstMessage
     );
-    await chatRoomDao.insertChatRoom(chatRoom);
-    if (character.firstMessage.isNotEmpty) await chatMessageDao.insertChatMessage(firstMessage);
+    final existingMessage = (await chatMessageDao.getLastChatMessage(roomId));
+    if (existingMessage==null && character.firstMessage.isNotEmpty) await chatMessageDao.insertChatMessage(firstMessage);
   }
 
   Future<void> updateOneChatRoom(ChatRoom chatRoom) => chatRoomDao.updateChatRoom(chatRoom);
