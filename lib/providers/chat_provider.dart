@@ -56,11 +56,6 @@ class ChatProvider extends ChangeNotifier {
     getChatMessages(chatMessage.roomId);
   }
 
-  Future<void> updateStreamChatMessage(ChatMessage chatMessage) async {
-    await chatRepository.updateStreamChatMessage(chatMessage);
-    getChatMessages(chatMessage.roomId);
-  }
-
   Future<void> deleteOneChatMessage(String id,String roomId) async {
     await chatRepository.deleteOneChatMessage(id);
    getChatMessages(roomId);
@@ -104,9 +99,9 @@ class ChatProvider extends ChangeNotifier {
       }
     })
     .listen((event) async {
-      answer += event.choices.first.delta.content![0].text!;
+      answer += event.choices.first.delta.content?[0].text ?? "";
       setRequestState(RequestState.answering);
-      updateStreamChatMessage(
+      updateOneChatMessage(
         message.copyWith(
           content: answer
         )
@@ -145,7 +140,6 @@ class ChatProvider extends ChangeNotifier {
                 characterId: character.id!,
                 chatMessageType: ChatMessageType.characterMessage,
                 timestamp: Utilities.getTimestamp(),
-                role: OpenAIChatMessageRole.assistant.name,
                 content: value.candidates!.first.content
             );
             insertChatMessage(answer);

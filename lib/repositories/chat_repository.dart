@@ -21,9 +21,7 @@ class ChatRepository {
 
   Future<void> deleteChatMessages(List<ChatMessage> messagesToDelete) => dao.deleteChatMessages(messagesToDelete);
 
-  Future<void> updateOneChatMessage(ChatMessage chatMessage) => dao.updateOneChatMessage(chatMessage);
-
-  Future<void> updateStreamChatMessage(ChatMessage chatMessage) => dao.updateStreamChatMessage(chatMessage);
+  Future<void> updateOneChatMessage(ChatMessage chatMessage) => dao.updateChatMessage(chatMessage);
 
   Future<ChatMessage?> queryLastChatMessage(String roomId) => dao.getLastChatMessage(roomId);
 

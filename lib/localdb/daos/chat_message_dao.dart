@@ -47,6 +47,10 @@ class ChatMessageDao {
   }
 
   Future<void> insertFirstMessage(Character character, ChatMessage firstMessage) async {
+    if (character.firstMessage.isEmpty){
+      return;
+    }
+
     if (character.firstMessage.isNotEmpty){
       final db = await localDB.database;
       final List<Map<String, dynamic>> existingMessages = await db.query(
@@ -73,38 +77,15 @@ class ChatMessageDao {
     }
   }
 
-  Future<void> updateOneChatMessage(ChatMessage chatMessage) async {
+  Future<void> updateChatMessage(ChatMessage chatMessage) async {
     final db = await localDB.database;
-    await db.update(
+    final result = await db.update(
       SQFliteHelper.chatMessageTable,
       chatMessage.toMap(),
       where: '${SQFliteHelper.chatMessageColumnId} = ?',
       whereArgs: [chatMessage.id],
     );
-  }
-
-  Future<void> updateStreamChatMessage(ChatMessage chatMessage) async {
-    final db = await localDB.database;
-
-    List<Map<String, dynamic>> existingMessage = await db.query(
-      SQFliteHelper.chatMessageTable,
-      where: '${SQFliteHelper.chatMessageColumnId} = ?',
-      whereArgs: [chatMessage.id],
-    );
-
-    if (existingMessage.isNotEmpty) {
-      await db.update(
-        SQFliteHelper.chatMessageTable,
-        chatMessage.toMap(),
-        where: '${SQFliteHelper.chatMessageColumnId} = ?',
-        whereArgs: [existingMessage.first[SQFliteHelper.chatMessageColumnId]],
-      );
-    } else {
-      await db.insert(
-        SQFliteHelper.chatMessageTable,
-        chatMessage.toMap(),
-      );
-    }
+    if (result==0) await insertChatMessage(chatMessage);
   }
 
   Future<void> deleteChatMessages(List<ChatMessage> messagesToDelete) async {
