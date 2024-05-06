@@ -154,7 +154,6 @@ class CharacterCreationState extends State<CharacterCreationPage> {
                         ],
                       ),
                     ),
-                    // Add your other widgets, such as text fields, buttons, etc., below this line
                   ],
                 ),
               ),
