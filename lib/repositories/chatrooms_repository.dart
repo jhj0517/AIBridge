@@ -34,7 +34,7 @@ class ChatRoomRepository {
       characterName: character.characterName,
       photoBLOB: character.photoBLOB,
     );
-    await chatRoomDao.updateChatRoom(chatRoom);
+    await chatRoomDao.upsertChatRoom(chatRoom);
 
     final firstMessage = ChatMessage.firstMessage(
         chatRoom.id!,
