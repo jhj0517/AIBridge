@@ -47,34 +47,25 @@ class ChatMessageDao {
   }
 
   Future<void> insertFirstMessage(Character character, ChatMessage firstMessage) async {
-    if (character.firstMessage.isEmpty){
-      return;
-    }
+    if (character.firstMessage.isEmpty) return;
 
-    if (character.firstMessage.isNotEmpty){
-      final db = await localDB.database;
-      final List<Map<String, dynamic>> existingMessages = await db.query(
-        SQFliteHelper.chatMessageTable,
-        where: '${SQFliteHelper.chatMessageColumnCharacterId} = ?',
-        whereArgs: [character.id],
-      );
-      final List<Map<String, dynamic>> existingChatroom = await db.query(
-        SQFliteHelper.chatRoomTable,
-        where: '${SQFliteHelper.chatRoomColumnCharacterId} = ?',
-        whereArgs: [character.id],
-      );
-      if (existingMessages.isEmpty && existingChatroom.isEmpty) {
-        final chatRoom = ChatRoom(
-          id: firstMessage.roomId,
-          characterId: character.id!,
-          userName: character.userName,
-          characterName: character.characterName,
-          photoBLOB: character.photoBLOB,
-        );
-        await db.insert(SQFliteHelper.chatRoomTable, chatRoom.toMap());
-        await db.insert(SQFliteHelper.chatMessageTable, firstMessage.toMap());
-      }
-    }
+    final db = await localDB.database;
+    final List<Map<String, dynamic>> existingChatroom = await db.query(
+      SQFliteHelper.chatRoomTable,
+      where: '${SQFliteHelper.chatRoomColumnCharacterId} = ?',
+      whereArgs: [character.id],
+    );
+    if (existingChatroom.isNotEmpty) return;
+
+    final chatRoom = ChatRoom(
+      id: firstMessage.roomId,
+      characterId: character.id!,
+      userName: character.userName,
+      characterName: character.characterName,
+      photoBLOB: character.photoBLOB,
+    );
+    await db.insert(SQFliteHelper.chatRoomTable, chatRoom.toMap());
+    await db.insert(SQFliteHelper.chatMessageTable, firstMessage.toMap());
   }
 
   Future<void> updateChatMessage(ChatMessage chatMessage) async {
