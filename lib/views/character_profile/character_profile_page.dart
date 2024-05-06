@@ -199,6 +199,5 @@ class CharacterProfilePageArguments {
   CharacterProfilePageArguments({
     required this.characterId,
     this.fromChatPage=false
-  }); // note : just receive Character
+  });
 }
-// Clean this.
