@@ -68,24 +68,6 @@ class PaLMPlatform implements AIPlatform {
     );
   }
 
-  @override
-  String toString() {
-    return 'PaLMService(\n'
-        '  serviceType: $serviceType,\n'
-        '  id: $id,\n'
-        '  characterId: $characterId,\n'
-        '  modelName: $modelName,\n'
-        '  modelId: $modelId,\n'
-        '  context: $context,\n'
-        '  exampleInput: $exampleInput,\n'
-        '  exampleOutput: $exampleOutput,\n'
-        '  temperature: $temperature,\n'
-        '  candidateCount: $candidateCount,\n'
-        '  topP: $topP,\n'
-        '  topK: $topK,\n'
-        ')';
-  }
-
 }
 
 /*
@@ -112,10 +94,6 @@ class PaLMResponse {
     );
   }
 
-  @override
-  String toString() {
-    return 'PaLMResponse(candidates: $candidates, messages: $messages, filters: $filters)';
-  }
 }
 
 class PaLMResponseCandidate {
@@ -164,11 +142,6 @@ class PaLMResponseContentFilter {
       message: json['message'],
     );
   }
-
-  @override
-  String toString() {
-    return 'ContentFilter(reason: $reason, message: $message)';
-  }
 }
 
 /*
@@ -195,8 +168,6 @@ class PaLMRequest {
       'prompt': prompt.toJson(),
       'temperature': temperature,
       'candidate_count': candidateCount,
-      // 'topP': topP,
-      // 'topK': topK,  // these are advanced value, I don't know its default value
     };
   }
 }
@@ -260,7 +231,7 @@ class PaLMMessage {
 
   Map<String, dynamic> toJson() {
     return {
-      'author': author.name, // Convert the enum to a string
+      'author': author.name,
       'content': content,
     };
   }
