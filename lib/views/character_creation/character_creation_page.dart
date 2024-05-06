@@ -337,8 +337,8 @@ class CharacterCreationState extends State<CharacterCreationPage> {
       Utilities.closeKeyboard(context);
     }
 
-    _selectedBackgroundImageBLOB!.isEmpty ?
-    _selectedBackgroundImageBLOB = await ImageConverter.convertAssetImageToBLOB(
+    _selectedBackgroundImageBLOB!.isEmpty
+    ? _selectedBackgroundImageBLOB = await ImageConverter.convertAssetImageToBLOB(
         PathConstants.defaultCharacterBackgroundImage
     )
     : _selectedBackgroundImageBLOB;
@@ -352,7 +352,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         firstMessage: _textFieldControllerFirstMessage.text,
         service: _getServiceData()
     );
-    await characterProvider.insertOrUpdateCharacter(newCharacter);
+    await characterProvider.upsertCharacter(newCharacter);
     await chatRoomsProvider.createChatRoom(newCharacter);
 
     if (mounted) {

@@ -6,7 +6,6 @@ import '../../utils/default_character_manager.dart';
 import '../sqflite_helper.dart';
 
 class CharacterDao {
-
   CharacterDao({
     required this.localDB
   });
@@ -31,18 +30,12 @@ class CharacterDao {
     return Character.fromMap(maps.first);
   }
 
-  Future<void> insertOrUpdateCharacter(Character character) async {
+  Future<void> insertCharacter(Character character) async {
     final db = await localDB.database;
-    final List<Map<String, dynamic>> existingCharacter = await db.query(
+    await db.insert(
       SQFliteHelper.charactersTable,
-      where: '${SQFliteHelper.charactersColumnId} = ?',
-      whereArgs: [character.id],
+      character.toMap(),
     );
-    if(existingCharacter.isEmpty){
-      await db.insert(SQFliteHelper.charactersTable, character.toMap());
-    } else {
-      await updateCharacter(character);
-    }
   }
 
   Future<void> insertDefaultCharacters({String userName=""}) async {
@@ -52,10 +45,21 @@ class CharacterDao {
     if (count == 0 && !defaultsInserted) {
       final List<Character> defaultCharacters = await DefaultCharacterManager.getDefaultCharacters(userName);
       for (final character in defaultCharacters) {
-        await insertOrUpdateCharacter(character);
+        await upsertCharacter(character);
       }
       await localDB.prefs.setBool(SharedPreferenceConstants.defaultInserted, true);
     }
+  }
+
+  Future<void> upsertCharacter(Character character) async {
+    final db = await localDB.database;
+    final result = await db.update(
+      SQFliteHelper.charactersTable,
+      character.toMap(),
+      where: '${SQFliteHelper.charactersColumnId} = ?',
+      whereArgs: [character.id],
+    );
+    if (result==0) await insertCharacter(character);
   }
 
   Future<void> updateCharacter(Character character) async {

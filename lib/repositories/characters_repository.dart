@@ -15,7 +15,7 @@ class CharactersRepository {
 
   Future<Character> getOneCharacter(String characterId) => characterDao.getOneCharacter(characterId);
 
-  Future<void> insertOrUpdateCharacter(Character character) => characterDao.insertOrUpdateCharacter(character);
+  Future<void> upsertCharacter(Character character) => characterDao.upsertCharacter(character);
 
   Future<void> insertDefaultCharacters({String userName=""}) => characterDao.insertDefaultCharacters(userName: userName);
 

@@ -28,8 +28,8 @@ class CharactersProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> insertOrUpdateCharacter(Character character) async{
-    await charactersRepository.insertOrUpdateCharacter(character);
+  Future<void> upsertCharacter(Character character) async{
+    await charactersRepository.upsertCharacter(character);
     getCharacters();
   }
 
