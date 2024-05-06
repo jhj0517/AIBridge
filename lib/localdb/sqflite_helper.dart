@@ -27,7 +27,6 @@ class SQFliteHelper {
   static const chatMessageColumnCharacterId = 'character_id';
   static const chatMessageColumnChatMessageType = 'type';
   static const chatMessageColumnTimestamp = 'timestamp';
-  static const chatMessageColumnRole = 'role';
   static const chatMessageColumnContent = 'content';
   static const chatMessageColumnImageUrl = 'image_url';
   static const chatMessageColumnIsEditable = 'is_editable';
@@ -120,7 +119,6 @@ class SQFliteHelper {
       $chatMessageColumnRoomId TEXT NOT NULL,
       $chatMessageColumnChatMessageType INTEGER NOT NULL,
       $chatMessageColumnTimestamp INTEGER NOT NULL,
-      $chatMessageColumnRole TEXT NOT NULL,
       $chatMessageColumnContent TEXT NOT NULL,
       $chatMessageColumnImageUrl TEXT NOT NULL,
       $chatMessageColumnIsEditable INTEGER NOT NULL,

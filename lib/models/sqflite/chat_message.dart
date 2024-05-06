@@ -12,7 +12,6 @@ class ChatMessage {
   final String characterId;
   final ChatMessageType chatMessageType;
   final int timestamp;
-  final String role;
   final String content;
   String imageUrl;
   bool isEditable;
@@ -23,7 +22,6 @@ class ChatMessage {
     required this.characterId,
     required this.chatMessageType,
     required this.timestamp,
-    required this.role,
     required this.content,
     this.imageUrl="",
     this.isEditable=false,
@@ -37,7 +35,6 @@ class ChatMessage {
       SQFliteHelper.chatMessageColumnCharacterId: characterId,
       SQFliteHelper.chatMessageColumnChatMessageType: chatMessageType.index,
       SQFliteHelper.chatMessageColumnTimestamp: timestamp,
-      SQFliteHelper.chatMessageColumnRole: role,
       SQFliteHelper.chatMessageColumnContent: content,
       SQFliteHelper.chatMessageColumnImageUrl: imageUrl,
       SQFliteHelper.chatMessageColumnIsEditable: isEditable ? 1 : 0,
@@ -51,7 +48,6 @@ class ChatMessage {
       characterId: map[SQFliteHelper.chatMessageColumnCharacterId] as String,
       chatMessageType: ChatMessageType.values[map[SQFliteHelper.chatMessageColumnChatMessageType] as int],
       timestamp: map[SQFliteHelper.chatMessageColumnTimestamp] as int,
-      role: map[SQFliteHelper.chatMessageColumnRole] as String,
       content: map[SQFliteHelper.chatMessageColumnContent] as String,
       imageUrl: map[SQFliteHelper.chatMessageColumnImageUrl] as String,
       isEditable: (map[SQFliteHelper.chatMessageColumnIsEditable] as int) == 1,
@@ -64,7 +60,6 @@ class ChatMessage {
         characterId: "",
         chatMessageType: ChatMessageType.indicator,
         timestamp: -1,
-        role: "",
         content: ""
     );
   }
@@ -77,7 +72,6 @@ class ChatMessage {
       characterId: characterId,
       chatMessageType: ChatMessageType.characterMessage,
       timestamp: Utilities.getTimestamp(),
-      role: "assistant",
       content: content
     );
   }
@@ -99,15 +93,10 @@ class ChatMessage {
       characterId: characterId ?? this.characterId,
       chatMessageType: chatMessageType ?? this.chatMessageType,
       timestamp: timestamp ?? this.timestamp,
-      role: role ?? this.role,
       content: content ?? this.content,
       imageUrl: imageUrl ?? this.imageUrl,
       isEditable: isEditable ?? this.isEditable,
     );
   }
 
-  @override
-  String toString() {
-    return 'ChatMessage(Id: $id, roomId: $roomId, characterId: $characterId, chatMessageType: $chatMessageType, timestamp: $timestamp, role: $role, content: $content, isEditable: $isEditable)';
-  }
 }

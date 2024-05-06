@@ -79,7 +79,7 @@ class PaLM{
   static List<PaLMMessage> formattingToPaLM(List<ChatMessage> chatMessages) {
     return chatMessages
         .map((message) => PaLMMessage(
-      author: message.role == 'user'
+      author: message.chatMessageType == ChatMessageType.userMessage
           ? PaLMMessageRole.user
           : PaLMMessageRole.assistant,
       content: message.content,

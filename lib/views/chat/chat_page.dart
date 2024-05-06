@@ -194,7 +194,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   }
 
   Future<void> _init() async {
-    final backgroundColor = Theme.of(context).colorScheme.background;
     await chatRoomsProvider.readChatRoomSetting(context);
     await charactersProvider.updateCurrentCharacter(widget.arguments.characterId);
     await chatRoomsProvider.updateCurrentChatRoom(widget.arguments.characterId);
@@ -281,7 +280,6 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
             characterId: character.id!,
             chatMessageType: ChatMessageType.userMessage,
             timestamp: Utilities.getTimestamp(),
-            role: "user",
             content: _imageURLTextEditingController.text,
             imageUrl: _imageURLTextEditingController.text
         );
@@ -356,7 +354,7 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
         break;
       case DialogResult.yes:
         chatProvider.setRequestState(RequestState.initialized);
-        _navigateTo(const MainNavigationPage(initialIndex: 0));
+        _navigateTo(const MainNavigationPage());
         break;
       case null:
         chatProvider.setRequestState(RequestState.initialized);
@@ -413,16 +411,15 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
   }
 
   Future<void> _onSubmitInput() async {
-    final currentChatRoom = chatRoomsProvider.currentChatRoom;
+    final chatRoom = chatRoomsProvider.currentChatRoom;
     final character = charactersProvider.currentCharacter;
-
     final now = Utilities.getTimestamp();
+
     final inputChatMessage = ChatMessage(
-      roomId: currentChatRoom.id!,
+      roomId: chatRoom.id!,
       characterId: character.id!,
       chatMessageType: ChatMessageType.userMessage,
       timestamp: now,
-      role: "user",
       content: _inputTextEditingController.text,
     );
 

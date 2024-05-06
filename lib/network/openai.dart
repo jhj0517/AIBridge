@@ -67,7 +67,7 @@ class OpenAINetwork{
               : [OpenAIChatCompletionChoiceMessageContentItemModel.imageUrl(
                   message.imageUrl
                )],
-      role: message.role == 'user'
+      role: message.chatMessageType == ChatMessageType.userMessage
           ? OpenAIChatMessageRole.user
           : OpenAIChatMessageRole.assistant,
     )).toList();
