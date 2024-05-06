@@ -38,7 +38,7 @@ class ChatRoomsProvider extends ChangeNotifier{
 
   Future<void> updateOneChatRoom(ChatRoom chatRoom) async{
     await chatRoomsRepository.updateOneChatRoom(chatRoom);
-    await getChatRooms();
+    getChatRooms();
   }
 
   Future<void> updateCurrentChatRoom(String characterId) async{
@@ -48,12 +48,12 @@ class ChatRoomsProvider extends ChangeNotifier{
 
   Future<void> createChatRoom(Character character) async{
     await chatRoomsRepository.createChatRoom(character);
-    await getChatRooms();
+    getChatRooms();
   }
 
   Future<void> deleteChatRoom(String chatRoomId) async{
     await chatRoomsRepository.deleteChatRoom(chatRoomId);
-    await getChatRooms();
+    getChatRooms();
   }
 
   Future<void> saveChatRoomSetting(ChatRoomSetting setting) async{
