@@ -35,7 +35,6 @@ class CharacterMessage extends BaseMessage {
                       builder: (context) => CharacterProfilePage(
                           arguments: CharacterProfilePageArguments(
                               characterId: character!.id!,
-                              fromChatPage: true
                           )
                       ),
                     )

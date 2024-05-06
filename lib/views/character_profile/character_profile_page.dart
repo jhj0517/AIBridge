@@ -162,22 +162,17 @@ class CharacterProfileState extends State<CharacterProfilePage> {
 
   Future<void> _onChat() async {
     await chatRoomsProvider.createChatRoom(charactersProvider.currentCharacter);
-
-    if (mounted) {
-      if(widget.arguments.fromChatPage == true){
-        Navigator.pop(context);
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatPage(
-                arguments: ChatPageArguments(
-                    characterId: widget.arguments.characterId
-                )
-            ),
+    if (context.mounted){
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatPage(
+              arguments: ChatPageArguments(
+                  characterId: widget.arguments.characterId
+              )
           ),
-        );
-      }
+        ),
+      );
     }
   }
 
@@ -194,10 +189,8 @@ class CharacterProfileState extends State<CharacterProfilePage> {
 
 class CharacterProfilePageArguments {
   final String characterId;
-  final bool? fromChatPage;
 
   CharacterProfilePageArguments({
     required this.characterId,
-    this.fromChatPage=false
   });
 }
