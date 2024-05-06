@@ -336,11 +336,12 @@ class CharacterCreationState extends State<CharacterCreationPage> {
     if (Utilities.isKeyboardShowing(context)) {
       Utilities.closeKeyboard(context);
     }
+
     _selectedBackgroundImageBLOB!.isEmpty ?
     _selectedBackgroundImageBLOB = await ImageConverter.convertAssetImageToBLOB(
         PathConstants.defaultCharacterBackgroundImage
     )
-    : Uint8List(0);
+    : _selectedBackgroundImageBLOB;
 
     final newCharacter = Character(
         id: widget.arguments.character.id,
@@ -352,17 +353,7 @@ class CharacterCreationState extends State<CharacterCreationPage> {
         service: _getServiceData()
     );
     await characterProvider.insertOrUpdateCharacter(newCharacter);
-    if(newCharacter.firstMessage.isNotEmpty){
-      // This only insert first Message if chatroom doesn't exist
-      final firstChatRoom = ChatRoom.newChatRoom(newCharacter);
-      final firstMessage = ChatMessage.firstMessage(firstChatRoom.id!, newCharacter.id!, _textFieldControllerFirstMessage.text);
-      await characterProvider.insertFirstMessage(newCharacter, firstMessage);
-    }
-
-    if(widget.arguments.character.id != null){
-      await characterProvider.updateCurrentCharacter(widget.arguments.character.id!);
-    }
-    await chatRoomsProvider.getChatRooms();
+    await chatRoomsProvider.createChatRoom(newCharacter);
 
     if (mounted) {
       Navigator.of(context).pop();

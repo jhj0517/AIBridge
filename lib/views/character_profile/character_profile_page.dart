@@ -162,15 +162,6 @@ class CharacterProfileState extends State<CharacterProfilePage> {
   }
 
   Future<void> _onChat() async {
-    if (charactersProvider.currentCharacter.firstMessage.isNotEmpty){
-      final firstChatRoom = ChatRoom.newChatRoom(charactersProvider.currentCharacter);
-      final firstMessage = ChatMessage.firstMessage(firstChatRoom.id!, charactersProvider.currentCharacter.id!, charactersProvider.currentCharacter.firstMessage);
-      await charactersProvider.insertFirstMessage(charactersProvider.currentCharacter, firstMessage);
-    } else {
-      await chatRoomsProvider.insertChatRoom(charactersProvider.currentCharacter);
-    }
-    chatRoomsProvider.getChatRooms();
-
     if (mounted) {
       if(widget.arguments.fromChatPage == true){
         Navigator.pop(context);
