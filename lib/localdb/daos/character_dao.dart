@@ -17,9 +17,7 @@ class CharacterDao {
     final db = await localDB.database;
     final maps = await db.query(SQFliteHelper.charactersTable);
 
-    return List.generate(maps.length, (i) {
-      return Character.fromMap(maps[i]);
-    });
+    return maps.map((json) => Character.fromMap(json)).toList();
   }
 
   Future<Character> getOneCharacter(String characterId) async {

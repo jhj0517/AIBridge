@@ -21,11 +21,8 @@ class ChatMessageDao {
       limit: 1,
     );
 
-    if (maps.isNotEmpty){
-      return ChatMessage.fromMap(maps.first);
-    } else {
-      return null;
-    }
+    if (maps.isEmpty) return null;
+    return ChatMessage.fromMap(maps.first);
   }
 
   Future<List<ChatMessage>> getChatMessages(String roomId) async {
@@ -36,9 +33,7 @@ class ChatMessageDao {
       whereArgs: [roomId],
     );
 
-    return List.generate(maps.length, (i) {
-      return ChatMessage.fromMap(maps[i]);
-    });
+    return maps.map((json) => ChatMessage.fromMap(json)).toList();
   }
 
   Future<void> insertChatMessage(ChatMessage chatMessage) async {
