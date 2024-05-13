@@ -3,7 +3,9 @@ import 'package:aibridge/views/chat/widgets/chat_list/chat_list.dart';
 import 'package:aibridge/views/chat/widgets/chat_menu/menu_item.dart';
 import 'package:aibridge/views/chat/widgets/messages/character/character_message_loading.dart';
 import 'package:aibridge/views/common/appbars/normal_app_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -102,21 +104,17 @@ class ChatPageState extends State<ChatPage> with WidgetsBindingObserver{
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Expanded(
-                        child: ChatList(
-                            list: chatProvider.chatMessages,
-                            character: charactersProvider.currentCharacter,
-                            isLoading: _isLoading,
-                            mode: mode,
-                            chatScrollController: _chatScrollController,
-                            chatTextEditingController: _chatTextEditingController,
-                            editChatFocusNode: _editChatFocusNode,
-                            messagesToDeleteNotifier: _messagesToDeleteNotifier,
-                            dialogCallback: (message) => _openChatDialog(message),
-                            settings: settings!
-                        )
-                    ),
-                    CharacterMessageLoading(
-                      character: charactersProvider.currentCharacter,
+                      child: ChatList(
+                          character: charactersProvider.currentCharacter,
+                          isLoading: _isLoading,
+                          mode: mode,
+                          chatScrollController: _chatScrollController,
+                          chatTextEditingController: _chatTextEditingController,
+                          editChatFocusNode: _editChatFocusNode,
+                          messagesToDeleteNotifier: _messagesToDeleteNotifier,
+                          dialogCallback: (message) => _openChatDialog(message),
+                          settings: settings!
+                      ),
                     ),
                     if (mode == ChatPageMode.editMode) ...[
                       EditBar(onPressed: () => _onEditChat()),

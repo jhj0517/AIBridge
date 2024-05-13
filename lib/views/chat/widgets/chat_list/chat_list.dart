@@ -4,13 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:aibridge/providers/chat_provider.dart';
 import 'package:aibridge/models/models.dart';
 import 'package:aibridge/views/chat/chat_page.dart';
+import '../messages/character/character_message_loading.dart';
 import 'chat_item.dart';
 
 class ChatList extends StatefulWidget{
 
   const ChatList({
     super.key,
-    required this.list,
     required this.character,
     required this.isLoading,
     required this.mode,
@@ -22,7 +22,6 @@ class ChatList extends StatefulWidget{
     required this.settings,
   });
 
-  final List<ChatMessage> list;
   final Character character;
   final bool isLoading;
   final ChatPageMode mode;
@@ -53,9 +52,15 @@ class ChatListState extends State<ChatList> {
                 cacheExtent: widget.isLoading? double.maxFinite: null, // without this, scrollChatToBottom() at first does not work
                 padding: const EdgeInsets.only(top: 10),
                 controller: widget.chatScrollController,
-                itemCount: chatMessages.length,
+                itemCount: chatMessages.length + 1,
                 itemBuilder: (context, index) {
-                  final item = chatMessages[index];
+                  if (index==0) {
+                    return CharacterMessageLoading(
+                      character: widget.character,
+                    );
+                  }
+
+                  final item = chatMessages[index-1];
                   return ChatItem(
                     item: item,
                     character: widget.character,
