@@ -38,44 +38,44 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<SocialAuthProvider>(
           create: (context) => SocialAuthProvider(
-            firebaseAuth: locator.get<FirebaseAuth>(),
-            googleSignIn: locator.get<GoogleSignIn>(instanceName: AppConstants.googleNormalSignInScope),
+            firebaseAuth: locator<FirebaseAuth>(),
+            googleSignIn: locator<GoogleSignIn>(instanceName: AppConstants.googleNormalSignInScope),
           ),
         ),
         ChangeNotifierProvider<ThemeProvider>(
           create: (context) => ThemeProvider(
-            prefs: locator.get<SharedPreferences>()
+            prefs: locator<SharedPreferences>()
           ),
         ),
         Provider<SQFliteHelper>(
           create: (context) => SQFliteHelper(
-            prefs: locator.get<SharedPreferences>()
+            prefs: locator<SharedPreferences>()
           ),
         ),
         ChangeNotifierProvider<GDriveProvider>(
           create: (context) => GDriveProvider(
-            localDB: locator.get<SQFliteHelper>(),
-            googleSignIn: locator.get<GoogleSignIn>(instanceName: AppConstants.googleDriveSignInScope)
+            localDB: locator<SQFliteHelper>(),
+            googleSignIn: locator<GoogleSignIn>(instanceName: AppConstants.googleDriveSignInScope)
           ),
         ),
         ChangeNotifierProvider<KeyProvider>(
           create: (context) => KeyProvider(
-            keyRepository: locator.get<KeyRepository>()
+            keyRepository: locator<KeyRepository>()
           ),
         ),
         ChangeNotifierProvider<CharactersProvider>(
           create: (context) => CharactersProvider(
-              charactersRepository: locator.get<CharactersRepository>()
+              charactersRepository: locator<CharactersRepository>()
           ),
         ),
         ChangeNotifierProvider<ChatRoomsProvider>(
           create: (context) => ChatRoomsProvider(
-            chatRoomsRepository: locator.get<ChatRoomRepository>()
+            chatRoomsRepository: locator<ChatRoomRepository>()
           ),
         ),
         ChangeNotifierProvider<ChatProvider>(
           create: (context) => ChatProvider(
-            chatRepository: locator.get<ChatRepository>(),
+            chatRepository: locator<ChatRepository>(),
             charactersProvider: context.read<CharactersProvider>(),
             chatRoomsProvider: context.read<ChatRoomsProvider>(),
             keyProvider: context.read<KeyProvider>(),
