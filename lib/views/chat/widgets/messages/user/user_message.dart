@@ -26,35 +26,31 @@ class UserMessage extends BaseMessage {
             const SizedBox(width: 70),
             buildTimestamp(context),
             const SizedBox(width: 4.0),
-            _buildChatBox(context),
+            Flexible(
+              child: Material(
+                color: Colors.transparent,
+                child: Ink(
+                    decoration: BoxDecoration(
+                      color: settings.userChatBoxBackgroundColor,
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: InkWell(
+                      splashColor: settings.userChatBoxBackgroundColor.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(12.0),
+                      onLongPress: () async => dialogCallback?.call(chatMessage),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                        child: buildMessageContent(context),
+                      ),
+                    )
+                ),
+              ),
+            ),
             const SizedBox(width: 10.0),
           ],
         ),
         const SizedBox(height: 15),
       ],
-    );
-  }
-
-  Widget _buildChatBox(BuildContext context){
-    return Flexible(
-      child: Material(
-        color: Colors.transparent,
-        child: Ink(
-            decoration: BoxDecoration(
-              color: settings.userChatBoxBackgroundColor,
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: InkWell(
-              splashColor: settings.userChatBoxBackgroundColor.withOpacity(0.5),
-              borderRadius: BorderRadius.circular(12.0),
-              onLongPress: () async => dialogCallback?.call(chatMessage),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                child: buildMessageContent(context),
-              ),
-            )
-        ),
-      ),
     );
   }
 }
