@@ -17,12 +17,6 @@ class ExifManager{
   static Future<Map<String, Object>?> readAttributes({
     required String imageFilePath
   }) async {
-    /*
-    * imageFilePath : path for the image
-    * -------
-    * returns EXIF data as a map
-    * Note : Only image in the temp folder is readable. Any task with EXIF should be handled in the temp folder.
-    * */
     try{
       Exif exif = await Exif.fromPath(imageFilePath);
       return await exif.getAttributes();
@@ -35,13 +29,6 @@ class ExifManager{
   static Future<void> saveImageWithExif({
     required Character character
   }) async {
-    /*
-    * Save new image with json character data as exif data
-    * ------------
-    * character : Character data to add exif data in the image
-    * Note : Only specific EXIF is writable in both Android and iOS. Using the key "UserComment" is safe for both OS. see more info: https://pub.dev/packages/native_exif
-    * Note : Only temp image is EXIF editable, so you should make temp image -> edit EXIF -> move it to Gallery
-    * */
     try {
       final file = File(p.join(Directory.systemTemp.path, 'tempimage.png'));
       await file.create();
@@ -69,13 +56,6 @@ class ExifManager{
   static Future<Character?> decodeCharacter({
     required XFile? pickedFile
   }) async {
-    /*
-    * Get character data from exif data in the image.
-    * ------------
-    * pickedFile : picked image file with image picker
-    * ------------
-    * returns Character model data
-    * */
     try{
       Map<String, Object>? attributes = await readAttributes(imageFilePath: pickedFile!.path);
       final exifBase64 = attributes?["UserComment"] as String;

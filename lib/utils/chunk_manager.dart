@@ -17,11 +17,6 @@ class ChunkManager{
   static List<Map<String, dynamic>>? readChunk({
     required Uint8List BLOB
   }) {
-    /*
-    * BLOB : bytes data of the image
-    * -------
-    * returns List of the chunk data
-    * */
     try{
       return pngExtract.extractChunks(BLOB);
     } catch(e){
@@ -33,15 +28,6 @@ class ChunkManager{
   static Future<bool> saveImageWithChunk({
     required Character character
   }) async {
-    /*
-    * Save new image with json character data as chunk data
-    * ------------
-    * character : Character data to add exif data in the image
-    * Note : Only specific EXIF is writable in both Android and iOS. Using the key "UserComment" is safe for both OS. see more info: https://pub.dev/packages/native_exif
-    * Note : Only temp image is EXIF editable, so you should make temp image -> edit EXIF -> move it to Gallery
-    * ------------
-    * returns a bool value that indicates whether the result was successful or not.
-    * */
     try {
       List<Map<String, dynamic>>? newChunks = readChunk(BLOB: character.photoBLOB);
       final v2Card = character.toV2Card();
@@ -73,16 +59,6 @@ class ChunkManager{
     required String keyword,
     required String newValue
   }) {
-    /*
-    * add tEXt type data in the chunk of the PNG.
-    * ------------
-    * originalChunk : original chunk data to add new data
-    * keyword : keyword for the data
-    * newValue : value for the data
-    * ------------
-    * returns list of new chunk data with tEXt data
-    * */
-    // Deep copy
     List<Map<String, dynamic>> newChunks = List.from(
         originalChunk.map((chunk) => Map<String, dynamic>.from(chunk)),
         growable: true
@@ -136,13 +112,6 @@ class ChunkManager{
   static Future<Character?> decodeCharacter({
     required File? pickedFile
   }) async {
-    /*
-    * Get character data from chunk data in the PNG.
-    * ------------
-    * pickedBLOB : picked image BLOB data with image picker
-    * ------------
-    * returns Character model data
-    * */
     try{
       final pickedBLOB = await ImageConverter.convertImageToBLOB(pickedFile!);
       final List<Map<String, dynamic>>? chunks = readChunk(BLOB: pickedBLOB);

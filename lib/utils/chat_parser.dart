@@ -21,14 +21,6 @@ class ChatParser {
   }
 
   static List<TextSpan> parseMessageContent(String content, ChatMessageType? type) {
-    /*
-    * parse font to italic within *content*
-    * ------------
-    * content : chat message to parse
-    * ChatMessageType : chat message type
-    * ------------
-    * returns List of TextSpan widget that is parsed
-    * */
     final List<TextSpan> textSpans = [];
     final RegExp italicPattern = RegExp(r'\*([^*]+)\*');
     final matches = italicPattern.allMatches(content).toList();
