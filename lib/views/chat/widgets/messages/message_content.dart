@@ -12,8 +12,6 @@ class MessageContent extends StatelessWidget {
   final ChatPageMode mode;
   final TextEditingController chatTextEditingController;
   final FocusNode editChatFocusNode;
-  final Future<void> Function(ChatMessage)? dialogCallback;
-  final Character? character;
 
   const MessageContent({
     super.key,
@@ -22,8 +20,6 @@ class MessageContent extends StatelessWidget {
     required this.chatMessage,
     required this.chatTextEditingController,
     required this.editChatFocusNode,
-    this.dialogCallback,
-    this.character,
   });
 
   @override
@@ -119,8 +115,4 @@ class MessageContent extends StatelessWidget {
     );
   }
 
-
-  bool isMessageToDelete(List<ChatMessage> messagesToDelete, ChatMessage messageEntry) {
-    return messagesToDelete.any((chatMessage) => chatMessage == messageEntry);
-  }
 }
