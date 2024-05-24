@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 
-import '../base/base_message.dart';
+import '../message_content.dart';
 import 'package:aibridge/models/models.dart';
+import 'package:aibridge/views/chat/chat_page.dart';
+import 'package:aibridge/views/chat/widgets/messages/chat_time.dart';
+import 'package:aibridge/views/chat/widgets/messages/delete_check_box.dart';
 
-class UserMessageDeleteMode extends BaseMessage {
+class UserMessageDeleteMode extends StatelessWidget {
   final ValueNotifier<List<ChatMessage>> messagesToDeleteNotifier;
+  final ChatMessage chatMessage;
+  final ChatRoomSetting settings;
+  final ChatPageMode mode;
+  final TextEditingController chatTextEditingController;
+  final FocusNode editChatFocusNode;
 
   const UserMessageDeleteMode({
     super.key,
     required this.messagesToDeleteNotifier,
-    required super.chatMessage,
-    required super.settings,
-    required super.mode,
-    required super.chatTextEditingController,
-    required super.editChatFocusNode,
+    required this.chatMessage,
+    required this.settings,
+    required this.mode,
+    required this.chatTextEditingController,
+    required this.editChatFocusNode,
   });
 
   @override
@@ -30,9 +38,7 @@ class UserMessageDeleteMode extends BaseMessage {
                   left: 0.0,
                   top: 0.0,
                   bottom: 0.0,
-                  child: buildMessageCheckbox(
-                      context, isMessageToDelete(messagesToDelete, chatMessage)
-                  ),
+                  child: DeleteCheckBox(isChecked: isMessageToDelete(messagesToDelete, chatMessage))
                 ),
                 Align(
                   alignment: Alignment.centerRight,
@@ -50,7 +56,7 @@ class UserMessageDeleteMode extends BaseMessage {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         const SizedBox(width: 70),
-                        buildTimestamp(context),
+                        ChatTime(chatMessage: chatMessage),
                         const SizedBox(width: 4.0),
                         Flexible(
                           child: Material(
@@ -63,7 +69,13 @@ class UserMessageDeleteMode extends BaseMessage {
                                 child: Container(
                                     padding:
                                     const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                                    child: buildMessageContent(context)
+                                    child: MessageContent(
+                                      settings: settings,
+                                      mode: mode,
+                                      chatMessage: chatMessage,
+                                      chatTextEditingController: chatTextEditingController,
+                                      editChatFocusNode: editChatFocusNode
+                                    )
                                 )
                             ),
                           ),
@@ -80,5 +92,9 @@ class UserMessageDeleteMode extends BaseMessage {
         const SizedBox(height: 15),
       ],
     );
+  }
+
+  bool isMessageToDelete(List<ChatMessage> messagesToDelete, ChatMessage messageEntry) {
+    return messagesToDelete.any((chatMessage) => chatMessage == messageEntry);
   }
 }

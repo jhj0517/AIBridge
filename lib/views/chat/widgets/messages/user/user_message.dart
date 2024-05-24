@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
-import '../base/base_message.dart';
 
+import 'package:aibridge/models/sqflite/chat_message.dart';
+import 'package:aibridge/models/chatroom_settings.dart';
+import 'package:aibridge/views/chat/chat_page.dart';
+import 'package:aibridge/views/chat/widgets/messages/chat_time.dart';
+import 'package:aibridge/views/chat/widgets/messages/message_content.dart';
 
-class UserMessage extends BaseMessage {
+class UserMessage extends StatelessWidget {
+
+  final ChatMessage chatMessage;
+  final ChatRoomSetting settings;
+  final ChatPageMode mode;
+  final TextEditingController chatTextEditingController;
+  final FocusNode editChatFocusNode;
+  final Future<void> Function(ChatMessage)? dialogCallback;
 
   const UserMessage({
     super.key,
-    required super.chatMessage,
-    required super.settings,
-    required super.mode,
-    required super.chatTextEditingController,
-    required super.editChatFocusNode,
-    required super.dialogCallback,
+    required this.chatMessage,
+    required this.settings,
+    required this.mode,
+    required this.chatTextEditingController,
+    required this.editChatFocusNode,
+    required this.dialogCallback,
   });
 
   @override
@@ -24,7 +35,7 @@ class UserMessage extends BaseMessage {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             const SizedBox(width: 70),
-            buildTimestamp(context),
+            ChatTime(chatMessage: chatMessage),
             const SizedBox(width: 4.0),
             Flexible(
               child: Material(
@@ -40,7 +51,13 @@ class UserMessage extends BaseMessage {
                       onLongPress: () async => dialogCallback?.call(chatMessage),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                        child: buildMessageContent(context),
+                        child: MessageContent(
+                          settings: settings,
+                          mode: mode,
+                          chatMessage: chatMessage,
+                          chatTextEditingController: chatTextEditingController,
+                          editChatFocusNode: editChatFocusNode
+                        ),
                       ),
                     )
                 ),
