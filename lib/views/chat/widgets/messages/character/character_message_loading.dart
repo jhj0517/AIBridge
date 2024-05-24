@@ -1,5 +1,7 @@
 import 'package:aibridge/models/sqflite/character.dart';
 import 'package:aibridge/utils/utils.dart';
+import 'package:aibridge/views/chat/widgets/messages/character_name.dart';
+import 'package:aibridge/views/chat/widgets/messages/chat_time.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,14 +41,7 @@ class CharacterMessageLoading extends StatelessWidget{
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          character!.characterName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0,
-                            color: Theme.of(context).textTheme.bodyMedium!.color,
-                          ),
-                        ),
+                        CharacterName(character: character),
                         const SizedBox(height: 4),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
