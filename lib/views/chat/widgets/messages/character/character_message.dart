@@ -1,20 +1,33 @@
-import 'package:aibridge/views/character_profile/character_profile_page.dart';
 import 'package:flutter/material.dart';
 
-import 'package:aibridge/views/chat/widgets/messages/base/base_message.dart';
+import 'package:aibridge/views/chat/widgets/messages/message_content.dart';
+import 'package:aibridge/models/chatroom_settings.dart';
+import 'package:aibridge/models/sqflite/character.dart';
+import 'package:aibridge/models/sqflite/chat_message.dart';
+import 'package:aibridge/views/character_profile/character_profile_page.dart';
+import 'package:aibridge/views/chat/chat_page.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
+import 'package:aibridge/views/chat/widgets/messages/character_name.dart';
+import 'package:aibridge/views/chat/widgets/messages/chat_time.dart';
 
-class CharacterMessage extends BaseMessage {
+class CharacterMessage extends StatelessWidget {
+  final ChatMessage chatMessage;
+  final ChatRoomSetting settings;
+  final ChatPageMode mode;
+  final TextEditingController chatTextEditingController;
+  final FocusNode editChatFocusNode;
+  final Future<void> Function(ChatMessage)? dialogCallback;
+  final Character? character;
 
   const CharacterMessage({
     super.key,
-    required super.chatMessage,
-    required super.settings,
-    required super.mode,
-    required super.chatTextEditingController,
-    required super.editChatFocusNode,
-    required super.dialogCallback,
-    required super.character,
+    required this.chatMessage,
+    required this.settings,
+    required this.mode,
+    required this.chatTextEditingController,
+    required this.editChatFocusNode,
+    required this.dialogCallback,
+    required this.character,
   });
 
   @override
@@ -47,7 +60,7 @@ class CharacterMessage extends BaseMessage {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildCharacterName(context),
+                    CharacterName(character: character),
                     const SizedBox(height: 4),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -66,14 +79,20 @@ class CharacterMessage extends BaseMessage {
                                   onLongPress: () async => dialogCallback?.call(chatMessage),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                                    child: buildMessageContent(context),
+                                    child: MessageContent(
+                                      settings: settings,
+                                      mode: mode,
+                                      chatMessage: chatMessage,
+                                      chatTextEditingController: chatTextEditingController,
+                                      editChatFocusNode: editChatFocusNode
+                                    )
                                   ),
                                 )
                             ),
                           ),
                         ),
                         const SizedBox(width: 4.0),
-                        buildTimestamp(context),
+                        ChatTime(chatMessage: chatMessage),
                         const SizedBox(width: 35.0),
                       ],
                     )

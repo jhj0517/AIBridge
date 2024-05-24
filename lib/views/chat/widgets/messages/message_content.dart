@@ -6,7 +6,7 @@ import 'package:aibridge/views/chat/chat_page.dart';
 import 'package:aibridge/views/full_photo/full_photo_page.dart';
 import 'package:aibridge/utils/utils.dart';
 
-abstract class BaseMessage extends StatelessWidget {
+class MessageContent extends StatelessWidget {
   final ChatMessage chatMessage;
   final ChatRoomSetting settings;
   final ChatPageMode mode;
@@ -15,7 +15,7 @@ abstract class BaseMessage extends StatelessWidget {
   final Future<void> Function(ChatMessage)? dialogCallback;
   final Character? character;
 
-  const BaseMessage({
+  const MessageContent({
     super.key,
     required this.settings,
     required this.mode,
@@ -26,7 +26,8 @@ abstract class BaseMessage extends StatelessWidget {
     this.character,
   });
 
-  Widget buildMessageContent(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     if (chatMessage.imageUrl.isNotEmpty && mode == ChatPageMode.deleteMode) {
       return Image.network(
         chatMessage.imageUrl,
@@ -118,46 +119,8 @@ abstract class BaseMessage extends StatelessWidget {
     );
   }
 
-  Widget buildMessageCheckbox(BuildContext context, bool isChecked) {
-    return IgnorePointer(
-      child: Theme(
-        data: ThemeData(
-          unselectedWidgetColor: Theme.of(context).textTheme.bodyMedium!.color,
-        ),
-        child: Checkbox(
-          shape: const CircleBorder(),
-          value: isChecked,
-          onChanged: (bool? newValue) {},
-        ),
-      ),
-    );
-  }
-
-  Widget buildTimestamp(BuildContext context) {
-    return Text(
-      Utilities.hourFormat(chatMessage.timestamp),
-      style: const TextStyle(
-        fontSize: 10.0,
-        color: Colors.grey,
-      ),
-    );
-  }
-
-  Widget buildCharacterName(BuildContext context){
-    return Text(
-      character!.characterName,
-      style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16.0,
-          color: Theme.of(context).textTheme.bodyMedium!.color,
-      ),
-    );
-  }
 
   bool isMessageToDelete(List<ChatMessage> messagesToDelete, ChatMessage messageEntry) {
     return messagesToDelete.any((chatMessage) => chatMessage == messageEntry);
   }
-
-  @override
-  Widget build(BuildContext context);
 }

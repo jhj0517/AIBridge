@@ -1,23 +1,33 @@
+import 'package:aibridge/views/chat/widgets/messages/character_name.dart';
+import 'package:aibridge/views/chat/widgets/messages/chat_time.dart';
+import 'package:aibridge/views/chat/widgets/messages/delete_check_box.dart';
 import 'package:flutter/material.dart';
 
 import 'package:aibridge/models/models.dart';
-import 'package:aibridge/views/chat/widgets/messages/base/base_message.dart';
 import 'package:aibridge/views/common/character/profile_picture.dart';
+import 'package:aibridge/views/chat/chat_page.dart';
+import 'package:aibridge/utils/utilities.dart';
+import 'package:aibridge/views/chat/widgets/messages/message_content.dart';
 
-
-class CharacterMessageDeleteMode extends BaseMessage {
+class CharacterMessageDeleteMode extends StatelessWidget {
 
   final ValueNotifier<List<ChatMessage>> messagesToDeleteNotifier;
+  final ChatMessage chatMessage;
+  final ChatRoomSetting settings;
+  final ChatPageMode mode;
+  final TextEditingController chatTextEditingController;
+  final FocusNode editChatFocusNode;
+  final Character? character;
 
   const CharacterMessageDeleteMode({
     super.key,
     required this.messagesToDeleteNotifier,
-    required super.chatMessage,
-    required super.settings,
-    required super.mode,
-    required super.chatTextEditingController,
-    required super.editChatFocusNode,
-    required super.character,
+    required this.chatMessage,
+    required this.settings,
+    required this.mode,
+    required this.chatTextEditingController,
+    required this.editChatFocusNode,
+    required this.character,
   });
 
   @override
@@ -39,8 +49,8 @@ class CharacterMessageDeleteMode extends BaseMessage {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    buildMessageCheckbox(
-                        context, isMessageToDelete(messagesToDelete, chatMessage)
+                    DeleteCheckBox(
+                      isChecked: isMessageToDelete(messagesToDelete, chatMessage)
                     ),
                     Expanded(
                         child: Row(
@@ -57,7 +67,7 @@ class CharacterMessageDeleteMode extends BaseMessage {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    buildCharacterName(context),
+                                    CharacterName(character: character),
                                     const SizedBox(height: 4),
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -73,13 +83,19 @@ class CharacterMessageDeleteMode extends BaseMessage {
                                                 child: Container(
                                                   padding:
                                                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-                                                  child: buildMessageContent(context),
+                                                  child: MessageContent(
+                                                    settings: settings,
+                                                    mode: mode,
+                                                    chatMessage: chatMessage,
+                                                    chatTextEditingController: chatTextEditingController,
+                                                    editChatFocusNode: editChatFocusNode
+                                                  ),
                                                 )
                                             ),
                                           ),
                                         ),
                                         const SizedBox(width: 4.0),
-                                        buildTimestamp(context),
+                                        ChatTime(chatMessage: chatMessage),
                                         const SizedBox(width:35.0)
                                       ],
                                     ),
@@ -97,5 +113,9 @@ class CharacterMessageDeleteMode extends BaseMessage {
           const SizedBox(height: 8),
         ]
     );
+  }
+
+  bool isMessageToDelete(List<ChatMessage> messagesToDelete, ChatMessage messageEntry) {
+    return messagesToDelete.any((chatMessage) => chatMessage == messageEntry);
   }
 }
